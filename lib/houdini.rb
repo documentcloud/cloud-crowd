@@ -5,6 +5,7 @@ module Houdini
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1
   COMPLETE    = 2
-  ERROR       = 3
+  WAITING     = 3
+  ERROR       = 4
   
 end

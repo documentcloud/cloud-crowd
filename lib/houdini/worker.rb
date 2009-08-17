@@ -1,17 +1,22 @@
 module Houdini
   
   class Worker
+    include RestClient
+    
+    CENTRAL_URL = Houdini::CONFIG['central_server'] + '/work_units'
     
     def fetch_work_unit
-      @work_unit = curb.get_job
+      response = get(CENTRAL_URL + '/fetch')
+      return if response.code == 204 # No content means no work for us.
+      @work_unit = JSON.parse(response)
     end
     
-    def complete_work_unit
-      curb.post_completed @work_unit
+    def complete_work_unit(result)
+      post(CENTRAL_URL + '/finish', :id => @work_unit['id'], :value => JSON.generate(result))
     end
     
-    def record_error(message)
-      curb.post_error(@work_unit, message)
+    def fail_work_unit(message)
+      post(CENTRAL_URL + '/fail', :id => @work_unit['id'], :value => message)
     end
     
     def has_work?
@@ -19,12 +24,13 @@ module Houdini
     end
     
     def run
-      action_class = @work_unit['action'].camelize.constantize
+      action, input, options = @work_unit['action'], @work_unit['input'], @work_unit['options']
+      action_class = action.camelize.constantize
       begin
-        action_class.new.process(@work_unit['input'], @work_unit['options'])
-        complete_work_unit
+        result = action_class.new.process(input, options)
+        complete_work_unit(result)
       rescue Exception => e
-        record_error(e.message)
+        fail_work_unit(e.message)
       ensure
         @work_unit = nil
       end

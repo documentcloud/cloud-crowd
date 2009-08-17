@@ -20,7 +20,7 @@ class Job < ActiveRecord::Base
   
   def queue_for_daemons
     JSON.parse(self.inputs).each do |wu_input|
-      WorkUnit.create(:job => self, :input => wu_input, :status => HOUDINI::PROCESSING)
+      WorkUnit.create(:job => self, :input => wu_input, :status => HOUDINI::WAITING)
     end
   end
   

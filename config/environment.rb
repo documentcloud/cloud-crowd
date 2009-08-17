@@ -34,6 +34,7 @@ Rails::Initializer.run do |config|
   
   # Gems:
   config.gem 'json', :version => '>= 1.1.7'
+  config.gem 'rest-client', :version => '>= 1.0.3', :lib => 'rest_client'
   
   if Rails.test?
     config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
