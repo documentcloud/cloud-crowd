@@ -1,0 +1,4 @@
+log
+tmp
+db/*.sqlite3
+raw
