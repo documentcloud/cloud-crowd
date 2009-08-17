@@ -1,5 +1,14 @@
 # Be sure to restart your server when you modify this file
 
+# Let's stop matching against +RAILS_ENV+, shall we?
+# Make a series of methods like +Rails.production?+
+unless defined?(Rails)
+  module Rails; end
+end
+%w(development test staging production).each do |env|
+  Rails.module_eval "def self.#{env}?; RAILS_ENV == '#{env}'; end"
+end
+
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.3' unless defined? RAILS_GEM_VERSION
 
@@ -19,6 +28,16 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
+  
+  # Standard Library:
+  require 'tmpdir'
+  
+  # Gems:
+  config.gem 'json', :version => '>= 1.1.7'
+  
+  if Rails.test?
+    config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
+  end
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -26,7 +45,7 @@ Rails::Initializer.run do |config|
 
   # Skip frameworks you're not going to use. To use Rails without a database,
   # you must remove the Active Record framework.
-  # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
+  config.frameworks -= [ :active_resource ]
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
@@ -39,3 +58,5 @@ Rails::Initializer.run do |config|
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
 end
+
+ActiveSupport::JSON.backend = 'JSONGem'
