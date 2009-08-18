@@ -3,7 +3,7 @@ class WorkUnitsController < ApplicationController
   # Ditto from below.
   def fetch
     unit = WorkUnit.first(:conditions => {:status => Dogpile::PENDING}, :order => "created_at desc", :lock => true)
-    return respond_no_content unless unit
+    return head :no_content unless unit
     unit.status = Dogpile::PROCESSING
     unit.save!
     render :json => unit
@@ -13,13 +13,13 @@ class WorkUnitsController < ApplicationController
   def finish
     unit = WorkUnit.find(params[:id], :lock => true)
     unit.update_attributes(:output => params[:output], :status => Dogpile::SUCCEEDED, :time => params[:time])
-    respond_no_content
+    head :no_content
   end
   
   def fail
     unit = WorkUnit.find(params[:id], :lock => true)
     unit.update_attributes(:output => params[:output], :status => Dogpile::FAILED, :time => params[:time])
-    respond_no_content
+    head :no_content
   end
   
 end
