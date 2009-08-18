@@ -6,6 +6,7 @@ class InitialSchema < ActiveRecord::Migration
       t.column :inputs,       :text,    :null => false
       t.column :action,       :string,  :null => false
       t.column :options,      :text,    :null => false
+      t.column :time,         :float
       t.column :callback_url, :string
       t.column :owner_email,  :string
       t.timestamps

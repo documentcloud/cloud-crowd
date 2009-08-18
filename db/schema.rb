@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(:version => 20090817192006) do
     t.text     "inputs",       :null => false
     t.string   "action",       :null => false
     t.text     "options",      :null => false
+    t.float    "time"
     t.string   "callback_url"
     t.string   "owner_email"
     t.datetime "created_at"

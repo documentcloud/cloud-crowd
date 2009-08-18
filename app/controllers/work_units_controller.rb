@@ -1,5 +1,4 @@
 class WorkUnitsController < ApplicationController
-  unloadable # For whatever reason, in dev mode, there are occasional load errors.
   
   # Ditto from below.
   def fetch
