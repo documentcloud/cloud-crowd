@@ -6,7 +6,6 @@ require 'rubygems'
 require 'daemons'
 require 'yaml'
 require 'json'
-require 'benchmark'
 require 'rest_client'
 require 'right_aws'
 
