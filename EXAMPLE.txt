@@ -1,0 +1,22 @@
+# Inside of a restclient session:
+
+require 'json'
+
+RestClient.post(
+	'http://localhost:3000/jobs/create', 
+	{:json => JSON.generate({
+		'inputs' => [
+			'http://www.google.com/intl/en_ALL/images/logo.gif', 
+			'http://www.hoax-slayer.com/images/mars.jpg', 
+			'http://www.windows.ucar.edu/mars/images/mars1.gif', 
+			'http://starchild.gsfc.nasa.gov/Images/StarChild/solar_system_level1/mars.gif', 
+			'http://blogs.tnr.com/tnr/blogs/the_plank/c068mars-atmosphere2.jpg'
+		],
+		'action' => 'graphics_magick',
+		'options' => {'steps' => [
+			{'name' => 'bw', 'command' => 'convert', 'options' => '-monochrome', 'extension' => 'jpg'}
+		]
+	}})}
+)
+
+status = get('http://localhost:3000/jobs/show/[job_id]')
