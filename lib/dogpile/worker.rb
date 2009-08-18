@@ -8,6 +8,7 @@ module Dogpile
     
     def initialize
       @id = $$
+      @hostname = Socket.gethostname
     end
     
     def fetch_work_unit
