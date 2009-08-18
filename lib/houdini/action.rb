@@ -32,7 +32,7 @@ module Houdini
     
     def local_storage_path
       base        = '/tmp/houdini'
-      action_part = underscore(self.class.to_s) + '_storage'
+      action_part = underscore(self.class.to_s)
       job_part    = "job_#{@job_id}"
       unit_part   = "unit_#{@work_unit_id}"
       
