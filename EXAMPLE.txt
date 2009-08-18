@@ -7,6 +7,9 @@ require 'json'
 RestClient.post(
 	'http://localhost:3000/jobs', 
 	{:json => JSON.generate({
+	
+		'action' => 'graphics_magick',
+		
 		'inputs' => [
 			'http://www.sci-fi-o-rama.com/wp-content/uploads/2008/10/dan_mcpharlin_the_land_of_sleeping_things.jpg',
 			'http://www.sci-fi-o-rama.com/wp-content/uploads/2009/07/dan_mcpharlin_wired_spread01.jpg',
@@ -14,7 +17,7 @@ RestClient.post(
 			'http://www.sci-fi-o-rama.com/wp-content/uploads/2009/07/dan_mcpharlin_wired_spread02.jpg',
 			'http://www.sci-fi-o-rama.com/wp-content/uploads/2009/02/dan_mcpharlin_untitled.jpg'
 		],
-		'action' => 'graphics_magick',
+		
 		'options' => {
 			'steps' => [{
 				'name' 			=> 'bw', 
@@ -33,6 +36,7 @@ RestClient.post(
 				'extension' => 'png'
 			}]
 		}
+		
 	})}
 )
 

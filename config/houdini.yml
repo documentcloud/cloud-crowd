@@ -1,2 +1,6 @@
 development:
-  central_server: http://localhost:3000
+  central_server:             http://localhost:3000
+  num_workers:                4
+  default_worker_sleep_time:  1
+  max_worker_sleep_time:      20
+  worker_sleep_multiplier:    1.3

@@ -3,3 +3,5 @@ tmp
 db/*.sqlite3
 raw
 config/secrets.yml
+lib/daemons/*.pid
+lib/daemons/*.output
