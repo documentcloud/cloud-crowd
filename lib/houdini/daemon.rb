@@ -8,6 +8,7 @@ require 'daemons'
 require 'yaml'
 require 'json'
 require 'rest_client'
+require 'benchmark'
 
 # Daemon/Worker Dependencies.
 require "#{RAILS_ROOT}/lib/houdini"
@@ -28,7 +29,9 @@ loop do
   puts 'going'
   @worker.fetch_work_unit
   if @worker.has_work?
-    @worker.run
+    puts "running #{@worker.action} worker"
+    time = Benchmark.measure { @worker.run }
+    puts "ran in #{time}\n"
     @sleep_time = DEFAULT_SLEEP_TIME
   else
     @sleep_time = [@sleep_time * SLEEP_MULTIPLIER, MAX_SLEEP_TIME].min

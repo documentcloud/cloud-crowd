@@ -6,7 +6,7 @@ class GraphicsMagick < Houdini::Action
   end
   
   def process
-    `curl "#{@input}" > #{input_path}`
+    `curl -s "#{@input}" > #{input_path}`
     results = []
     
     @options['steps'].each do |step|
