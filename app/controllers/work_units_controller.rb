@@ -12,14 +12,14 @@ class WorkUnitsController < ApplicationController
   # Perhaps move this into a WorkUnit class method with a transaction.
   def finish
     unit = WorkUnit.find(params[:id], :lock => true)
-    unit.update_attributes(:output => params[:output], :status => Dogpile::COMPLETE)
+    unit.update_attributes(:output => params[:output], :status => Dogpile::COMPLETE, :time => params[:time])
     check_for_completion(unit)
     respond_no_content
   end
   
   def fail
     unit = WorkUnit.find(params[:id], :lock => true)
-    unit.update_attributes(:output => params[:output], :status => Dogpile::ERROR)
+    unit.update_attributes(:output => params[:output], :status => Dogpile::ERROR, :time => params[:time])
     check_for_completion(unit)
     respond_no_content
   end

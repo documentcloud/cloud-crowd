@@ -13,12 +13,9 @@ module Dogpile
     
     def run
       loop do
-        puts 'going'
         @worker.fetch_work_unit
         if @worker.has_work?
-          puts "running #{@worker.action} worker"
-          time = Benchmark.measure { @worker.run }
-          puts "ran in #{time}\n"
+          @worker.run
           @sleep_time = DEFAULT_SLEEP_TIME
         else
           @sleep_time = [@sleep_time * SLEEP_MULTIPLIER, MAX_SLEEP_TIME].min

@@ -5,3 +5,4 @@ raw
 config/secrets.yml
 lib/daemons/*.pid
 lib/daemons/*.output
+lib/daemons/*.log

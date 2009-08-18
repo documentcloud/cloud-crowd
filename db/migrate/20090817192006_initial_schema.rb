@@ -15,6 +15,7 @@ class InitialSchema < ActiveRecord::Migration
       t.column :status,       :integer, :null => false
       t.column :job_id,       :integer, :null => false
       t.column :input,        :string,  :null => false
+      t.column :time,         :float
       t.column :output,       :text
       t.timestamps
     end
