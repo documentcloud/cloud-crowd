@@ -38,7 +38,9 @@ Rails::Initializer.run do |config|
   config.gem 'right_aws', :version => '>= 1.10.0'
   
   if Rails.test?
+    config.gem 'faker', :version => '>= 0.3.1'
     config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
+    config.gem 'notahat-machinist', :lib => 'machinist', :source => 'http://gems.github.com'
   end
 
   # Only load the plugins named here, in the order given (default is alphabetical).

@@ -48,7 +48,7 @@ class Job < ActiveRecord::Base
   def display_eta
     time = self.eta
     return "unknown" if !time
-    return "completed" if time == 0
+    return "complete" if time == 0
     case time
     when (0..(1.minute))        then "#{time} seconds"
     when ((1.minute)..(1.hour)) then "#{time / 1.minute} minutes"

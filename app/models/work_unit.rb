@@ -11,6 +11,10 @@ class WorkUnit < ActiveRecord::Base
   named_scope 'done',       :conditions => {:status => Dogpile::DONE}
   named_scope 'incomplete', :conditions => {:status => Dogpile::INCOMPLETE}
   
+  def after_save
+    self.job.check_for_completion if done?
+  end
+  
   def done?
     Dogpile::DONE.include? status
   end
