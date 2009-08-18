@@ -1,14 +1,14 @@
-module Houdini
+module Dogpile
   
   class Daemon
     
-    DEFAULT_SLEEP_TIME  = Houdini::CONFIG['default_worker_sleep_time']
-    MAX_SLEEP_TIME      = Houdini::CONFIG['max_worker_sleep_time']
-    SLEEP_MULTIPLIER    = Houdini::CONFIG['worker_sleep_multiplier']
+    DEFAULT_SLEEP_TIME  = Dogpile::CONFIG['default_worker_sleep_time']
+    MAX_SLEEP_TIME      = Dogpile::CONFIG['max_worker_sleep_time']
+    SLEEP_MULTIPLIER    = Dogpile::CONFIG['worker_sleep_multiplier']
     
     def initialize
       @sleep_time = DEFAULT_SLEEP_TIME
-      @worker = Houdini::Worker.new
+      @worker = Dogpile::Worker.new
     end
     
     def run
@@ -31,4 +31,4 @@ module Houdini
   
 end
 
-Houdini::Daemon.new.run
+Dogpile::Daemon.new.run

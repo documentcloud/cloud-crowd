@@ -5,7 +5,7 @@ class WorkUnit < ActiveRecord::Base
   validates_presence_of :job_id, :status, :input
   
   def done?
-    [Houdini::COMPLETE, Houdini::ERROR].include? status
+    [Dogpile::COMPLETE, Dogpile::ERROR].include? status
   end
   
   def to_json(opts={})

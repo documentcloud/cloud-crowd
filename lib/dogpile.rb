@@ -1,6 +1,6 @@
-module Houdini
+module Dogpile
   
-  CONFIG = YAML.load_file("#{RAILS_ROOT}/config/houdini.yml")[RAILS_ENV]
+  CONFIG = YAML.load_file("#{RAILS_ROOT}/config/dogpile.yml")[RAILS_ENV]
   
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1

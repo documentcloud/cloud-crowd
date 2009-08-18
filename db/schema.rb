@@ -32,5 +32,6 @@ ActiveRecord::Schema.define(:version => 20090817192006) do
   end
 
   add_index "work_units", ["job_id"], :name => "index_work_units_on_job_id"
+  add_index "work_units", ["status"], :name => "index_work_units_on_status"
 
 end

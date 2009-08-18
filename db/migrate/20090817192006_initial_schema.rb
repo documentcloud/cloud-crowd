@@ -19,6 +19,7 @@ class InitialSchema < ActiveRecord::Migration
       t.timestamps
     end
     add_index :work_units, :job_id
+    add_index :work_units, :status
     
   end
 
