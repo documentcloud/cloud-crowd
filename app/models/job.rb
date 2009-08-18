@@ -1,7 +1,6 @@
 class Job < ActiveRecord::Base
   
-  has_many :sub_jobs
-  has_many :outputs, :through => :sub_jobs
+  has_many :work_units
   
   validates_presence_of :status, :inputs, :action, :options
   
@@ -20,8 +19,20 @@ class Job < ActiveRecord::Base
   
   def queue_for_daemons
     JSON.parse(self.inputs).each do |wu_input|
-      WorkUnit.create(:job => self, :input => wu_input, :status => HOUDINI::WAITING)
+      WorkUnit.create(:job => self, :input => wu_input, :status => Houdini::WAITING)
     end
+  end
+  
+  def to_json(opts={})
+    units = self.work_units
+    ins   = units.inject({}) {|memo, u| memo[u.input] = u.status; memo }
+    outs  = units.inject({}) {|memo, u| memo[u.input] = u.output if u.done?; memo }
+    {
+      'id'        => self.id,
+      'status'    => self.status,
+      'inputs'    => ins,
+      'outputs'   => outs
+    }.to_json
   end
   
 end
