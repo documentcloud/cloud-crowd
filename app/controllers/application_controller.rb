@@ -7,10 +7,4 @@ class ApplicationController < ActionController::Base
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
-  
-  protected
-  
-  def respond_no_content
-    render :nothing => true, :status => 204
-  end
 end
