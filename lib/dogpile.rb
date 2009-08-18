@@ -6,19 +6,19 @@ module Dogpile
   
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1
-  COMPLETE    = 2
-  PENDING     = 3
+  PENDING     = 2
+  SUCCEEDED   = 3
   FAILED      = 4
   
-  # A work unit is considered to be done if it's complete or if it failed.
-  DONE        = [COMPLETE, FAILED]
+  # A work unit is considered to be complete if it succeeded or if it failed.
+  COMPLETE    = [SUCCEEDED, FAILED]
   
   # A work unit is considered incomplete if it's pending or being processed.
   INCOMPLETE  = [PENDING, PROCESSING]
   
   # Mapping of statuses to their display strings.
   DISPLAY_STATUS_MAP = {
-    1 => 'processing', 2 => 'complete', 3 => 'pending', 4 => 'failed'
+    1 => 'processing', 2 => 'pending', 3 => 'succeeded', 4 => 'failed'
   }
   
   def self.display_status(status)
