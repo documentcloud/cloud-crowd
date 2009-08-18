@@ -20,20 +20,20 @@ class JobTest < ActiveSupport::TestCase
     end
     
     should "know its completion status" do
-      assert !@job.all_work_units_done?
-      @unit.update_attributes(:status => Dogpile::COMPLETE)
-      assert @job.reload.all_work_units_done?
+      assert !@job.all_work_units_complete?
+      @unit.update_attributes(:status => Dogpile::SUCCEEDED)
+      assert @job.reload.all_work_units_complete?
     end
     
     should "know its eta, both numerically and for display" do
       job = Job.make(:inputs => ['http://some.url', 'http://other.url'].to_json)
       assert !job.eta
       assert job.display_eta == 'unknown'
-      job.work_units.first.update_attributes(:status => Dogpile::COMPLETE, :time => 3)
+      job.work_units.first.update_attributes(:status => Dogpile::SUCCEEDED, :time => 3)
       job.reload
-      assert job.eta == 3
-      assert job.display_eta == '3.0 seconds'
-      job.work_units.last.update_attributes(:status => Dogpile::COMPLETE, :time => 3)
+      assert job.eta <= 3.0
+      assert job.display_eta.match(/\A\d+\.\d+ seconds\Z/)
+      job.work_units.last.update_attributes(:status => Dogpile::SUCCEEDED, :time => 3)
       job.reload
       assert job.time > 0.00001
       assert job.eta == 0

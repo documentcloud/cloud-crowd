@@ -8,11 +8,11 @@ class WorkUnitTest < ActiveSupport::TestCase
     
     should "know if its done" do
       unit = WorkUnit.make
-      assert !unit.done?
-      unit.status = Dogpile::COMPLETE
-      assert unit.done?
+      assert !unit.complete?
+      unit.status = Dogpile::SUCCEEDED
+      assert unit.complete?
       unit.status = Dogpile::FAILED
-      assert unit.done?
+      assert unit.complete?
     end
     
     should "have JSON that includes job attributes" do
