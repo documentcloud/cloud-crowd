@@ -13,14 +13,12 @@ class WorkUnitsController < ApplicationController
   def finish
     unit = WorkUnit.find(params[:id], :lock => true)
     unit.update_attributes(:output => params[:output], :status => Dogpile::COMPLETE, :time => params[:time])
-    unit.job.check_for_completion
     respond_no_content
   end
   
   def fail
     unit = WorkUnit.find(params[:id], :lock => true)
     unit.update_attributes(:output => params[:output], :status => Dogpile::FAILED, :time => params[:time])
-    unit.job.check_for_completion
     respond_no_content
   end
   
