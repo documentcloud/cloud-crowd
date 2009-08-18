@@ -38,7 +38,7 @@ module Dogpile
     def run
       action_class = Module.const_get(camelize(@action))
       begin
-        result = action_class.new(@input, @options).process
+        result = action_class.new(@input, @options).run
         complete_work_unit(result)
       rescue Exception => e
         fail_work_unit(e)
