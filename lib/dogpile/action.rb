@@ -6,21 +6,13 @@ module Dogpile
     def initialize(input, options)
       @input, @options = input, options
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
-      FileUtils.mkdir_p(local_storage_path) unless File.exists?(local_storage_path)
+      @store = Dogpile::AssetStore.new
+      FileUtils.mkdir_p(temp_storage_path) unless File.exists?(temp_storage_path)
     end
     
     def run
       raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
     end
-    
-    # Think about if we really need these.
-    # def pre_process
-    #   
-    # end
-    # 
-    # def post_process
-    #   
-    # end
     
     # If your Action has any cleanup to be performed (say, leftover files on S3)
     # override +cleanup+ with the appropriate garbage collection.
@@ -28,11 +20,13 @@ module Dogpile
       
     end
     
+    # TODO: Think about auto-cleaning up all temp files, by fiat.
+    
     
     protected
     
-    def local_storage_path
-      base        = '/tmp/dogpile'
+    def temp_storage_path
+      base        = @store.temp_storage_path
       action_part = underscore(self.class.to_s)
       job_part    = "job_#{@job_id}"
       unit_part   = "unit_#{@work_unit_id}"

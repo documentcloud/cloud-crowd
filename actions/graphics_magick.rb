@@ -5,26 +5,32 @@ class GraphicsMagick < Dogpile::Action
     @file_name = File.basename(@input, File.extname(@input))
   end
   
-  def process
+  def run
     `curl -s "#{@input}" > #{input_path}`
     results = []
     
     @options['steps'].each do |step|
       name, cmd, opts, ext = step['name'], step['command'], step['options'], step['extension']
       output_path = output_path_for(name, ext)
+      storage_path = storage_path_for(name, ext)
       `gm #{cmd} #{opts} #{input_path} #{output_path}`
-      results << {'name' => name, 'url' => output_path}
+      @store.save(output_path, storage_path)
+      results << {'name' => name, 'url' => @store.url(storage_path)}
     end
     
     results
   end
   
   def input_path
-    @input_path ||= File.join(local_storage_path, File.basename(@input))
+    @input_path ||= File.join(temp_storage_path, File.basename(@input))
   end
   
   def output_path_for(step_name, extension)
-    "#{local_storage_path}/#{@file_name}_#{step_name}.#{extension}"
+    "#{temp_storage_path}/#{@file_name}_#{step_name}.#{extension}"
+  end
+  
+  def storage_path_for(step_name, extension)
+    "job_#{@options['job_id']}/#{@file_name}_#{step_name}.#{extension}"
   end
   
 end

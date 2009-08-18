@@ -7,7 +7,7 @@ module Dogpile
     include FileUtils
     
     def initialize
-      mkdir_p local_storage_path unless exists? local_storage_path
+      mkdir_p temp_storage_path unless File.exists? temp_storage_path
     end
     
     def temp_storage_path
@@ -15,24 +15,36 @@ module Dogpile
     end
     
     def save(local_path, save_path)
-      if RAILS_ENV == 'development'
-        save_to_filesystem(local_path, remote_path)
-      else
-        save_to_s3(local_path, remote_path)
-      end
+      # if RAILS_ENV == 'development'
+      #   save_to_filesystem(local_path, save_path)
+      # else
+        save_to_s3(local_path, save_path)
+      # end
+    end
+    
+    def url(save_path)
+      @bucket.key(save_path).public_link
     end
     
     private
     
     def save_to_filesystem(local_path, save_path)
-      save_path = join("/tmp/dogpile_storage", save_path)
-      save_dir = dirname(save_path)
-      mkdir_p save_dir unless exists? save_dir
+      save_path = File.join("/tmp/dogpile_storage", save_path)
+      save_dir = File.dirname(save_path)
+      mkdir_p save_dir unless File.exists? save_dir
       cp(local_path, save_path)
     end
     
     def save_to_s3(local_path, save_path)
-      
+      ensure_s3_connection
+      @bucket.put(save_path, File.open(local_path), {}, 'public-read')
+    end
+    
+    def ensure_s3_connection
+      unless @s3 && @bucket
+        @s3 = RightAws::S3.new(Dogpile::SECRETS['aws_access_key'], Dogpile::SECRETS['aws_secret_key'])
+        @bucket = @s3.bucket(Dogpile::CONFIG['s3_bucket'], true)
+      end
     end
   
   end
