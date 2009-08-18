@@ -1,6 +1,6 @@
-module Houdini
+module Dogpile
 
-  # The Houdini::AssetStore should provide a common API for stashing and retrieving
+  # The Dogpile::AssetStore should provide a common API for stashing and retrieving
   # assets via URLs, in production this will be S3 but in development it may
   # be the filesystem or /tmp.
   class AssetStore
@@ -30,7 +30,7 @@ module Houdini
     private 
     
     def local_storage_path
-      "#{Dir.tmpdir}/houdini_assets"
+      "#{Dir.tmpdir}/dogpile_assets"
     end
   
   end

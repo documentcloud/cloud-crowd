@@ -5,7 +5,7 @@
 # Make sure the secret is at least 30 characters and all random, 
 # no regular words or you'll be exposed to dictionary attacks.
 ActionController::Base.session = {
-  :key         => '_houdini_session',
+  :key         => '_dogpile_session',
   :secret      => 'd41dcdb7aa9a76438c1f84969f83f667d4a93bff76c8b7dedbd10280e757ebbc96dc9f0341a11ffbd00ef328abd93469c2f877a0ed8e39a4e14998984e087526'
 }
 

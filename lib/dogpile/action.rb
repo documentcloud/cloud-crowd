@@ -1,6 +1,6 @@
-module Houdini
+module Dogpile
   
-  # Base Houdini::Action class. Override this with your custom action steps.
+  # Base Dogpile::Action class. Override this with your custom action steps.
   class Action
     
     def initialize(input, options)
@@ -10,16 +10,17 @@ module Houdini
     end
     
     def run
-      raise NotImplementedError.new("Houdini::Actions must override 'run' with their own processing code.")
+      raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
     end
     
-    def pre_process
-      
-    end
-    
-    def post_process
-      
-    end
+    # Think about if we really need these.
+    # def pre_process
+    #   
+    # end
+    # 
+    # def post_process
+    #   
+    # end
     
     # If your Action has any cleanup to be performed (say, leftover files on S3)
     # override +cleanup+ with the appropriate garbage collection.
@@ -31,7 +32,7 @@ module Houdini
     protected
     
     def local_storage_path
-      base        = '/tmp/houdini'
+      base        = '/tmp/dogpile'
       action_part = underscore(self.class.to_s)
       job_part    = "job_#{@job_id}"
       unit_part   = "unit_#{@work_unit_id}"

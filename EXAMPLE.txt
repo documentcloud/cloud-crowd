@@ -27,7 +27,7 @@ RestClient.post(
 			},{
 				'name' 			=> 'annotated',
 				'command' 	=> 'convert',
-				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 Houdini!"',
+				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 Dogpile!"',
 				'extension' => 'jpg'
 			},{
 				'name'			=> 'blurred',

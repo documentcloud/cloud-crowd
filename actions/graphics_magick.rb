@@ -1,4 +1,4 @@
-class GraphicsMagick < Houdini::Action
+class GraphicsMagick < Dogpile::Action
   
   def initialize(*args)
     super(*args)

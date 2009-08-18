@@ -1,8 +1,8 @@
-module Houdini
+module Dogpile
   
   class Worker
     
-    CENTRAL_URL = Houdini::CONFIG['central_server'] + '/work_units'
+    CENTRAL_URL = Dogpile::CONFIG['central_server'] + '/work_units'
     
     attr_reader :action
     

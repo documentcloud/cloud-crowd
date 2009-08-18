@@ -8,7 +8,7 @@ class Job < ActiveRecord::Base
   
   def self.create_from_request(h)
     self.create(
-      :status       => Houdini::PROCESSING,
+      :status       => Dogpile::PROCESSING,
       :inputs       => h['inputs'].to_json,
       :action       => h['action'],
       :options      => (h['options'] || {}).to_json,
@@ -19,7 +19,7 @@ class Job < ActiveRecord::Base
   
   def queue_for_daemons
     JSON.parse(self.inputs).each do |wu_input|
-      WorkUnit.create(:job => self, :input => wu_input, :status => Houdini::WAITING)
+      WorkUnit.create(:job => self, :input => wu_input, :status => Dogpile::WAITING)
     end
   end
   
