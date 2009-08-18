@@ -24,7 +24,12 @@ class Job < ActiveRecord::Base
   end
     
   def check_for_completion
-    update_attributes(:status => Dogpile::COMPLETE) if all_work_units_done?
+    if all_work_units_done?
+      update_attributes({
+        :status => Dogpile::COMPLETE,
+        :time => Time.now - self.created_at
+      })
+    end
   end
   
   def all_work_units_done?

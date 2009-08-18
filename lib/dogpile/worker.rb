@@ -26,7 +26,7 @@ module Dogpile
     
     def fail_work_unit(exception)
       data = completion_params.merge({:output => exception.message})
-      RestClient.post(CENTRAL_URL + '/fail', :id => @options['work_unit_id'], :output => exception.message)
+      RestClient.post(CENTRAL_URL + '/fail', data)
       log "failed #{@action} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
     end
     
