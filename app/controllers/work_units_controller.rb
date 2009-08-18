@@ -1,8 +1,9 @@
 class WorkUnitsController < ApplicationController
+  unloadable # For whatever reason, in dev mode, there are occasional load errors.
   
   # Ditto from below.
   def fetch
-    unit = WorkUnit.first(:conditions => {:status => Dogpile::WAITING}, :order => "created_at desc", :lock => true)
+    unit = WorkUnit.first(:conditions => {:status => Dogpile::PENDING}, :order => "created_at desc", :lock => true)
     return respond_no_content unless unit
     unit.status = Dogpile::PROCESSING
     unit.save!
@@ -13,24 +14,15 @@ class WorkUnitsController < ApplicationController
   def finish
     unit = WorkUnit.find(params[:id], :lock => true)
     unit.update_attributes(:output => params[:output], :status => Dogpile::COMPLETE, :time => params[:time])
-    check_for_completion(unit)
+    unit.job.check_for_completion
     respond_no_content
   end
   
   def fail
     unit = WorkUnit.find(params[:id], :lock => true)
-    unit.update_attributes(:output => params[:output], :status => Dogpile::ERROR, :time => params[:time])
-    check_for_completion(unit)
+    unit.update_attributes(:output => params[:output], :status => Dogpile::FAILED, :time => params[:time])
+    unit.job.check_for_completion
     respond_no_content
-  end
-  
-  
-  private
-  
-  def check_for_completion(unit)
-    if WorkUnit.count(:conditions => {:job_id => unit.job_id, :status => [Dogpile::PROCESSING, Dogpile::WAITING]}) <= 0
-      unit.job.update_attributes :status => Dogpile::COMPLETE
-    end
   end
   
 end

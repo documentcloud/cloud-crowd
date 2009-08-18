@@ -4,8 +4,15 @@ class WorkUnit < ActiveRecord::Base
   
   validates_presence_of :job_id, :status, :input
   
+  named_scope 'processing', :conditions => {:status => Dogpile::PROCESSING}
+  named_scope 'complete',   :conditions => {:status => Dogpile::COMPLETE}
+  named_scope 'pending',    :conditions => {:status => Dogpile::PENDING}
+  named_scope 'failed',     :conditions => {:status => Dogpile::FAILED}
+  named_scope 'done',       :conditions => {:status => Dogpile::DONE}
+  named_scope 'incomplete', :conditions => {:status => Dogpile::INCOMPLETE}
+  
   def done?
-    [Dogpile::COMPLETE, Dogpile::ERROR].include? status
+    Dogpile::DONE.include? status
   end
   
   def to_json(opts={})
