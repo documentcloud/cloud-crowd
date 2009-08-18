@@ -42,7 +42,8 @@ module Dogpile
     
     def ensure_s3_connection
       unless @s3 && @bucket
-        @s3 = RightAws::S3.new(Dogpile::SECRETS['aws_access_key'], Dogpile::SECRETS['aws_secret_key'])
+        params = {:port => 80, :protocol => 'http'}
+        @s3 = RightAws::S3.new(Dogpile::SECRETS['aws_access_key'], Dogpile::SECRETS['aws_secret_key'], params)
         @bucket = @s3.bucket(Dogpile::CONFIG['s3_bucket'], true)
       end
     end
