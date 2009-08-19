@@ -20,11 +20,6 @@ RestClient.post(
 		
 		'options' => {
 			'steps' => [{
-				'name' 			=> 'bw', 
-				'command' 	=> 'convert', 
-				'options' 	=> '-monochrome', 
-				'extension' => 'jpg'
-			},{
 				'name' 			=> 'annotated',
 				'command' 	=> 'convert',
 				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 Dogpile!"',
@@ -34,6 +29,12 @@ RestClient.post(
 				'command' 	=> 'convert',
 				'options'		=> '-blur 10x5',
 				'extension' => 'png'
+			},{
+				'name' 			=> 'bw', 
+				'input'			=> 'blurred',
+				'command' 	=> 'convert', 
+				'options' 	=> '-monochrome', 
+				'extension' => 'jpg'
 			}]
 		}
 		

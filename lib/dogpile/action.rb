@@ -3,10 +3,9 @@ module Dogpile
   # Base Dogpile::Action class. Override this with your custom action steps.
   class Action
     
-    def initialize(input, options)
-      @input, @options = input, options
+    def initialize(input, options, store)
+      @input, @options, @store = input, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
-      @store = Dogpile::AssetStore.new
       FileUtils.mkdir_p(temp_storage_path) unless File.exists?(temp_storage_path)
     end
     
