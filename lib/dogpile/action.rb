@@ -1,28 +1,49 @@
 module Dogpile
   
   # Base Dogpile::Action class. Override this with your custom action steps.
+  #
+  # Public API to Dogpile::Action subclasses:
+  # +input_url+, +input_path+, +file_name+, +work_directory+, +options+, +save+
+  #
+  # +save+ takes a local filesystem path, and returns the public url on S3 where 
+  # the document was saved.
+  #
+  # Dogpile::Actions must implement a +run+ method, which must return a 
+  # JSON-serializeable object that will be used as the output for the work unit.
   class Action
     
-    def initialize(input, options, store)
-      @input, @options, @store = input, options, store
+    attr_reader :input_url, :input_path, :file_name, :options, :work_directory
+    
+    def initialize(input_url, options, store)
+      @input_url, @options, @store = input_url, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
-      FileUtils.mkdir_p(temp_storage_path) unless File.exists?(temp_storage_path)
+      @work_directory = File.join(@store.temp_storage_path, storage_prefix)
+      @input_path = File.join(@work_directory, File.basename(@input_url))
+      @file_name = File.basename(@input_path, File.extname(@input_path))
+      FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
+      `curl -s "#{@input_url}" > #{@input_path}`
     end
     
+    # Each Dogpile::Action must implement a +run+ method.
     def run
       raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
     end
     
     # If your Action has any cleanup to be performed (say, leftover files on S3)
     # override +cleanup+ with the appropriate garbage collection.
+    # TODO: Think about auto-cleaning up all temp files, by fiat.
     def cleanup
       
     end
+        
+    def save(file_path)
+      save_path = File.join(s3_storage_path, File.basename(file_path))
+      @store.save(file_path, save_path)
+      return @store.url(save_path)
+    end
     
-    # TODO: Think about auto-cleaning up all temp files, by fiat.
     
-    
-    protected
+    private
     
     def storage_prefix
       action_part = underscore(self.class.to_s)
@@ -31,16 +52,9 @@ module Dogpile
       @storage_prefix ||= File.join(action_part, job_part, unit_part)
     end
     
-    def temp_storage_path
-      @temp_storage_path ||= File.join(@store.temp_storage_path, storage_prefix)
-    end
-    
     def s3_storage_path
       @s3_storage_path ||= storage_prefix
     end
-    
-    
-    private
     
     # Pilfered from the ActiveSupport::Inflector.
     def underscore(word)
