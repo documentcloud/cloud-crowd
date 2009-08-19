@@ -8,6 +8,12 @@ class Job < ActiveRecord::Base
   
   validates_presence_of :status, :inputs, :action, :options
   
+  # Note that COMPLETE and INCOMPLETE are unions of other states.
+  named_scope 'processing', :conditions => {:status => Dogpile::PROCESSING}
+  named_scope 'succeeded',  :conditions => {:status => Dogpile::SUCCEEDED}
+  named_scope 'failed',     :conditions => {:status => Dogpile::FAILED}
+  named_scope 'complete',   :conditions => {:status => Dogpile::COMPLETE}
+  
   after_create :queue_for_daemons
   
   # Create a Job from an incoming JSON or XML request, and add it to the queue.
