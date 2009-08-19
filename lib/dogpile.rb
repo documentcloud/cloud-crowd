@@ -1,8 +1,9 @@
+SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
+
 module Dogpile
   
   # Load configuration.
   CONFIG  = YAML.load_file("#{RAILS_ROOT}/config/dogpile.yml")[RAILS_ENV]
-  SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
   
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1

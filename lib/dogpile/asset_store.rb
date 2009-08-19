@@ -13,7 +13,7 @@ module Dogpile
     def temp_storage_path
       "#{Dir.tmpdir}/dogpile_tmp"
     end
-    
+        
     def save(local_path, save_path)
       # if RAILS_ENV == 'development'
       #   save_to_filesystem(local_path, save_path)
@@ -43,7 +43,7 @@ module Dogpile
     def ensure_s3_connection
       unless @s3 && @bucket
         params = {:port => 80, :protocol => 'http'}
-        @s3 = RightAws::S3.new(Dogpile::SECRETS['aws_access_key'], Dogpile::SECRETS['aws_secret_key'], params)
+        @s3 = RightAws::S3.new(SECRETS['aws_access_key'], SECRETS['aws_secret_key'], params)
         @bucket = @s3.bucket(Dogpile::CONFIG['s3_bucket'], true)
       end
     end
