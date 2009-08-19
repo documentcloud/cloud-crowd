@@ -52,6 +52,8 @@ class Job < ActiveRecord::Base
   # TODO: This method needs to grow up and be way more sophisticated. A good 
   # ETA should take into account the number of running daemons, and any other 
   # work units ahead in line within the queue.
+  # Think about: the current ETA divided by the number of workers actually seems
+  # pretty accurate in practice.
   def eta
     num_remaining = self.work_units.incomplete.count
     return 0 if num_remaining <= 0

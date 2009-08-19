@@ -14,6 +14,9 @@ module Dogpile
     
     attr_reader :input_url, :input_path, :file_name, :options, :work_directory
     
+    # Initializing a new Action sets up all of the read-only variables that
+    # form the bulk of the API for action subclasses. (Paths to read from and
+    # write to).
     def initialize(input_url, options, store)
       @input_url, @options, @store = input_url, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
