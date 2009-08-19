@@ -36,6 +36,8 @@ Rails::Initializer.run do |config|
   config.gem 'json', :version => '>= 1.1.7'
   config.gem 'rest-client', :version => '>= 1.0.3', :lib => 'rest_client'
   config.gem 'right_aws', :version => '>= 1.10.0'
+  config.gem 'sqlite3-ruby', :version => '>= 1.2.5'
+  config.gem 'daemons', :version => '>= 1.0.10'
   
   if Rails.test?
     config.gem 'faker', :version => '>= 0.3.1'

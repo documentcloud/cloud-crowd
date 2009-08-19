@@ -3,10 +3,10 @@
 class MonitorController < ApplicationController
   
   def index
-    @incomplete_jobs = Job.processing.count
-    @incomplete_work_units = WorkUnit.incomplete.count
-    @completed_jobs = Job.complete.count
-    @completed_work_units = WorkUnit.complete.count
+    @incomplete_jobs        = Job.processing.count
+    @incomplete_work_units  = WorkUnit.incomplete.count
+    @completed_jobs         = Job.complete.count
+    @completed_work_units   = WorkUnit.complete.count
   end
   
 end

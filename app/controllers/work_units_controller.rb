@@ -7,7 +7,7 @@ class WorkUnitsController < ApplicationController
   # Check to see if there's any work that needs to be done. Take it if there is.
   def fetch
     unit = WorkUnit.first(:conditions => {:status => Dogpile::PENDING}, :order => "created_at desc", :lock => true)
-    return head :no_content unless unit
+    return head(:no_content) unless unit
     unit.update_attributes(:status => Dogpile::PROCESSING)
     render :json => unit
   end
