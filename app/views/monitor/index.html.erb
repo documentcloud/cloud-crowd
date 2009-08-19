@@ -1,0 +1,13 @@
+<%
+	@title = "Department of Records"
+%>
+
+<p>
+	There are currently <%= @incomplete_jobs %> jobs in process (composed of 
+	<%= @incomplete_work_units %> work units).
+</p>
+
+<p>
+	This Dogpile installation has finished <%= @completed_jobs %> jobs, totalling
+	<%= @completed_work_units %> work units.
+</p>
