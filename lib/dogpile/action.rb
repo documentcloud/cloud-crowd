@@ -25,13 +25,19 @@ module Dogpile
     
     protected
     
-    def temp_storage_path
-      base        = @store.temp_storage_path
+    def storage_prefix
       action_part = underscore(self.class.to_s)
       job_part    = "job_#{@job_id}"
       unit_part   = "unit_#{@work_unit_id}"
-      
-      @local_storage_path ||= File.join(base, action_part, job_part, unit_part)
+      @storage_prefix ||= File.join(action_part, job_part, unit_part)
+    end
+    
+    def temp_storage_path
+      @temp_storage_path ||= File.join(@store.temp_storage_path, storage_prefix)
+    end
+    
+    def s3_storage_path
+      @s3_storage_path ||= storage_prefix
     end
     
     
