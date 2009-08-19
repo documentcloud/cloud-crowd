@@ -3,6 +3,7 @@ module Dogpile
   class Worker
     
     CENTRAL_URL = Dogpile::CONFIG['central_server'] + '/work_units'
+    RETRY_WAIT = Dogpile::CONFIG['worker_retry_wait']
     
     attr_reader :action
     
@@ -17,26 +18,44 @@ module Dogpile
     
     # Ask the central server for a new WorkUnit.
     def fetch_work_unit
-      unit_json = RestClient.get(CENTRAL_URL + '/fetch')
-      return unless response # No content means no work for us.
-      @start_time = Time.now
-      parse_work_unit unit_json
-      log "fetched work unit for #{@action}"
+      keep_trying_to "fetch a new work unit" do
+        unit_json = RestClient.get(CENTRAL_URL + '/fetch')
+        return unless unit_json # No content means no work for us.
+        @start_time = Time.now
+        parse_work_unit unit_json
+        log "fetched work unit for #{@action}"
+      end
     end
     
     # Return output to the central server, marking the current work unit as done.
     def complete_work_unit(result)
-      data = completion_params.merge({:output => JSON.generate(result)})
-      RestClient.post(CENTRAL_URL + '/finish', data)
-      log "finished #{@action} in #{data[:time]} seconds"
+      keep_trying_to "complete work unit" do
+        data = completion_params.merge({:output => JSON.generate(result)})
+        RestClient.post(CENTRAL_URL + '/finish', data)
+        log "finished #{@action} in #{data[:time]} seconds"
+      end
     end
     
     # Mark the current work unit as failed, returning the exception to central.
     def fail_work_unit(exception)
-      json = JSON.generate({'message' => exception.message, 'backtrace' => exception.backtrace})
-      data = completion_params.merge({:output => json})
-      RestClient.post(CENTRAL_URL + '/fail', data)
-      log "failed #{@action} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
+      keep_trying_to "mark work unit as failed" do
+        json = JSON.generate({'message' => exception.message, 'backtrace' => exception.backtrace})
+        data = completion_params.merge({:output => json})
+        RestClient.post(CENTRAL_URL + '/fail', data)
+        log "failed #{@action} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
+      end
+    end
+    
+    def keep_trying_to(title)
+      begin
+        yield
+      rescue Exception => e
+        log "failed to #{title} -- retry in #{RETRY_WAIT} seconds"
+        log e.message
+        log e.backtrace
+        sleep RETRY_WAIT
+        retry
+      end
     end
     
     # Does this Worker have a job to do?
@@ -46,8 +65,8 @@ module Dogpile
     
     # Executes the current work unit, catching all exceptions as failures.
     def run
-      action_class = Module.const_get(camelize(@action))
       begin
+        action_class = Module.const_get(camelize(@action))
         result = action_class.new(@input, @options, @store).run
         complete_work_unit(result)
       rescue Exception => e

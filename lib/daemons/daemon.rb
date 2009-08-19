@@ -2,12 +2,12 @@ module Dogpile
   
   class Daemon
     
-    DEFAULT_SLEEP_TIME  = Dogpile::CONFIG['default_worker_sleep_time']
-    MAX_SLEEP_TIME      = Dogpile::CONFIG['max_worker_sleep_time']
-    SLEEP_MULTIPLIER    = Dogpile::CONFIG['worker_sleep_multiplier']
+    DEFAULT_WAIT    = Dogpile::CONFIG['default_worker_wait']
+    MAX_WAIT        = Dogpile::CONFIG['max_worker_wait']
+    WAIT_MULTIPLIER = Dogpile::CONFIG['worker_wait_multiplier']
     
     def initialize
-      @sleep_time = DEFAULT_SLEEP_TIME
+      @wait_time = DEFAULT_WAIT
       @worker = Dogpile::Worker.new
     end
     
@@ -16,10 +16,10 @@ module Dogpile
         @worker.fetch_work_unit
         if @worker.has_work?
           @worker.run
-          @sleep_time = DEFAULT_SLEEP_TIME
+          @wait_time = DEFAULT_WAIT
         else
-          @sleep_time = [@sleep_time * SLEEP_MULTIPLIER, MAX_SLEEP_TIME].min
-          sleep @sleep_time
+          @wait_time = [@wait_time * WAIT_MULTIPLIER, MAX_WAIT].min
+          sleep @wait_time
         end
       end
     end
