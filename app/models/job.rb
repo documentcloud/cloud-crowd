@@ -34,6 +34,16 @@ class Job < ActiveRecord::Base
     if all_work_units_complete?
       st = any_work_units_failed? ? Dogpile::FAILED : Dogpile::SUCCEEDED
       update_attributes({:status => st, :time => Time.now - self.created_at})
+      fire_callback if callback_url
+    end
+  end
+  
+  # If a callback_url is defined, post the Job's JSON to it upon completion.
+  def fire_callback
+    begin
+      RestClient.post(callback_url, {:job => self.to_json})
+    rescue RestClient::Exception => e
+      puts "Failed to fire job callback. Hmmm, what should happen here?"
     end
   end
   
@@ -80,7 +90,7 @@ class Job < ActiveRecord::Base
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
     units = self.work_units
-    ins   = units.inject({}) {|memo, u| memo[u.input] = u.status; memo }
+    ins   = units.inject({}) {|memo, u| memo[u.input] = Dogpile.display_status(u.status); memo }
     outs  = units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
     {
       'id'        => self.id,

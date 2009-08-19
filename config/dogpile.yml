@@ -7,12 +7,12 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  central_server: http://localhost:3000
+  central_server: http://localhost:9173
   s3_bucket:      dogpile_development
                   
 test:             
   <<: *defaults   
-  central_server: http://localhost:3000
+  central_server: http://localhost:9173
   s3_bucket:      dogpile_test
   
 production:
