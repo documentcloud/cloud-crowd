@@ -1,3 +1,9 @@
+# The GraphicsMagick action, dependent on the `gm` command, is able to perform
+# any number of GraphicsMagick conversions on an image passed in as an input.
+# The options hash should specify the name for the particular step (which is
+# appended to the resulting image filename) the command (eg. convert, mogrify), 
+# the options (to the command, eg. -shadow -blur), and the extension which will
+# determine the resulting image type.
 class GraphicsMagick < Dogpile::Action
   
   def initialize(*args)

@@ -1,5 +1,4 @@
 defaults: &defaults
-  autoscale:                  no
   num_workers:                4
   default_worker_sleep_time:  1
   max_worker_sleep_time:      20
