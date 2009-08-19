@@ -30,7 +30,7 @@ class GraphicsMagick < Dogpile::Action
   end
   
   def storage_path_for(step_name, extension)
-    "job_#{@options['job_id']}/#{@file_name}_#{step_name}.#{extension}"
+    "#{s3_storage_path}/#{@file_name}_#{step_name}.#{extension}"
   end
   
 end
