@@ -15,11 +15,13 @@ module Dogpile
     end
         
     def save(local_path, save_path)
-      # if RAILS_ENV == 'development'
-      #   save_to_filesystem(local_path, save_path)
-      # else
-        save_to_s3(local_path, save_path)
-      # end
+      ensure_s3_connection
+      @bucket.put(save_path, File.open(local_path), {}, 'public-read')
+    end
+    
+    def cleanup_job(job)
+      ensure_s3_connection
+      @bucket.delete_folder("#{job.action}/job_#{job.id}")
     end
     
     def url(save_path)
@@ -33,11 +35,6 @@ module Dogpile
       save_dir = File.dirname(save_path)
       mkdir_p save_dir unless File.exists? save_dir
       cp(local_path, save_path)
-    end
-    
-    def save_to_s3(local_path, save_path)
-      ensure_s3_connection
-      @bucket.put(save_path, File.open(local_path), {}, 'public-read')
     end
     
     def ensure_s3_connection
