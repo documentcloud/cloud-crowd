@@ -52,6 +52,11 @@ class Job < ActiveRecord::Base
     Job.callback_proc.call(:job => self.to_json) if Rails.test? && Job.callback_proc
   end
   
+  # Cleaning up after a job will remove all of its files from S3.
+  def cleanup
+    Dogpile::AssetStore.new.cleanup_job(self)
+  end
+  
   # Have all of the WorkUnits finished? We could trade reads for writes here
   # by keeping a completed_count on the Job itself.
   def all_work_units_complete?

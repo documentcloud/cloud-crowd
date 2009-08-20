@@ -23,7 +23,7 @@ module Dogpile
         return unless unit_json # No content means no work for us.
         @start_time = Time.now
         parse_work_unit unit_json
-        log "fetched work unit for #{@action}"
+        log "fetched work unit for #{@action_name}"
       end
     end
     
@@ -32,7 +32,7 @@ module Dogpile
       keep_trying_to "complete work unit" do
         data = completion_params.merge({:output => JSON.generate(result)})
         RestClient.post(CENTRAL_URL + '/finish', data)
-        log "finished #{@action} in #{data[:time]} seconds"
+        log "finished #{@action_name} in #{data[:time]} seconds"
       end
     end
     
@@ -42,7 +42,7 @@ module Dogpile
         json = JSON.generate({'message' => exception.message, 'backtrace' => exception.backtrace})
         data = completion_params.merge({:output => json})
         RestClient.post(CENTRAL_URL + '/fail', data)
-        log "failed #{@action} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
+        log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
     end
     
@@ -60,14 +60,15 @@ module Dogpile
     
     # Does this Worker have a job to do?
     def has_work?
-      @action && @input && @options
+      @action_name && @input && @options
     end
     
     # Executes the current work unit, catching all exceptions as failures.
     def run
       begin
-        action_class = Module.const_get(camelize(@action))
-        result = action_class.new(@input, @options, @store).run
+        action_class = Module.const_get(camelize(@action_name))
+        @action = action_class.new(@input, @options, @store)
+        result = @action.run
         complete_work_unit(result)
       rescue Exception => e
         fail_work_unit(e)
@@ -87,7 +88,7 @@ module Dogpile
     # Extract our instance variables from a WorkUnit's JSON.
     def parse_work_unit(unit_json)
       unit = JSON.parse(unit_json)
-      @action, @input, @options = unit['action'], unit['input'], unit['options']
+      @action_name, @input, @options = unit['action'], unit['input'], unit['options']
       @options['job_id'] = unit['job_id']
       @options['work_unit_id'] = unit['id']
       @options['attempts'] ||= unit['attempts']
@@ -99,8 +100,10 @@ module Dogpile
     end
     
     # When we're done with a unit, clear out our ivars to make way for the next.
+    # Also, remove all of the previous unit's temporary storage.
     def clear_work_unit
-      @action, @input, @options, @start_time = nil, nil, nil, nil
+      @action.cleanup_work_directory
+      @action, @action_name, @input, @options, @start_time = nil, nil, nil, nil, nil
     end
     
     # Stolen-ish in parts from ActiveSupport::Inflector.

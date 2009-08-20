@@ -32,11 +32,9 @@ module Dogpile
       raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
     end
     
-    # If your Action has any cleanup to be performed (say, leftover files on S3)
-    # override +cleanup+ with the appropriate garbage collection.
-    # TODO: Think about auto-cleaning up all temp files, by fiat.
-    def cleanup
-      
+    # After the Action has finished, we remove the work directory.
+    def cleanup_work_directory
+      FileUtils.rm_r(@work_directory)
     end
         
     def save(file_path)
