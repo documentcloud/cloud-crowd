@@ -24,9 +24,10 @@ ActiveRecord::Schema.define(:version => 20090817192006) do
   end
 
   create_table "work_units", :force => true do |t|
-    t.integer  "status",     :null => false
-    t.integer  "job_id",     :null => false
-    t.string   "input",      :null => false
+    t.integer  "status",                    :null => false
+    t.integer  "job_id",                    :null => false
+    t.string   "input",                     :null => false
+    t.integer  "attempts",   :default => 0, :null => false
     t.float    "time"
     t.text     "output"
     t.datetime "created_at"

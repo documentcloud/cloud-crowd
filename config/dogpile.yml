@@ -4,6 +4,7 @@ defaults: &defaults
   max_worker_wait:        20
   worker_wait_multiplier: 1.3
   worker_retry_wait:      5
+  work_unit_retries:      3
 
 development:
   <<: *defaults

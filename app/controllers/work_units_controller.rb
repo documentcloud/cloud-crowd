@@ -14,15 +14,13 @@ class WorkUnitsController < ApplicationController
   
   # When a WorkUnit has finished processing, mark it as successful.
   def finish
-    unit = WorkUnit.find(params[:id], :lock => true)
-    unit.update_attributes(:output => params[:output], :status => Dogpile::SUCCEEDED, :time => params[:time])
+    WorkUnit.find(params[:id], :lock => true).finish(params[:output], params[:time])
     head :no_content
   end
   
   # When a WorkUnit has failed to process, mark it as failed.
   def fail
-    unit = WorkUnit.find(params[:id], :lock => true)
-    unit.update_attributes(:output => params[:output], :status => Dogpile::FAILED, :time => params[:time])
+    WorkUnit.find(params[:id], :lock => true).fail(params[:output], params[:time])
     head :no_content
   end
   
