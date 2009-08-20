@@ -20,8 +20,6 @@ class DocumentCloudImport < Dogpile::Action
   def extract_full_text_and_title
     ex = DC::Import::TextExtractor.new(input_path)
     @text = ex.get_text
-    # TODO: Replace with a better exception.
-    raise "hell" if @text.length > DC::Import::CalaisFetcher::MAX_TEXT_SIZE
     path = "#{work_directory}/#{file_name}.txt"
     File.open(path, 'w+') {|f| f.write(@text) }
     [path, ex.get_title || "Untitled Document"]
