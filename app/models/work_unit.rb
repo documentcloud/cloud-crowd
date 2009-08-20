@@ -21,6 +21,36 @@ class WorkUnit < ActiveRecord::Base
     self.job.check_for_completion if complete?
   end
   
+  # Mark this unit as having finished successfully.
+  def finish(output, time_taken)
+    update_attributes({
+      :status   => Dogpile::SUCCEEDED,
+      :attempts => self.attempts + 1,
+      :output   => output,
+      :time     => time_taken
+    })
+  end
+  
+  # Mark this unit as having failed. May attempt a retry.
+  def fail(output, time_taken)
+    tries = self.attempts + 1
+    return try_again if tries < Dogpile::CONFIG['work_unit_retries']
+    update_attributes({
+      :status   => Dogpile::FAILED,
+      :attempts => tries,
+      :output   => output,
+      :time     => time_taken
+    })
+  end
+  
+  # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
+  def try_again
+    update_attributes({
+      :status   => Dogpile::PENDING,
+      :attempts => self.attempts + 1
+    })
+  end
+  
   # The work is complete if the WorkUnit failed or succeeded.
   def complete?
     Dogpile::COMPLETE.include? status
@@ -29,11 +59,12 @@ class WorkUnit < ActiveRecord::Base
   # The JSON representation of a WorkUnit contains common elements of its job.
   def to_json(opts={})
     {
-      'id'      => self.id,
-      'job_id'  => self.job_id,
-      'input'   => self.input,
-      'action'  => self.job.action,
-      'options' => JSON.parse(self.job.options)
+      'id'        => self.id,
+      'job_id'    => self.job_id,
+      'input'     => self.input,
+      'attempts'  => self.attempts,
+      'action'    => self.job.action,
+      'options'   => JSON.parse(self.job.options)
     }.to_json
   end
   

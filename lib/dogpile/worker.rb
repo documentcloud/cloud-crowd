@@ -90,6 +90,7 @@ module Dogpile
       @action, @input, @options = unit['action'], unit['input'], unit['options']
       @options['job_id'] = unit['job_id']
       @options['work_unit_id'] = unit['id']
+      @options['attempts'] ||= unit['attempts']
     end
     
     # Log a message to the daemon log. Includes PID for identification.

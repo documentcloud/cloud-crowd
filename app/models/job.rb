@@ -16,6 +16,9 @@ class Job < ActiveRecord::Base
   
   after_create :queue_for_daemons
   
+  # If we're testing, add a +callback_proc+ accessor for mimicking +callback_url+.
+  class << self; attr_accessor :callback_proc; end if Rails.test?
+  
   # Create a Job from an incoming JSON or XML request, and add it to the queue.
   def self.create_from_request(h)
     self.create(
@@ -34,17 +37,19 @@ class Job < ActiveRecord::Base
     if all_work_units_complete?
       st = any_work_units_failed? ? Dogpile::FAILED : Dogpile::SUCCEEDED
       update_attributes({:status => st, :time => Time.now - self.created_at})
-      fire_callback if callback_url
+      fire_callback
     end
   end
   
   # If a callback_url is defined, post the Job's JSON to it upon completion.
+  # If we're testing, and there's a callback proc defined, call that.
   def fire_callback
     begin
-      RestClient.post(callback_url, {:job => self.to_json})
+      RestClient.post(callback_url, {:job => self.to_json}) if callback_url
     rescue RestClient::Exception => e
       puts "Failed to fire job callback. Hmmm, what should happen here?"
     end
+    Job.callback_proc.call(:job => self.to_json) if Rails.test? && Job.callback_proc
   end
   
   # Have all of the WorkUnits finished? We could trade reads for writes here
