@@ -3,6 +3,7 @@
 # of inputs (usually public urls to files), an action (the name of a script that 
 # Dogpile knows how to run), and, eventually a corresponding list of output.
 class Job < ActiveRecord::Base
+  include ActionView::Helpers::DateHelper
   
   has_many :work_units
   
@@ -16,10 +17,8 @@ class Job < ActiveRecord::Base
   
   after_create :queue_for_daemons
   
-  # If we're testing, add a +callback_proc+ accessor for mimicking +callback_url+.
-  class << self; attr_accessor :callback_proc; end if Rails.test?
-  
   # Create a Job from an incoming JSON or XML request, and add it to the queue.
+  # TODO: Add XML support.
   def self.create_from_request(h)
     self.create(
       :status       => Dogpile::PROCESSING,
@@ -42,14 +41,12 @@ class Job < ActiveRecord::Base
   end
   
   # If a callback_url is defined, post the Job's JSON to it upon completion.
-  # If we're testing, and there's a callback proc defined, call that.
   def fire_callback
     begin
       RestClient.post(callback_url, {:job => self.to_json}) if callback_url
     rescue RestClient::Exception => e
       puts "Failed to fire job callback. Hmmm, what should happen here?"
     end
-    Job.callback_proc.call(:job => self.to_json) if Rails.test? && Job.callback_proc
   end
   
   # Cleaning up after a job will remove all of its files from S3.
@@ -73,7 +70,7 @@ class Job < ActiveRecord::Base
   # ETA should take into account the number of running daemons, and any other 
   # work units ahead in line within the queue.
   # Think about: the current ETA divided by the number of workers actually seems
-  # pretty accurate in practice.
+  # pretty accurate in practice. (But then we need to count workers.)
   def eta
     num_remaining = self.work_units.incomplete.count
     return 0 if num_remaining <= 0
@@ -85,15 +82,11 @@ class Job < ActiveRecord::Base
   end
   
   # Generate a display-ready version of the ETA.
-  def display_eta
+  def display_eta    
     time = self.eta
     return "unknown" if !time
     return "complete" if time == 0
-    case time
-    when (0..(1.minute))        then "#{time} seconds"
-    when ((1.minute)..(1.hour)) then "#{time / 1.minute} minutes"
-    else                             "#{time / 1.hour} hours"
-    end
+    distance_of_time_in_words(0, eta, :include_seconds => true)
   end
   
   def display_status

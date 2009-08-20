@@ -5,9 +5,6 @@ module Dogpile
   # Public API to Dogpile::Action subclasses:
   # +input_url+, +input_path+, +file_name+, +work_directory+, +options+, +save+
   #
-  # +save+ takes a local filesystem path, and returns the public url on S3 where 
-  # the document was saved.
-  #
   # Dogpile::Actions must implement a +run+ method, which must return a 
   # JSON-serializeable object that will be used as the output for the work unit.
   class Action
@@ -36,7 +33,9 @@ module Dogpile
     def cleanup_work_directory
       FileUtils.rm_r(@work_directory)
     end
-        
+    
+    # Takes a local filesystem path, and returns the public url on S3 where the 
+    # file was saved. 
     def save(file_path)
       save_path = File.join(s3_storage_path, File.basename(file_path))
       @store.save(file_path, save_path)

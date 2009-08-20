@@ -41,8 +41,8 @@ RestClient.post(
 	})}
 )
 
-# status = RestClient.get('http://localhost:3000/jobs/[job_id]')
+# status = RestClient.get('http://localhost:9173/jobs/[job_id]')
 
-# puts JSON.parse(RestClient.get('http://localhost:3000/jobs/9'))['outputs'].values.map {|v| 
+# puts JSON.parse(RestClient.get('http://localhost:9173/jobs/[job_id]'))['outputs'].values.map {|v| 
 #		JSON.parse(v).map {|v| v['url']} 
 #	}.flatten.join("\n")

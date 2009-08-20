@@ -30,7 +30,7 @@ module Dogpile
     # Return output to the central server, marking the current work unit as done.
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
-        data = completion_params.merge({:output => JSON.generate(result)})
+        data = completion_params.merge({:output => result})
         RestClient.post(CENTRAL_URL + '/finish', data)
         log "finished #{@action_name} in #{data[:time]} seconds"
       end
@@ -39,8 +39,7 @@ module Dogpile
     # Mark the current work unit as failed, returning the exception to central.
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
-        json = JSON.generate({'message' => exception.message, 'backtrace' => exception.backtrace})
-        data = completion_params.merge({:output => json})
+        data = completion_params.merge({:output => exception.message})
         RestClient.post(CENTRAL_URL + '/fail', data)
         log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
@@ -66,8 +65,7 @@ module Dogpile
     # Executes the current work unit, catching all exceptions as failures.
     def run
       begin
-        action_class = Module.const_get(camelize(@action_name))
-        @action = action_class.new(@input, @options, @store)
+        @action = load_action
         result = @action.run
         complete_work_unit(result)
       rescue Exception => e
@@ -79,6 +77,19 @@ module Dogpile
     
     
     private
+    
+    # Some workers might not ever need to load all the installed actions,
+    # so we lazy-load them. Think about a variant of this for installing and
+    # loading actions into a running Dogpile cluster on the fly.
+    def load_action
+      action_class = camelize(@action_name)
+      begin
+        Module.const_get(action_class).new(@input, @options, @store)
+      rescue NameError => e
+        require "#{RAILS_ROOT}/actions/#{@action_name}"
+        retry
+      end
+    end
     
     # Common parameters to send back to central, regardless of success or failure.
     def completion_params
