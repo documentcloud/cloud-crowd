@@ -1,5 +1,9 @@
 module Dogpile
   
+  # A Dogpile::Daemon, started by the Daemons gem, runs a Dogpile::Worker in
+  # a loop, continually fetching and processing WorkUnits from the central
+  # server. The Daemon backs off and pings central less frequently when there
+  # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
     DEFAULT_WAIT    = Dogpile::CONFIG['default_worker_wait']
@@ -11,6 +15,7 @@ module Dogpile
       @worker = Dogpile::Worker.new
     end
     
+    # Loop forever, fetching WorkUnits.
     def run
       loop do
         @worker.fetch_work_unit

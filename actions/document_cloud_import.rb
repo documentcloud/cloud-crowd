@@ -2,19 +2,22 @@ require "#{RAILS_ROOT}/lib/dc/import/calais_fetcher"
 require "#{RAILS_ROOT}/lib/dc/import/image_extractor"
 require "#{RAILS_ROOT}/lib/dc/import/text_extractor"
 
+# DocumentCloud import produces full text, RDF from OpenCalais, and thumbnails
+# from a PDF document. The calling DocumentCloud instance is responsible for
+# downloading and ingesting these resources.
 class DocumentCloudImport < Dogpile::Action
   
   def run
     text_path, title = extract_full_text_and_title
     thumb_path, small_thumb_path = *generate_thumbnails
     rdf_path = fetch_rdf_from_calais
-    {
+    JSON.generate({
       'title'               => title,
       'full_text_url'       => save(text_path),
       'rdf_url'             => save(rdf_path),
       'thumbnail_url'       => save(thumb_path),
       'small_thumbnail_url' => save(small_thumb_path)
-    }
+    })
   end
   
   def extract_full_text_and_title

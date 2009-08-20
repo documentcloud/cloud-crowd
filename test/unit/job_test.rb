@@ -32,7 +32,7 @@ class JobTest < ActiveSupport::TestCase
       job.work_units.first.update_attributes(:status => Dogpile::SUCCEEDED, :time => 3)
       job.reload
       assert job.eta <= 3.0
-      assert job.display_eta.match(/\A\d+\.\d+ seconds\Z/)
+      assert job.display_eta == 'less than 5 seconds'
       job.work_units.last.update_attributes(:status => Dogpile::SUCCEEDED, :time => 3)
       job.reload
       assert job.time > 0.00001

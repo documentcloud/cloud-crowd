@@ -24,7 +24,7 @@ class GraphicsMagick < Dogpile::Action
     in_path, out_path = input_path_for(step), output_path_for(step)
     `gm #{cmd} #{opts} #{in_path} #{out_path}`
     public_url = save(out_path)
-    {'name' => name, 'url' => public_url}
+    JSON.generate({'name' => name, 'url' => public_url})
   end
   
   # Where should the starting image be located?

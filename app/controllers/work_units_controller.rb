@@ -1,6 +1,6 @@
 # This controller is the interface between the pack of Daemons and the 
 # central server. Daemons periodially call +fetch+ to check for pending 
-# WorkUnits. When they're done processing a unit, they post back to +finish+,
+# WorkUnits. When they're done processing a unit, they post back to +finish+
 # if the unit has been successfully processed, otherwise +fail+.
 class WorkUnitsController < ApplicationController
   
