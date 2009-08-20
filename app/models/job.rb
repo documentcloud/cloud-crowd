@@ -96,6 +96,10 @@ class Job < ActiveRecord::Base
     end
   end
   
+  def display_status
+    Dogpile.display_status(self.status)
+  end
+  
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
@@ -104,7 +108,7 @@ class Job < ActiveRecord::Base
     outs  = units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
     {
       'id'        => self.id,
-      'status'    => Dogpile.display_status(self.status),
+      'status'    => self.display_status,
       'inputs'    => ins,
       'outputs'   => outs,
       'eta'       => self.display_eta

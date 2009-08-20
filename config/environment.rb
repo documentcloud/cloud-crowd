@@ -33,6 +33,7 @@ Rails::Initializer.run do |config|
   require 'tmpdir'
   
   # Gems:
+  config.gem 'mysql', :version => '>= 2.7'
   config.gem 'json', :version => '>= 1.1.7'
   config.gem 'rest-client', :version => '>= 1.0.3', :lib => 'rest_client'
   config.gem 'right_aws', :version => '>= 1.10.0'

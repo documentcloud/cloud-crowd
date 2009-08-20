@@ -24,6 +24,11 @@ class InitialSchema < ActiveRecord::Migration
     add_index :work_units, :job_id
     add_index :work_units, :status
     
+    # create_table(:worker_records) do |t|
+    #   t.column :hostname,     :string,  :null => false
+    #   t.column :pid,          :integer, :null => false
+    # end
+    
   end
 
   def self.down

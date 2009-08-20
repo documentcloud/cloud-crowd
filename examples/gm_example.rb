@@ -5,7 +5,7 @@
 require 'json'
 
 RestClient.post(
-	'http://localhost:3000/jobs', 
+	'http://localhost:9173/jobs', 
 	{:json => JSON.generate({
 	
 		'action' => 'graphics_magick',

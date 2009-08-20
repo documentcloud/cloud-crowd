@@ -3,7 +3,7 @@ require 'json'
 images = ('0001'..'0658').map {|num| "http://graphics8.nytimes.com/packages/images/nytint/docs/geithner-schedule-new-york-fed/#{num}.gif"}
 
 RestClient.post(
-	'http://localhost:3000/jobs', 
+	'http://localhost:9173/jobs', 
 	{:json => JSON.generate({
 	
 		'action' => 'graphics_magick',
