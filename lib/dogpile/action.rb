@@ -29,11 +29,6 @@ module Dogpile
       raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
     end
     
-    # After the Action has finished, we remove the work directory.
-    def cleanup_work_directory
-      FileUtils.rm_r(@work_directory)
-    end
-    
     # Takes a local filesystem path, and returns the public url on S3 where the 
     # file was saved. 
     def save(file_path)
@@ -42,9 +37,16 @@ module Dogpile
       return @store.url(save_path)
     end
     
+    # After the Action has finished, we remove the work directory.
+    def cleanup_work_directory
+      FileUtils.rm_r(@work_directory)
+    end
+    
     
     private
     
+    # The directory prefix to use for both local and S3 storage.
+    # [action_name]/job_[job_id]/unit_[work_unit_it]
     def storage_prefix
       action_part = underscore(self.class.to_s)
       job_part    = "job_#{@job_id}"
