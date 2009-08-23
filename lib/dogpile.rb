@@ -1,4 +1,24 @@
-SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
+
+
+# Standard Library:
+require 'tmpdir'
+
+# Gems:
+require 'sinatra'
+require 'activerecord'
+require 'json'
+require 'daemons'
+require 'rest_client'
+require 'right_aws'
+
+# Dogpile:
+require 'dogpile/models'
+require 'dogpile/helpers'
+require 'dogpile/app'
+
+
+# SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
 
 module Dogpile
   
@@ -22,6 +42,7 @@ module Dogpile
     1 => 'processing', 2 => 'pending', 3 => 'succeeded', 4 => 'failed'
   }
   
+  # Return the display-ready status.
   def self.display_status(status)
     DISPLAY_STATUS_MAP[status]
   end

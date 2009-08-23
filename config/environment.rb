@@ -33,6 +33,8 @@ Rails::Initializer.run do |config|
   require 'tmpdir'
   
   # Gems:
+  config.gem 'sintara', :version => '>= 0.9.4'
+  config.gem 'activerecord', :version => '>= 2.3.3'
   config.gem 'mysql', :version => '>= 2.7'
   config.gem 'json', :version => '>= 1.1.7'
   config.gem 'rest-client', :version => '>= 1.0.3', :lib => 'rest_client'
