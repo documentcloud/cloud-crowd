@@ -1,11 +1,11 @@
-module Dogpile
+module CloudCrowd
   
-  # Base Dogpile::Action class. Override this with your custom action steps.
+  # Base CloudCrowd::Action class. Override this with your custom action steps.
   #
-  # Public API to Dogpile::Action subclasses:
+  # Public API to CloudCrowd::Action subclasses:
   # +input_url+, +input_path+, +file_name+, +work_directory+, +options+, +save+
   #
-  # Dogpile::Actions must implement a +run+ method, which must return a 
+  # CloudCrowd::Actions must implement a +run+ method, which must return a 
   # JSON-serializeable object that will be used as the output for the work unit.
   class Action
     
@@ -24,9 +24,9 @@ module Dogpile
       `curl -s "#{@input_url}" > #{@input_path}`
     end
     
-    # Each Dogpile::Action must implement a +run+ method.
+    # Each CloudCrowd::Action must implement a +run+ method.
     def run
-      raise NotImplementedError.new("Dogpile::Actions must override 'run' with their own processing code.")
+      raise NotImplementedError.new("CloudCrowd::Actions must override 'run' with their own processing code.")
     end
     
     # Takes a local filesystem path, and returns the public url on S3 where the 

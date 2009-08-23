@@ -1,7 +1,7 @@
 # A chunk of work that will be farmed out into many WorkUnits to be processed
-# in parallel by all the active Dogpile::Workers. Jobs are defined by a list
+# in parallel by all the active CloudCrowd::Workers. Jobs are defined by a list
 # of inputs (usually public urls to files), an action (the name of a script that 
-# Dogpile knows how to run), and, eventually a corresponding list of output.
+# CloudCrowd knows how to run), and, eventually a corresponding list of output.
 class Job < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
   
@@ -10,10 +10,10 @@ class Job < ActiveRecord::Base
   validates_presence_of :status, :inputs, :action, :options
   
   # Note that COMPLETE and INCOMPLETE are unions of other states.
-  named_scope 'processing', :conditions => {:status => Dogpile::PROCESSING}
-  named_scope 'succeeded',  :conditions => {:status => Dogpile::SUCCEEDED}
-  named_scope 'failed',     :conditions => {:status => Dogpile::FAILED}
-  named_scope 'complete',   :conditions => {:status => Dogpile::COMPLETE}
+  named_scope 'processing', :conditions => {:status => CloudCrowd::PROCESSING}
+  named_scope 'succeeded',  :conditions => {:status => CloudCrowd::SUCCEEDED}
+  named_scope 'failed',     :conditions => {:status => CloudCrowd::FAILED}
+  named_scope 'complete',   :conditions => {:status => CloudCrowd::COMPLETE}
   
   after_create :queue_for_daemons
   
@@ -21,7 +21,7 @@ class Job < ActiveRecord::Base
   # TODO: Add XML support.
   def self.create_from_request(h)
     self.create(
-      :status       => Dogpile::PROCESSING,
+      :status       => CloudCrowd::PROCESSING,
       :inputs       => h['inputs'].to_json,
       :action       => h['action'],
       :options      => (h['options'] || {}).to_json,
@@ -34,7 +34,7 @@ class Job < ActiveRecord::Base
   # finished, if so, this job is complete.
   def check_for_completion
     if all_work_units_complete?
-      st = any_work_units_failed? ? Dogpile::FAILED : Dogpile::SUCCEEDED
+      st = any_work_units_failed? ? CloudCrowd::FAILED : CloudCrowd::SUCCEEDED
       update_attributes({:status => st, :time => Time.now - self.created_at})
       fire_callback
     end
@@ -51,7 +51,7 @@ class Job < ActiveRecord::Base
   
   # Cleaning up after a job will remove all of its files from S3.
   def cleanup
-    Dogpile::AssetStore.new.cleanup_job(self)
+    CloudCrowd::AssetStore.new.cleanup_job(self)
   end
   
   # Have all of the WorkUnits finished? We could trade reads for writes here
@@ -90,14 +90,14 @@ class Job < ActiveRecord::Base
   end
   
   def display_status
-    Dogpile.display_status(self.status)
+    CloudCrowd.display_status(self.status)
   end
   
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
     units = self.work_units
-    ins   = units.inject({}) {|memo, u| memo[u.input] = Dogpile.display_status(u.status); memo }
+    ins   = units.inject({}) {|memo, u| memo[u.input] = CloudCrowd.display_status(u.status); memo }
     outs  = units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
     {
       'id'        => self.id,
@@ -114,7 +114,7 @@ class Job < ActiveRecord::Base
   # When starting a new job, split up our inputs into WorkUnits, and queue them.
   def queue_for_daemons
     JSON.parse(self.inputs).each do |wu_input|
-      WorkUnit.create(:job => self, :input => wu_input, :status => Dogpile::PENDING)
+      WorkUnit.create(:job => self, :input => wu_input, :status => CloudCrowd::PENDING)
     end
   end
   

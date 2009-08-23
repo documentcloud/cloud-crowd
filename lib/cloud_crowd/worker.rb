@@ -1,9 +1,9 @@
-module Dogpile
+module CloudCrowd
   
   class Worker
     
-    CENTRAL_URL = Dogpile::CONFIG['central_server'] + '/work_units'
-    RETRY_WAIT = Dogpile::CONFIG['worker_retry_wait']
+    CENTRAL_URL = CloudCrowd::CONFIG['central_server'] + '/work_units'
+    RETRY_WAIT = CloudCrowd::CONFIG['worker_retry_wait']
     
     attr_reader :action
     
@@ -13,7 +13,7 @@ module Dogpile
     def initialize
       @id = $$
       @hostname = Socket.gethostname
-      @store = Dogpile::AssetStore.new
+      @store = CloudCrowd::AssetStore.new
     end
     
     # Ask the central server for a new WorkUnit.
@@ -80,7 +80,7 @@ module Dogpile
     
     # Some workers might not ever need to load all the installed actions,
     # so we lazy-load them. Think about a variant of this for installing and
-    # loading actions into a running Dogpile cluster on the fly.
+    # loading actions into a running CloudCrowd cluster on the fly.
     def load_action
       action_class = camelize(@action_name)
       begin

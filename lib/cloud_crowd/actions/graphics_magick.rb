@@ -7,7 +7,7 @@
 # +input+ as the name of a previous step; doing this will use the result of
 # that step as the source image, otherwise each step uses the original image
 # as its source.
-class GraphicsMagick < Dogpile::Action
+class GraphicsMagick < CloudCrowd::Action
   
   # Download the initial image, and run each of the specified GraphicsMagick
   # commands against it, returning the aggregate output.

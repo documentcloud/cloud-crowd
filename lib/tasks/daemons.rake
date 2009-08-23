@@ -6,7 +6,7 @@ namespace :daemons do
   desc 'Start up a pack of worker daemons'
   task :start do
     require 'yaml'
-    conf = YAML.load_file("#{File.dirname(__FILE__)}/../../config/dogpile.yml")
+    conf = YAML.load_file("#{File.dirname(__FILE__)}/../../config/cloud_crowd.yml")
     env = defined?(RAILS_ENV) ? RAILS_ENV : 'development'
     conf[env]['num_workers'].times do
       `ruby #{RUNNER_PATH} start`

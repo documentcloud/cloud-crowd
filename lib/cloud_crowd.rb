@@ -12,18 +12,18 @@ require 'daemons'
 require 'rest_client'
 require 'right_aws'
 
-# Dogpile:
-require 'dogpile/models'
-require 'dogpile/helpers'
-require 'dogpile/app'
+# CloudCrowd:
+require 'cloud_crowd/models'
+require 'cloud_crowd/helpers'
+require 'cloud_crowd/app'
 
 
 # SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
 
-module Dogpile
+module CloudCrowd
   
   # Load configuration.
-  CONFIG  = YAML.load_file("#{RAILS_ROOT}/config/dogpile.yml")[RAILS_ENV]
+  CONFIG  = YAML.load_file("#{RAILS_ROOT}/config/cloud_crowd.yml")[RAILS_ENV]
   
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1

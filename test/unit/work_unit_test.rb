@@ -9,9 +9,9 @@ class WorkUnitTest < ActiveSupport::TestCase
     should "know if its done" do
       unit = WorkUnit.make
       assert !unit.complete?
-      unit.status = Dogpile::SUCCEEDED
+      unit.status = CloudCrowd::SUCCEEDED
       assert unit.complete?
-      unit.status = Dogpile::FAILED
+      unit.status = CloudCrowd::FAILED
       assert unit.complete?
     end
     

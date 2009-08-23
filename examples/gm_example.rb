@@ -22,7 +22,7 @@ RestClient.post(
 			'steps' => [{
 				'name' 			=> 'annotated',
 				'command' 	=> 'convert',
-				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 Dogpile!"',
+				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 CloudCrowd!"',
 				'extension' => 'jpg'
 			},{
 				'name'			=> 'blurred',

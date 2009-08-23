@@ -1,4 +1,4 @@
-# This is the script that kicks off a single Dogpile::Daemon. Because the 
+# This is the script that kicks off a single CloudCrowd::Daemon. Because the 
 # daemons don't load the entire rails stack, this file functions like a mini
 # environment.rb, loading all the common gems that we need.
 
@@ -15,11 +15,11 @@ require 'rest_client'
 require 'right_aws'
 
 # Daemon/Worker Dependencies.
-require "#{RAILS_ROOT}/lib/dogpile"
-Dir["#{RAILS_ROOT}/lib/dogpile/*.rb"].each {|ruby| require ruby }
+require "#{RAILS_ROOT}/lib/cloud_crowd"
+Dir["#{RAILS_ROOT}/lib/cloud_crowd/*.rb"].each {|ruby| require ruby }
 
 Daemons.run("#{RAILS_ROOT}/lib/daemons/daemon.rb", {
-  :app_name   => "dogpile_worker",
+  :app_name   => "cloud_crowd_worker",
   :multiple   => true,
   :backtrace  => true,
   :log_output => true

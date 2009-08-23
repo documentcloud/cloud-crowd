@@ -7,12 +7,12 @@ class WorkUnit < ActiveRecord::Base
   validates_presence_of :job_id, :status, :input
   
   # Note that COMPLETE and INCOMPLETE are unions of other states.
-  named_scope 'processing', :conditions => {:status => Dogpile::PROCESSING}
-  named_scope 'pending',    :conditions => {:status => Dogpile::PENDING}
-  named_scope 'succeeded',  :conditions => {:status => Dogpile::SUCCEEDED}
-  named_scope 'failed',     :conditions => {:status => Dogpile::FAILED}
-  named_scope 'complete',   :conditions => {:status => Dogpile::COMPLETE}
-  named_scope 'incomplete', :conditions => {:status => Dogpile::INCOMPLETE}
+  named_scope 'processing', :conditions => {:status => CloudCrowd::PROCESSING}
+  named_scope 'pending',    :conditions => {:status => CloudCrowd::PENDING}
+  named_scope 'succeeded',  :conditions => {:status => CloudCrowd::SUCCEEDED}
+  named_scope 'failed',     :conditions => {:status => CloudCrowd::FAILED}
+  named_scope 'complete',   :conditions => {:status => CloudCrowd::COMPLETE}
+  named_scope 'incomplete', :conditions => {:status => CloudCrowd::INCOMPLETE}
   
   after_save :check_for_job_completion
   
@@ -24,7 +24,7 @@ class WorkUnit < ActiveRecord::Base
   # Mark this unit as having finished successfully.
   def finish(output, time_taken)
     update_attributes({
-      :status   => Dogpile::SUCCEEDED,
+      :status   => CloudCrowd::SUCCEEDED,
       :attempts => self.attempts + 1,
       :output   => output,
       :time     => time_taken
@@ -34,9 +34,9 @@ class WorkUnit < ActiveRecord::Base
   # Mark this unit as having failed. May attempt a retry.
   def fail(output, time_taken)
     tries = self.attempts + 1
-    return try_again if tries < Dogpile::CONFIG['work_unit_retries']
+    return try_again if tries < CloudCrowd::CONFIG['work_unit_retries']
     update_attributes({
-      :status   => Dogpile::FAILED,
+      :status   => CloudCrowd::FAILED,
       :attempts => tries,
       :output   => output,
       :time     => time_taken
@@ -46,14 +46,14 @@ class WorkUnit < ActiveRecord::Base
   # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
   def try_again
     update_attributes({
-      :status   => Dogpile::PENDING,
+      :status   => CloudCrowd::PENDING,
       :attempts => self.attempts + 1
     })
   end
   
   # The work is complete if the WorkUnit failed or succeeded.
   def complete?
-    Dogpile::COMPLETE.include? status
+    CloudCrowd::COMPLETE.include? status
   end
   
   # The JSON representation of a WorkUnit contains common elements of its job.

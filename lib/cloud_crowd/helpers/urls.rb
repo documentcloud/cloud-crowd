@@ -1,4 +1,4 @@
-module Dogpile
+module CloudCrowd
   module Helpers
     module Urls
       

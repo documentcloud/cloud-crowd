@@ -1,6 +1,6 @@
-module Dogpile
+module CloudCrowd
 
-  # The Dogpile::AssetStore should provide a common API for stashing and retrieving
+  # The CloudCrowd::AssetStore should provide a common API for stashing and retrieving
   # assets via URLs, in production this will be S3 but in development it may
   # be the filesystem or /tmp.
   class AssetStore
@@ -10,9 +10,9 @@ module Dogpile
       mkdir_p temp_storage_path unless File.exists? temp_storage_path
     end
     
-    # Path to Dogpile's temporary local storage.
+    # Path to CloudCrowd's temporary local storage.
     def temp_storage_path
-      "#{Dir.tmpdir}/dogpile_tmp"
+      "#{Dir.tmpdir}/cloud_crowd_tmp"
     end
     
     # Copy a finished file from our local storage to S3.
@@ -37,7 +37,7 @@ module Dogpile
     # Unused for the moment. Think about using the filesystem instead of S3
     # in development.
     def save_to_filesystem(local_path, save_path)
-      save_path = File.join("/tmp/dogpile_storage", save_path)
+      save_path = File.join("/tmp/cloud_crowd_storage", save_path)
       save_dir = File.dirname(save_path)
       mkdir_p save_dir unless File.exists? save_dir
       cp(local_path, save_path)
@@ -49,7 +49,7 @@ module Dogpile
       unless @s3 && @bucket
         params = {:port => 80, :protocol => 'http'}
         @s3 = RightAws::S3.new(SECRETS['aws_access_key'], SECRETS['aws_secret_key'], params)
-        @bucket = @s3.bucket(Dogpile::CONFIG['s3_bucket'], true)
+        @bucket = @s3.bucket(CloudCrowd::CONFIG['s3_bucket'], true)
       end
     end
   

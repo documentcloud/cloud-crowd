@@ -1,18 +1,18 @@
-module Dogpile
+module CloudCrowd
   
-  # A Dogpile::Daemon, started by the Daemons gem, runs a Dogpile::Worker in
+  # A CloudCrowd::Daemon, started by the Daemons gem, runs a CloudCrowd::Worker in
   # a loop, continually fetching and processing WorkUnits from the central
   # server. The Daemon backs off and pings central less frequently when there
   # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
-    DEFAULT_WAIT    = Dogpile::CONFIG['default_worker_wait']
-    MAX_WAIT        = Dogpile::CONFIG['max_worker_wait']
-    WAIT_MULTIPLIER = Dogpile::CONFIG['worker_wait_multiplier']
+    DEFAULT_WAIT    = CloudCrowd::CONFIG['default_worker_wait']
+    MAX_WAIT        = CloudCrowd::CONFIG['max_worker_wait']
+    WAIT_MULTIPLIER = CloudCrowd::CONFIG['worker_wait_multiplier']
     
     def initialize
       @wait_time = DEFAULT_WAIT
-      @worker = Dogpile::Worker.new
+      @worker = CloudCrowd::Worker.new
     end
     
     # Loop forever, fetching WorkUnits.
@@ -34,4 +34,4 @@ module Dogpile
   
 end
 
-Dogpile::Daemon.new.run
+CloudCrowd::Daemon.new.run

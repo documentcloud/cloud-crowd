@@ -1,4 +1,4 @@
-# The Dogpile API. You can post a new job in either XML or JSON format, 
+# The CloudCrowd API. You can post a new job in either XML or JSON format, 
 # and check on the status of your job by getting its id.
 class JobsController < ApplicationController
   

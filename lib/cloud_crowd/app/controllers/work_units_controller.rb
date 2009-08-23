@@ -8,9 +8,9 @@ class WorkUnitsController < ApplicationController
   def fetch
     unit = nil
     WorkUnit.transaction do
-      unit = WorkUnit.first(:conditions => {:status => Dogpile::PENDING}, :order => "created_at desc", :lock => true)
+      unit = WorkUnit.first(:conditions => {:status => CloudCrowd::PENDING}, :order => "created_at desc", :lock => true)
       return head(:no_content) unless unit
-      unit.update_attributes(:status => Dogpile::PROCESSING)
+      unit.update_attributes(:status => CloudCrowd::PROCESSING)
     end
     render :json => unit
   end
