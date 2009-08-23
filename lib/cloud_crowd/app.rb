@@ -1,7 +1,7 @@
 module CloudCrowd
   
-  class App < Sinatra
-    set :root "#{File.dirname(__FILE__)}/../.."
+  class App < Sinatra::Default
+    set :root, "#{File.dirname(__FILE__)}/../.."
     enable :static
     
     helpers CloudCrowd::Helpers

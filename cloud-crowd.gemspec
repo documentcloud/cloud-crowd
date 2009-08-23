@@ -1,11 +1,19 @@
+# TODO: Before pushing to GitHub replace 'files' with a complete file list.
+
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
   s.version   = '0.0.1'
   s.date      = '2009-08-23'
-  
-  s.summary     = ""
-  s.description = ""
-  s.homepage    = "wiki page on github?"
+
+  s.homepage    = "http://documentcloud.org" # wiki page on github?  
+  s.summary     = "MapReduce your files in style and comfort."
+  s.description = <<-EOS
+    The crowd, suddenly there where there was nothing before, is a mysterious and
+    universal phenomenon. A few people may have been standing together -- five, ten
+    or twelve, nor more; nothing has been announced, nothing is expected. Suddenly
+    everywhere is black with people and more come streaming from all sides as though
+    streets had only one direction.
+  EOS
   
   s.authors     = ['Jeremy Ashkenas']
   s.email       = 'jeremy@documentcloud.org'
@@ -30,5 +38,5 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'notahat-machinist',   ['>= 1.0.3']
   end
   
-  
+  s.files = Dir['./**/*.*']
 end

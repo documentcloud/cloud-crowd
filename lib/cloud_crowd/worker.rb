@@ -86,7 +86,7 @@ module CloudCrowd
       begin
         Module.const_get(action_class).new(@input, @options, @store)
       rescue NameError => e
-        require "#{RAILS_ROOT}/actions/#{@action_name}"
+        require "#{CloudCrowd::App.root}/actions/#{@action_name}"
         retry
       end
     end

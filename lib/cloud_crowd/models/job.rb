@@ -3,7 +3,6 @@
 # of inputs (usually public urls to files), an action (the name of a script that 
 # CloudCrowd knows how to run), and, eventually a corresponding list of output.
 class Job < ActiveRecord::Base
-  include ActionView::Helpers::DateHelper
   
   has_many :work_units
   
@@ -86,7 +85,11 @@ class Job < ActiveRecord::Base
     time = self.eta
     return "unknown" if !time
     return "complete" if time == 0
-    distance_of_time_in_words(0, eta, :include_seconds => true)
+    case time
+    when (0..60)    then "#{time} seconds"
+    when (61..3600) then "#{time/60} minutes"
+    else                 "#{time/3600} hours"
+    end
   end
   
   def display_status

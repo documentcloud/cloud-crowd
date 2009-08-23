@@ -1,6 +1,5 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
-
 # Standard Library:
 require 'tmpdir'
 
@@ -12,18 +11,14 @@ require 'daemons'
 require 'rest_client'
 require 'right_aws'
 
-# CloudCrowd:
-require 'cloud_crowd/models'
-require 'cloud_crowd/helpers'
 require 'cloud_crowd/app'
 
-
-# SECRETS = YAML.load_file("#{RAILS_ROOT}/config/secrets.yml")[RAILS_ENV]
+# SECRETS = YAML.load_file("#{CloudCrowd::App.root}/config/secrets.yml")[CloudCrowd::App.environment]
 
 module CloudCrowd
   
   # Load configuration.
-  CONFIG  = YAML.load_file("#{RAILS_ROOT}/config/cloud_crowd.yml")[RAILS_ENV]
+  CONFIG  = YAML.load_file("#{CloudCrowd::App.root}/config/cloud_crowd.yml")[CloudCrowd::App.environment]
   
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1
@@ -48,3 +43,7 @@ module CloudCrowd
   end
   
 end
+
+# CloudCrowd:
+require 'cloud_crowd/models'
+require 'cloud_crowd/helpers'
