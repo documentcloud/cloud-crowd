@@ -1,24 +1,19 @@
-defaults: &defaults
-  num_workers:            4
-  default_worker_wait:    1
-  max_worker_wait:        20
-  worker_wait_multiplier: 1.3
-  worker_retry_wait:      5
-  work_unit_retries:      3
-  # add a work_unit_timeout really big
-  # actions can override
+num_workers:            4
+default_worker_wait:    1
+max_worker_wait:        20
+worker_wait_multiplier: 1.3
+worker_retry_wait:      5
+work_unit_retries:      3
+central_server:         http://localhost:9173
+s3_bucket:              dogpile_development
 
-development:
-  <<: *defaults
-  central_server: http://localhost:9173
-  s3_bucket:      dogpile_development
-                  
-test:             
-  <<: *defaults   
-  central_server: http://localhost:9173
-  s3_bucket:      dogpile_test
+db:
+  adapter: mysql
+  encoding: utf8
+  username: root
+  password:
+  socket: /tmp/mysql.sock
+  database: dogpile_development
   
-production:
-  <<: *defaults
-  central_server: http://dogpile.ec2.webco.com
-  s3_bucket:      dogpile_production
+# add a work_unit_timeout really big
+# actions can override
