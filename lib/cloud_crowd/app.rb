@@ -1,6 +1,7 @@
 module CloudCrowd
   
-  class App < Sinatra::Default    
+  class App < Sinatra::Default
+        
     # static serves files from /public, methodoverride allows the _method param.
     enable :static, :methodoverride
     
