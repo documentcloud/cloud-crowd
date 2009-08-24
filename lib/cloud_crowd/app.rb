@@ -1,8 +1,8 @@
 module CloudCrowd
   
-  class App < Sinatra::Default
-    set :root, "#{File.dirname(__FILE__)}/../.."
-    enable :static
+  class App < Sinatra::Default    
+    # static serves files from /public, methodoverride allows the _method param.
+    enable :static, :methodoverride
     
     helpers CloudCrowd::Helpers
     

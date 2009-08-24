@@ -1,6 +1,3 @@
-# Use the 'db' settings in cloud_crowd.yml to connect to the database.
-ActiveRecord::Base.establish_connection(CloudCrowd.config[:db])
-
 # Complete schema for CloudCrowd.
 ActiveRecord::Schema.define(:version => 1) do
 
