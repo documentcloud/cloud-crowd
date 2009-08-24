@@ -2,8 +2,8 @@ module CloudCrowd
   
   class Worker
     
-    CENTRAL_URL = CloudCrowd::CONFIG['central_server'] + '/work_units'
-    RETRY_WAIT = CloudCrowd::CONFIG['worker_retry_wait']
+    CENTRAL_URL = CloudCrowd.config['central_server'] + '/work_units'
+    RETRY_WAIT = CloudCrowd.config['worker_retry_wait']
     
     attr_reader :action
     

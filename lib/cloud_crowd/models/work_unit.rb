@@ -34,7 +34,7 @@ class WorkUnit < ActiveRecord::Base
   # Mark this unit as having failed. May attempt a retry.
   def fail(output, time_taken)
     tries = self.attempts + 1
-    return try_again if tries < CloudCrowd::CONFIG['work_unit_retries']
+    return try_again if tries < CloudCrowd.config['work_unit_retries']
     update_attributes({
       :status   => CloudCrowd::FAILED,
       :attempts => tries,

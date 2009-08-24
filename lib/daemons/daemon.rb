@@ -6,9 +6,9 @@ module CloudCrowd
   # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
-    DEFAULT_WAIT    = CloudCrowd::CONFIG['default_worker_wait']
-    MAX_WAIT        = CloudCrowd::CONFIG['max_worker_wait']
-    WAIT_MULTIPLIER = CloudCrowd::CONFIG['worker_wait_multiplier']
+    DEFAULT_WAIT    = CloudCrowd.config['default_worker_wait']
+    MAX_WAIT        = CloudCrowd.config['max_worker_wait']
+    WAIT_MULTIPLIER = CloudCrowd.config['worker_wait_multiplier']
     
     def initialize
       @wait_time = DEFAULT_WAIT

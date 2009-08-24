@@ -1,9 +1,9 @@
-ENV["RAILS_ENV"] = "test"
+ENV["CloudCrowd::App.environment"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'machinist/active_record'
 require 'sham'
 require 'faker'
-require "#{RAILS_ROOT}/test/blueprints.rb"
+require "#{CloudCrowd::App.root}/test/blueprints.rb"
 require 'test_help'
 
 class ActiveSupport::TestCase

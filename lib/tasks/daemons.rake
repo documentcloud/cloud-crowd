@@ -1,5 +1,5 @@
 RUNNER_PATH = "#{File.dirname(__FILE__)}/../daemons/runner.rb"
-RAILS_ENV = 'development'
+CloudCrowd::App.environment = 'development'
 
 namespace :daemons do
   
@@ -7,7 +7,7 @@ namespace :daemons do
   task :start do
     require 'yaml'
     conf = YAML.load_file("#{File.dirname(__FILE__)}/../../config/cloud_crowd.yml")
-    env = defined?(RAILS_ENV) ? RAILS_ENV : 'development'
+    env = defined?(CloudCrowd::App.environment) ? CloudCrowd::App.environment : 'development'
     conf[env]['num_workers'].times do
       `ruby #{RUNNER_PATH} start`
     end

@@ -11,17 +11,12 @@ require 'daemons'
 require 'rest_client'
 require 'right_aws'
 
-# SECRETS = YAML.load_file("#{CloudCrowd::App.root}/config/secrets.yml")[CloudCrowd::App.environment]
-
 module CloudCrowd
   
   class App < Sinatra::Default
     set :root, "#{File.dirname(__FILE__)}/.."
   end
-  
-  # Load configuration.
-  CONFIG  = YAML.load_file("#{CloudCrowd::App.root}/config/cloud_crowd.yml")[CloudCrowd::App.environment]
-  
+    
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1
   PENDING     = 2
@@ -39,9 +34,21 @@ module CloudCrowd
     1 => 'processing', 2 => 'pending', 3 => 'succeeded', 4 => 'failed'
   }
   
-  # Return the display-ready status.
-  def self.display_status(status)
-    DISPLAY_STATUS_MAP[status]
+  class << self
+    attr_reader :config
+    
+    def configure(config_path)
+      @config = YAML.load_file(config_path)[CloudCrowd::App.environment]
+    end
+
+    def configure_database(config_path)
+      configuration = YAML.load_file(config_path)[CloudCrowd::App.environment]
+      ActiveRecord::Base.establish_connection(configuration)
+    end
+
+    def display_status(status)
+      DISPLAY_STATUS_MAP[status]
+    end
   end
   
 end

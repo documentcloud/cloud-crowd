@@ -1,6 +1,6 @@
-require "#{RAILS_ROOT}/lib/dc/import/calais_fetcher"
-require "#{RAILS_ROOT}/lib/dc/import/image_extractor"
-require "#{RAILS_ROOT}/lib/dc/import/text_extractor"
+require "#{CloudCrowd::App.root}/lib/dc/import/calais_fetcher"
+require "#{CloudCrowd::App.root}/lib/dc/import/image_extractor"
+require "#{CloudCrowd::App.root}/lib/dc/import/text_extractor"
 
 # DocumentCloud import produces full text, RDF from OpenCalais, and thumbnails
 # from a PDF document. The calling DocumentCloud instance is responsible for
