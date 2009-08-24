@@ -19,40 +19,35 @@ module CloudCrowd
     end
     
     post '/jobs' do
-      job = Job.create_from_request(JSON.parse(params[:json]))
-      render :json => job
+      Job.create_from_request(JSON.parse(params[:json])).to_json
     end
     
-    get '/jobs/:job_id' do
-      job = Job.find(params[:id])
-      render :json => job
+    get '/jobs/:id' do
+      Job.find(params[:id]).to_json
     end
     
-    delete '/jobs/:job_id' do
+    delete '/jobs/:id' do
       Job.find(params[:id]).cleanup
-      render :nothing => true
+      ''
     end
     
     get '/work' do
-      unit = nil
-      WorkUnit.transaction do
-        unit = WorkUnit.first(:conditions => {:status => CloudCrowd::PENDING}, :order => "created_at desc", :lock => true)
-        return head(:no_content) unless unit
+      begin
+        unit = WorkUnit.first(:conditions => {:status => CloudCrowd::PENDING}, :order => "created_at desc")
+        return status(204) && '' unless unit
         unit.update_attributes(:status => CloudCrowd::PROCESSING)
+        unit.to_json
+      rescue ActiveRecord::StaleObjectError => e
+        return status(204) && ''
       end
-      render :json => unit
     end
     
-    put '/work/:work_unit_id' do
-      WorkUnit.transaction do
-        WorkUnit.find(params[:id], :lock => true).finish(params[:output], params[:time])
+    put '/work/:id' do
+      case params[:status]
+      when 'succeeded' then WorkUnit.find(params[:id]).finish(params[:output], params[:time])
+      when 'failed'    then WorkUnit.find(params[:id]).fail(params[:output], params[:time])
       end
-      head :no_content
-      # If failed
-      WorkUnit.transaction do
-        WorkUnit.find(params[:id], :lock => true).fail(params[:output], params[:time])
-      end
-      head :no_content
+      return status(204) && ''
     end
     
   end

@@ -1,9 +1,9 @@
 module CloudCrowd
   
   class Worker
-    
-    CENTRAL_URL = CloudCrowd.config['central_server'] + '/work_units'
-    RETRY_WAIT = CloudCrowd.config['worker_retry_wait']
+        
+    CENTRAL_URL = CloudCrowd.config[:central_server] + '/work_units'
+    RETRY_WAIT = CloudCrowd.config[:worker_retry_wait]
     
     attr_reader :action
     
@@ -19,7 +19,7 @@ module CloudCrowd
     # Ask the central server for a new WorkUnit.
     def fetch_work_unit
       keep_trying_to "fetch a new work unit" do
-        unit_json = RestClient.get(CENTRAL_URL + '/fetch')
+        unit_json = RestClient.get(CENTRAL_URL + '/work')
         return unless unit_json # No content means no work for us.
         @start_time = Time.now
         parse_work_unit unit_json
@@ -31,7 +31,7 @@ module CloudCrowd
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
         data = completion_params.merge({:output => result})
-        RestClient.post(CENTRAL_URL + '/finish', data)
+        RestClient.put(CENTRAL_URL + '/work/' + data[:id], data)
         log "finished #{@action_name} in #{data[:time]} seconds"
       end
     end
@@ -40,7 +40,7 @@ module CloudCrowd
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
         data = completion_params.merge({:output => exception.message})
-        RestClient.post(CENTRAL_URL + '/fail', data)
+        RestClient.put(CENTRAL_URL + '/work/' + data[:id], data)
         log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
     end

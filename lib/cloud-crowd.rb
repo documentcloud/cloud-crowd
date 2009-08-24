@@ -38,11 +38,11 @@ module CloudCrowd
     attr_reader :config
     
     def configure(config_path)
-      @config = YAML.load_file(config_path)[CloudCrowd::App.environment]
+      @config = YAML.load_file(config_path)
     end
 
     def configure_database(config_path)
-      configuration = YAML.load_file(config_path)[CloudCrowd::App.environment]
+      configuration = YAML.load_file(config_path)
       ActiveRecord::Base.establish_connection(configuration)
     end
 
@@ -55,5 +55,6 @@ end
 
 # CloudCrowd:
 require 'cloud_crowd/models'
+require 'cloud_crowd/asset_store'
 require 'cloud_crowd/helpers'
 require 'cloud_crowd/app'

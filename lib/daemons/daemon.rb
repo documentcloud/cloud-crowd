@@ -1,3 +1,7 @@
+CloudCrowd.configure(ENV['CLOUD_CROWD_CONFIG'])
+
+require 'cloud_crowd/worker'
+
 module CloudCrowd
   
   # A CloudCrowd::Daemon, started by the Daemons gem, runs a CloudCrowd::Worker in

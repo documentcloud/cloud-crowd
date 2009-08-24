@@ -1,4 +1,3 @@
-ENV["CloudCrowd::App.environment"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'machinist/active_record'
 require 'sham'
