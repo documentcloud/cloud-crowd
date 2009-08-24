@@ -11,13 +11,13 @@ class DocumentCloudImport < CloudCrowd::Action
     text_path, title = extract_full_text_and_title
     thumb_path, small_thumb_path = *generate_thumbnails
     rdf_path = fetch_rdf_from_calais
-    JSON.generate({
+    {
       'title'               => title,
       'full_text_url'       => save(text_path),
       'rdf_url'             => save(rdf_path),
       'thumbnail_url'       => save(thumb_path),
       'small_thumbnail_url' => save(small_thumb_path)
-    })
+    }.to_json
   end
   
   def extract_full_text_and_title

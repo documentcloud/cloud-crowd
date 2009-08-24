@@ -9,10 +9,11 @@ module CloudCrowd
       parse_options
       command = ARGV.shift
       case command
-      when 'console' then load_console
-      when 'server'  then start_server
-      when 'workers' then control_workers
-      else                usage
+      when 'console'      then load_console
+      when 'server'       then start_server
+      when 'workers'      then control_workers
+      when 'load_schema'  then load_schema
+      else                     usage
       end
     end
     
@@ -27,6 +28,7 @@ module CloudCrowd
     end
     
     def load_code
+      require 'rubygems'
       require File.dirname(__FILE__) + '/../cloud-crowd'
       CloudCrowd.configure('config.yml')
     end
@@ -34,7 +36,6 @@ module CloudCrowd
     def load_console
       require 'irb'
       require 'irb/completion'
-      require 'rubygems'
       load_code
       CloudCrowd.configure_database('database.yml')
       IRB.start
@@ -42,6 +43,12 @@ module CloudCrowd
     
     def start_server
       
+    end
+    
+    def load_schema
+      load_code
+      CloudCrowd.configure_database('database.yml')
+      require 'cloud_crowd/schema.rb'
     end
     
     def control_workers

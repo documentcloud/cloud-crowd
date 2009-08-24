@@ -4,7 +4,7 @@ images = ('0001'..'0658').map {|num| "http://graphics8.nytimes.com/packages/imag
 
 RestClient.post(
 	'http://localhost:9173/jobs', 
-	{:json => JSON.generate({
+	{:json => {
 	
 		'action' => 'graphics_magick',
 		
@@ -39,5 +39,5 @@ RestClient.post(
 			}]
 		}
 		
-	})}
+	}.to_json}
 )

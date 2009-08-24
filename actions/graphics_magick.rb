@@ -24,7 +24,7 @@ class GraphicsMagick < CloudCrowd::Action
     in_path, out_path = input_path_for(step), output_path_for(step)
     `gm #{cmd} #{opts} #{in_path} #{out_path}`
     public_url = save(out_path)
-    JSON.generate({'name' => name, 'url' => public_url})
+    {'name' => name, 'url' => public_url}.to_json
   end
   
   # Where should the starting image be located?

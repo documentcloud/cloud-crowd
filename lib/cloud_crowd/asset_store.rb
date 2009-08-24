@@ -48,8 +48,8 @@ module CloudCrowd
     def ensure_s3_connection
       unless @s3 && @bucket
         params = {:port => 80, :protocol => 'http'}
-        @s3 = RightAws::S3.new(SECRETS['aws_access_key'], SECRETS['aws_secret_key'], params)
-        @bucket = @s3.bucket(CloudCrowd.config['s3_bucket'], true)
+        @s3 = RightAws::S3.new(CloudCrowd.config[:aws_access_key], CloudCrowd.config[:aws_secret_key], params)
+        @bucket = @s3.bucket(CloudCrowd.config[:s3_bucket], true)
       end
     end
   

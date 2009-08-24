@@ -14,7 +14,7 @@ require 'right_aws'
 module CloudCrowd
   
   class App < Sinatra::Default
-    set :root, "#{File.dirname(__FILE__)}/.."
+    set :root, File.expand_path(File.dirname(__FILE__) + '/..')
   end
     
   # All the possible statuses for Jobs and WorkUnits
@@ -56,5 +56,6 @@ end
 # CloudCrowd:
 require 'cloud_crowd/models'
 require 'cloud_crowd/asset_store'
+require 'cloud_crowd/action'
 require 'cloud_crowd/helpers'
 require 'cloud_crowd/app'

@@ -14,12 +14,3 @@ namespace :gem do
   end
   
 end
-
-namespace :db do
-  
-  desc 'Load the database schema'
-  task :load_schema do
-    sh 'ruby -rubygems -r lib/cloud-crowd lib/cloud_crowd/schema.rb'
-  end
-  
-end

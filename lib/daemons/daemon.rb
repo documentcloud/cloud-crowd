@@ -10,9 +10,9 @@ module CloudCrowd
   # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
-    DEFAULT_WAIT    = CloudCrowd.config['default_worker_wait']
-    MAX_WAIT        = CloudCrowd.config['max_worker_wait']
-    WAIT_MULTIPLIER = CloudCrowd.config['worker_wait_multiplier']
+    DEFAULT_WAIT    = CloudCrowd.config[:default_worker_wait]
+    MAX_WAIT        = CloudCrowd.config[:max_worker_wait]
+    WAIT_MULTIPLIER = CloudCrowd.config[:worker_wait_multiplier]
     
     def initialize
       @wait_time = DEFAULT_WAIT
@@ -20,6 +20,10 @@ module CloudCrowd
     end
     
     # Loop forever, fetching WorkUnits.
+    # TODO: Workers busy with their work units won't die until the unit has 
+    # been finished. This should probably be wrapped in an appropriately lengthy
+    # timeout, or should be killable from the outside by terminating the thread.
+    # In either case, nasty un-cleaned-up bits might be left behind.
     def run
       loop do
         @worker.fetch_work_unit

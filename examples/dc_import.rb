@@ -4,7 +4,7 @@ pdfs = Dir['/Users/jashkenas/Desktop/document_cloud/*.pdf'].map {|pdf| "file://#
 
 RestClient.post(
 	'http://localhost:9173/jobs', 
-	{:json => JSON.generate({
+	{:json => {
 	
 		'action' => 'document_cloud_import',
 		
@@ -12,5 +12,5 @@ RestClient.post(
 		
 		'options' => {}
 		
-	})}
+	}.to_json}
 )
