@@ -1,7 +1,7 @@
 require 'json'
 
-RestClient.post(
-	'http://localhost:9173/jobs', 
+puts RestClient.post(
+	'http://ec2-75-101-213-115.compute-1.amazonaws.com/jobs', 
 	{:json => {
 	
 		'action' => 'pdf_to_images',
