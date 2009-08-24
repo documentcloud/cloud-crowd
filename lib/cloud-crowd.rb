@@ -11,11 +11,14 @@ require 'daemons'
 require 'rest_client'
 require 'right_aws'
 
-require 'cloud_crowd/app'
-
 # SECRETS = YAML.load_file("#{CloudCrowd::App.root}/config/secrets.yml")[CloudCrowd::App.environment]
 
 module CloudCrowd
+  
+  class App < Sinatra::Default
+    set :root, "#{File.dirname(__FILE__)}/.."
+    enable :static
+  end
   
   # Load configuration.
   CONFIG  = YAML.load_file("#{CloudCrowd::App.root}/config/cloud_crowd.yml")[CloudCrowd::App.environment]
@@ -47,3 +50,4 @@ end
 # CloudCrowd:
 require 'cloud_crowd/models'
 require 'cloud_crowd/helpers'
+require 'cloud_crowd/app'
