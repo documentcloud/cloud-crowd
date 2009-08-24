@@ -2,8 +2,8 @@ log
 tmp
 db/*.sqlite3
 raw
-config/secrets.yml
 lib/dc
 lib/daemons/*.pid
 lib/daemons/*.output
 lib/daemons/*.log
+*.tar

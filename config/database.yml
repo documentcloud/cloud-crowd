@@ -16,3 +16,4 @@ test:
 production:
   <<: *defaults
   database: dogpile_production
+  password: master
