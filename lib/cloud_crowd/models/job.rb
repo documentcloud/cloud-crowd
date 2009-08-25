@@ -3,6 +3,7 @@
 # of inputs (usually public urls to files), an action (the name of a script that 
 # CloudCrowd knows how to run), and, eventually a corresponding list of output.
 class Job < ActiveRecord::Base
+  include CloudCrowd::ModelStatus
   
   has_many :work_units
   
@@ -31,7 +32,7 @@ class Job < ActiveRecord::Base
   def check_for_completion
     return unless all_work_units_complete?
     self.status = any_work_units_failed? ? CloudCrowd::FAILED     :
-                  self.should_process?   ? CloudCrowd::PROCESSING :
+                  self.splitting?        ? CloudCrowd::PROCESSING :
                   self.should_merge?     ? CloudCrowd::MERGING    :
                                            CloudCrowd::SUCCEEDED
                                            
@@ -84,12 +85,7 @@ class Job < ActiveRecord::Base
   end
   
   def should_merge?
-    meth = self.action_class.new.respond_to? :merge
-    meth && self.status == CloudCrowd::PROCESSING
-  end
-  
-  def should_process?
-    self.status == CloudCrowd::SPLITTING
+    self.processing? && self.action_class.new.respond_to?(:merge)
   end
   
   def action_class

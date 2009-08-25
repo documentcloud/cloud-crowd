@@ -1,6 +1,3 @@
-require 'cloud_crowd/models/job'
-require 'cloud_crowd/models/work_unit'
-
 module CloudCrowd
   module ModelStatus
     
@@ -19,13 +16,16 @@ module CloudCrowd
       
     end
     
-    def processing?;  self.status == CloudCrowd::PROCESSING;  end
-    def succeeded?;   self.status == CloudCrowd::SUCCEEDED;   end
-    def failed?;      self.status == CloudCrowd::FAILED;      end
-    def splitting?;   self.status == CloudCrowd::SPLITTING;   end
-    def merging?;     self.status == CloudCrowd::MERGING;     end
-    def complete?;    self.status == CloudCrowd::COMPLETE;    end
-    def incomplete?;  self.status == CloudCrowd::INCOMPLETE;  end
+    def processing?;  self.status == CloudCrowd::PROCESSING;          end
+    def succeeded?;   self.status == CloudCrowd::SUCCEEDED;           end
+    def failed?;      self.status == CloudCrowd::FAILED;              end
+    def splitting?;   self.status == CloudCrowd::SPLITTING;           end
+    def merging?;     self.status == CloudCrowd::MERGING;             end
+    def complete?;    CloudCrowd::COMPLETE.include?(self.status);     end
+    def incomplete?;  CloudCrowd::INCOMPLETE.include?(self.status);   end
     
   end
 end
+
+require 'cloud_crowd/models/job'
+require 'cloud_crowd/models/work_unit'

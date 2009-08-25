@@ -1,6 +1,7 @@
 # A WorkUnit is an atomic chunk of work from a job, processing a single input
 # through a single action. All WorkUnits receive the same options.
 class WorkUnit < ActiveRecord::Base
+  include CloudCrowd::ModelStatus
   
   belongs_to :job
   
@@ -41,11 +42,6 @@ class WorkUnit < ActiveRecord::Base
       :taken    => false,
       :attempts => self.attempts + 1
     })
-  end
-  
-  # The work is complete if the WorkUnit failed or succeeded.
-  def complete?
-    CloudCrowd::COMPLETE.include? status
   end
   
   # The JSON representation of a WorkUnit contains common elements of its job.

@@ -15,8 +15,8 @@ class JobTest < ActiveSupport::TestCase
     
     should "create all of its work units as soon as the job is created" do
       assert @job.work_units.count >= 1
-      assert @job.status == CloudCrowd::PROCESSING
-      assert @unit.status == CloudCrowd::PROCESSING
+      assert @job.processing?
+      assert @unit.processing?
     end
     
     should "know its completion status" do
