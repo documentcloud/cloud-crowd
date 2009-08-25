@@ -41,11 +41,11 @@ class Job < ActiveRecord::Base
     case self.status
     when CloudCrowd::PROCESSING
       save
-      outs = outs.values.map {|v| JSON.parse(v) }.flatten
+      outs = outs.map {|v| JSON.parse(v) }.flatten
       queue_for_daemons(outs)
     when CloudCrowd::MERGING
       save
-      queue_for_daemons(outs.values.to_json)
+      queue_for_daemons(outs.to_json)
     else
       self.outputs = outs.to_json
       self.time = Time.now - self.created_at
@@ -93,8 +93,8 @@ class Job < ActiveRecord::Base
   end
   
   def gather_outputs_from_work_units
-    outs = self.work_units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
-    self.work_units.destroy_all
+    outs = self.work_units.complete.map {|wu| wu.output }
+    self.work_units.complete.destroy_all
     outs
   end
   
@@ -133,12 +133,9 @@ class Job < ActiveRecord::Base
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
-    {
-      'id'        => self.id,
-      'status'    => self.display_status,
-      'outputs'   => JSON.parse(self.outputs),
-      'eta'       => self.display_eta
-    }.to_json
+    atts = {'id' => self.id, 'status' => self.display_status, 'eta' => self.display_eta}
+    atts.merge!({'output' => JSON.parse(self.outputs)}) if self.outputs
+    atts.to_json
   end
     
   # When starting a new job, split up our inputs into WorkUnits, and queue them.
