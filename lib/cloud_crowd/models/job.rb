@@ -41,8 +41,7 @@ class Job < ActiveRecord::Base
     case self.status
     when CloudCrowd::PROCESSING
       save
-      outs = outs.map {|v| JSON.parse(v) }.flatten
-      queue_for_daemons(outs)
+      queue_for_daemons(outs.map {|o| JSON.parse(o) }.flatten)
     when CloudCrowd::MERGING
       save
       queue_for_daemons(outs.to_json)

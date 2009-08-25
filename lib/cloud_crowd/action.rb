@@ -11,6 +11,7 @@ module CloudCrowd
   # and reducing around the input.
   # split must return an array of inputs.
   # merge must return the output for the job.
+  # All actions run inside of their work_directory.
   class Action
     
     attr_reader :input, :input_path, :file_name, :options, :work_directory
@@ -21,8 +22,9 @@ module CloudCrowd
     def configure(status, input, options, store)
       @input, @options, @store = input, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
-      @work_directory = File.join(@store.temp_storage_path, storage_prefix)
+      @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
+      Dir.chdir @work_directory
       unless status == CloudCrowd::MERGING
         @input_path = File.join(@work_directory, File.basename(@input))
         @file_name = File.basename(@input_path, File.extname(@input_path))
@@ -51,6 +53,7 @@ module CloudCrowd
     
     # After the Action has finished, we remove the work directory.
     def cleanup_work_directory
+      Dir.chdir '/'
       FileUtils.rm_r(@work_directory)
     end
     
