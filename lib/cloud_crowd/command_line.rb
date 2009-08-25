@@ -3,7 +3,9 @@ require 'optparse'
 module CloudCrowd
   class CommandLine
     
-    WORKER_RUNNER = "#{File.dirname(__FILE__)}/../daemons/runner.rb"
+    CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
+    
+    WORKER_RUNNER = File.expand_path("#{File.dirname(__FILE__)}/../daemons/runner.rb")
     
     def initialize
       parse_options
@@ -18,6 +20,13 @@ module CloudCrowd
       end
     end
     
+    def ensure_config
+      return if @config_found
+      config_dir = ENV['CLOUD_CROWD_CONFIG'] || '.'
+      Dir.chdir config_dir
+      CONFIG_FILES.all? {|f| File.exists? f } ? @config_dir = true : config_not_found
+    end
+    
     def parse_options
       @options = {}
       opts = OptionParser.new do |opts|
@@ -29,6 +38,7 @@ module CloudCrowd
     end
     
     def load_code
+      ensure_config
       require 'rubygems'
       require File.dirname(__FILE__) + '/../cloud-crowd'
       CloudCrowd.configure('config.yml')
@@ -64,6 +74,7 @@ module CloudCrowd
     end
     
     def control_workers
+      ensure_config
       command = ARGV.shift
       case command
       when 'start'    then start_workers
@@ -95,8 +106,17 @@ module CloudCrowd
       puts `ruby #{WORKER_RUNNER} status`
     end
     
+    def config_not_found
+      puts "crowd` can't find the CloudCrowd configuration directory. Please either run 'crowd' from inside of the directory, or add a CLOUD_CROWD_CONFIG variable to your environment."
+      exit(1)
+    end
+    
     def usage
-      'Usage: lorem ipsum dolor sit amet...'
+      puts 'Usage: lorem ipsum dolor sit amet...'
+    end
+    
+    def worker_usage
+      puts 'Use the workers like: lorem ipsum dolor sit amet...'
     end
     
   end

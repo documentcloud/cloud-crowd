@@ -9,7 +9,7 @@ RestClient.post(
 		
 		'inputs' => [
 		  # 'http://s3.amazonaws.com/cloud_crowd_development/pdfs/DocumentCloud_As_Submitted.pdf'
-		  'http://s3.amazonaws.com/cloud_crowd_development/pdfs/amnesty_v_cia.pdf'
+		  'http://s3.amazonaws.com/cloud_crowd_development/pdfs/aclu_v_dod.pdf'
 		],
 		
 		'options' => {
