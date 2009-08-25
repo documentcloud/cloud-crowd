@@ -135,6 +135,7 @@ class Job < ActiveRecord::Base
   def to_json(opts={})
     atts = {'id' => self.id, 'status' => self.display_status, 'eta' => self.display_eta}
     atts.merge!({'output' => JSON.parse(self.outputs)}) if self.outputs
+    atts.merge!({'time' => self.time}) if self.time
     atts.to_json
   end
     
