@@ -13,6 +13,7 @@ module CloudCrowd
       when 'server'       then start_server
       when 'workers'      then control_workers
       when 'load_schema'  then load_schema
+      when 'install'      then install_configuration
       else                     usage
       end
     end
@@ -49,6 +50,12 @@ module CloudCrowd
       load_code
       CloudCrowd.configure_database('database.yml')
       require 'cloud_crowd/schema.rb'
+    end
+    
+    def install_configuration
+      require 'fileutils'
+      install_path = ARGV.shift
+      FileUtils.mkdir_p install_path unless File.exists?(install_path)
     end
     
     def control_workers
