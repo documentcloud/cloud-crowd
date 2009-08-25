@@ -23,18 +23,17 @@ class PdfToImages < CloudCrowd::Action
     `tar -xzf #{input_path}`
     FileUtils.rm input_path
     results = []
+    cmds = []
     Dir["*.pdf"].each do |pdf| 
       name          = File.basename(pdf, File.extname(pdf))
       full          = "#{name}_full.gif"
       thumb         = "#{name}_thumb.gif"
       icon          = "#{name}_icon.gif"
-      cmds = [
-        "gm convert -resize 667x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03 #{pdf} #{full}",
-        "gm convert -resize 70x #{full} #{thumb}",
-        "gm convert -resize 23x #{thumb} #{icon}"
-      ]
-      system cmds.join(' && ')
+      cmds << "gm convert -resize 667x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03 #{pdf} #{full}"
+      cmds << "gm convert -resize 70x #{full} #{thumb}"
+      cmds << "gm convert -resize 23x #{thumb} #{icon}"
     end
+    system cmds.join(' && ')
     `tar -czf #{file_name}.tar *.gif`
     save("#{file_name}.tar")
   end

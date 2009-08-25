@@ -5,7 +5,7 @@
 class Job < ActiveRecord::Base
   include CloudCrowd::ModelStatus
   
-  has_many :work_units
+  has_many :work_units, :dependent => :destroy
   
   validates_presence_of :status, :inputs, :action, :options
     
