@@ -98,34 +98,6 @@ class Job < ActiveRecord::Base
     outs
   end
   
-  # Calculate a rough ETA by looking at the average processing time.
-  # TODO: This method needs to grow up and be way more sophisticated. A good 
-  # ETA should take into account the number of running daemons, and any other 
-  # work units ahead in line within the queue.
-  # Think about: the current ETA divided by the number of workers actually seems
-  # pretty accurate in practice. (But then we need to count workers.)
-  def eta
-    num_remaining = self.work_units.incomplete.count
-    return 0 if num_remaining <= 0
-    done_units = self.work_units.complete
-    return nil if done_units.empty?
-    avg_time = done_units.inject(0) {|sum, unit| sum + unit.time } / done_units.length
-    since_change = Time.now - self.work_units.first(:order => 'updated_at desc').updated_at
-    [avg_time * num_remaining - since_change, 0.1].max
-  end
-  
-  # Generate a display-ready version of the ETA.
-  def display_eta    
-    time = self.eta
-    return "unknown" if !time
-    return "complete" if time == 0
-    case time
-    when (0..60)    then "#{time} seconds"
-    when (61..3600) then "#{time/60} minutes"
-    else                 "#{time/3600} hours"
-    end
-  end
-  
   def display_status
     CloudCrowd.display_status(self.status)
   end
@@ -133,7 +105,7 @@ class Job < ActiveRecord::Base
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
-    atts = {'id' => self.id, 'status' => self.display_status, 'eta' => self.display_eta}
+    atts = {'id' => self.id, 'status' => self.display_status, 'remaining' => self.work_units.incomplete.count}
     atts.merge!({'output' => JSON.parse(self.outputs)}) if self.outputs
     atts.merge!({'time' => self.time}) if self.time
     atts.to_json
