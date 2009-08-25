@@ -136,7 +136,7 @@ class Job < ActiveRecord::Base
     {
       'id'        => self.id,
       'status'    => self.display_status,
-      'outputs'   => self.outputs,
+      'outputs'   => JSON.parse(self.outputs),
       'eta'       => self.display_eta
     }.to_json
   end
