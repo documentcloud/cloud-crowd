@@ -55,7 +55,12 @@ module CloudCrowd
     def install_configuration
       require 'fileutils'
       install_path = ARGV.shift
+      cc_root = File.dirname(__FILE__) + '/../..'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
+      FileUtils.cp "#{cc_root}/config/config.example.ru", "#{install_path}/config.ru"
+      FileUtils.cp "#{cc_root}/config/config.example.yml", "#{install_path}/config.yml"
+      FileUtils.cp "#{cc_root}/config/database.example.yml", "#{install_path}/database.yml"
+      FileUtils.cp_r "#{cc_root}/actions", "#{install_path}/actions"
     end
     
     def control_workers

@@ -2,7 +2,9 @@ log
 tmp
 db/*.sqlite3
 raw
-config/secrets.yml
+config/config.ru*
+config/config.yml*
+config/database.yml*
 lib/dc
 lib/daemons/*.pid
 lib/daemons/*.output

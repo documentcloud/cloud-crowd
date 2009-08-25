@@ -17,6 +17,9 @@ module CloudCrowd
     def initialize
       @wait_time = DEFAULT_WAIT
       @worker = CloudCrowd::Worker.new
+      Signal.trap('INT',  'EXIT')
+      Signal.trap('KILL', 'EXIT')
+      Signal.trap('TERM', 'EXIT')
     end
     
     # Loop forever, fetching WorkUnits.
