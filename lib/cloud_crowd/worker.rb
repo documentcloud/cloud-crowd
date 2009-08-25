@@ -30,7 +30,7 @@ module CloudCrowd
     # Return output to the central server, marking the current work unit as done.
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
-        data = completion_params.merge({:output => result})
+        data = completion_params.merge({:status => 'succeeded', :output => result})
         RestClient.put("#{CENTRAL_URL}/work/#{data[:id]}", data)
         log "finished #{@action_name} in #{data[:time]} seconds"
       end
@@ -39,7 +39,7 @@ module CloudCrowd
     # Mark the current work unit as failed, returning the exception to central.
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
-        data = completion_params.merge({:output => exception.message})
+        data = completion_params.merge({:status => 'failed', :output => exception.message})
         RestClient.put("#{CENTRAL_URL}/work/#{data[:id]}", data)
         log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end

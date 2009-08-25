@@ -76,7 +76,9 @@ module CloudCrowd
     end
     
     def start_workers
-      @options[:num_workers].times do
+      load_code
+      num_workers = @options[:num_workers] || CloudCrowd.config[:num_workers]
+      num_workers.times do
         `CLOUD_CROWD_CONFIG='#{File.expand_path('config.yml')}' ruby #{WORKER_RUNNER} start`
       end
     end
@@ -94,7 +96,7 @@ module CloudCrowd
     end
     
     def usage
-      
+      'Usage: lorem ipsum dolor sit amet...'
     end
     
   end

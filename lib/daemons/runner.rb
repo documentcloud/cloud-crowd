@@ -5,6 +5,7 @@
 # CloudCrowd::App.root = File.expand_path(File.dirname(__FILE__) + '/../..') unless defined?(CloudCrowd::App.root)
 
 # Standard Lib and Gems
+require 'fileutils'
 require 'rubygems'
 require 'daemons'
 require 'socket'
@@ -13,12 +14,15 @@ require 'json'
 require 'rest_client'
 require 'right_aws'
 
+FileUtils.mkdir('log') unless File.exists?('log')
+
 # Daemon/Worker Dependencies.
 require "#{File.dirname(__FILE__)}/../cloud-crowd"
 
 Daemons.run("#{CloudCrowd::App.root}/lib/daemons/daemon.rb", {
   :app_name   => "cloud_crowd_worker",
-  # :dir_mode   => :system,
+  :dir_mode   => :normal,
+  :dir        => 'log',
   :multiple   => true,
   :backtrace  => true,
   :log_output => true

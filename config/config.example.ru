@@ -12,4 +12,6 @@ require 'cloud-crowd'
 CloudCrowd.configure(File.dirname(__FILE__) + '/config.yml')
 CloudCrowd.configure_database(File.dirname(__FILE__) + '/database.yml')
 
-map '/' { run CloudCrowd::App }
+map '/' do
+  run CloudCrowd::App
+end

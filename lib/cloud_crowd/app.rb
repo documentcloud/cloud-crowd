@@ -30,12 +30,12 @@ module CloudCrowd
       Job.create_from_request(JSON.parse(params[:json])).to_json
     end
     
-    get '/jobs/:id' do
-      Job.find(params[:id]).to_json
+    get '/jobs/:job_id' do
+      current_job.to_json
     end
     
-    delete '/jobs/:id' do
-      Job.find(params[:id]).cleanup
+    delete '/jobs/:job_id' do
+      current_job.cleanup
       ''
     end
     
@@ -50,10 +50,11 @@ module CloudCrowd
       end
     end
     
-    put '/work/:id' do
+    put '/work/:work_unit_id' do
       case params[:status]
-      when 'succeeded' then WorkUnit.find(params[:id]).finish(params[:output], params[:time])
-      when 'failed'    then WorkUnit.find(params[:id]).fail(params[:output], params[:time])
+      when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
+      when 'failed'    then current_work_unit.fail(params[:output], params[:time])
+      else             return error(500, "Completing a work unit must specify status.")
       end
       return status(204) && ''
     end
