@@ -20,19 +20,21 @@ module CloudCrowd
     
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1
-  PENDING     = 2
-  SUCCEEDED   = 3
-  FAILED      = 4
+  SUCCEEDED   = 2
+  FAILED      = 3
+  SPLITTING   = 4
+  MERGING     = 5
   
   # A work unit is considered to be complete if it succeeded or if it failed.
   COMPLETE    = [SUCCEEDED, FAILED]
   
-  # A work unit is considered incomplete if it's pending or being processed.
-  INCOMPLETE  = [PENDING, PROCESSING]
+  # A work unit is considered incomplete if it's being processed, split up or 
+  # merged together.
+  INCOMPLETE  = [PROCESSING, SPLITTING, MERGING]
   
   # Mapping of statuses to their display strings.
   DISPLAY_STATUS_MAP = {
-    1 => 'processing', 2 => 'pending', 3 => 'succeeded', 4 => 'failed'
+    1 => 'processing', 2 => 'succeeded', 3 => 'failed', 4 => 'splitting', 5 => 'merging'
   }
   
   class << self
@@ -50,11 +52,25 @@ module CloudCrowd
     def display_status(status)
       DISPLAY_STATUS_MAP[status]
     end
+    
+    # Some workers might not ever need to load all the installed actions,
+    # so we lazy-load them. Think about a variant of this for installing and
+    # loading actions into a running CloudCrowd cluster on the fly.
+    def actions(name)
+      action_class = name.camelize
+      begin
+        Module.const_get(action_class)
+      rescue NameError => e
+        require "#{CloudCrowd::App.root}/actions/#{name}"
+        retry
+      end
+    end
   end
   
 end
 
 # CloudCrowd:
+require 'cloud_crowd/core_ext'
 require 'cloud_crowd/models'
 require 'cloud_crowd/asset_store'
 require 'cloud_crowd/action'

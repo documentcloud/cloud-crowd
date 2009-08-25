@@ -1,7 +1,10 @@
-* Security. HTTP Basic Auth via config.yml, S3 authenticated URLs.
-* Monitor UI -- see queue of jobs / work units.
-* Job creation UI. Pick an action, add inputs, set options, go.
-* Right now actions just process. Think about map / process / reduce.
-* Finish fleshing out the crowd command.
-* Unit and integration tests.
-* Documentation.
+TODO:
+	* Security. HTTP Basic Auth via config.yml, S3 authenticated URLs.
+	* Monitor UI -- see queue of jobs / work units.
+	* Job creation UI. Pick an action, add inputs, set options, go.
+	* Right now actions just process. Think about map / process / reduce.
+	* Finish fleshing out the crowd command.
+	* Unit and integration tests.
+	* Documentation.
+
+DONE:

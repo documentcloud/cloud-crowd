@@ -65,8 +65,14 @@ module CloudCrowd
     # Executes the current work unit, catching all exceptions as failures.
     def run
       begin
-        @action = load_action
-        result = @action.run
+        @action = CloudCrowd.actions(@action_name).new
+        @action.configure(@status, @input, @options, @store)
+        result = case @status
+        when CloudCrowd::PROCESSING then @action.process
+        when CloudCrowd::SPLITTING  then @action.split
+        when CloudCrowd::MERGING    then @action.merge
+        else raise "Work units must specify their status."
+        end
         complete_work_unit(result)
       rescue Exception => e
         fail_work_unit(e)
@@ -78,19 +84,6 @@ module CloudCrowd
     
     private
     
-    # Some workers might not ever need to load all the installed actions,
-    # so we lazy-load them. Think about a variant of this for installing and
-    # loading actions into a running CloudCrowd cluster on the fly.
-    def load_action
-      action_class = camelize(@action_name)
-      begin
-        Module.const_get(action_class).new(@input, @options, @store)
-      rescue NameError => e
-        require "#{CloudCrowd::App.root}/actions/#{@action_name}"
-        retry
-      end
-    end
-    
     # Common parameters to send back to central, regardless of success or failure.
     def completion_params
       {:id => @options['work_unit_id'], :time => Time.now - @start_time}
@@ -99,7 +92,7 @@ module CloudCrowd
     # Extract our instance variables from a WorkUnit's JSON.
     def parse_work_unit(unit_json)
       unit = JSON.parse(unit_json)
-      @action_name, @input, @options = unit['action'], unit['input'], unit['options']
+      @action_name, @input, @options, @status = unit['action'], unit['input'], unit['options'], unit['status']
       @options['job_id'] = unit['job_id']
       @options['work_unit_id'] = unit['id']
       @options['attempts'] ||= unit['attempts']
@@ -115,11 +108,6 @@ module CloudCrowd
     def clear_work_unit
       @action.cleanup_work_directory
       @action, @action_name, @input, @options, @start_time = nil, nil, nil, nil, nil
-    end
-    
-    # Stolen-ish in parts from ActiveSupport::Inflector.
-    def camelize(word)
-      word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
     end
     
   end

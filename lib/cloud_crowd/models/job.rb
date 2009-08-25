@@ -7,36 +7,51 @@ class Job < ActiveRecord::Base
   has_many :work_units
   
   validates_presence_of :status, :inputs, :action, :options
-  
-  # Note that COMPLETE and INCOMPLETE are unions of other states.
-  named_scope 'processing', :conditions => {:status => CloudCrowd::PROCESSING}
-  named_scope 'succeeded',  :conditions => {:status => CloudCrowd::SUCCEEDED}
-  named_scope 'failed',     :conditions => {:status => CloudCrowd::FAILED}
-  named_scope 'complete',   :conditions => {:status => CloudCrowd::COMPLETE}
-  
-  after_create :queue_for_daemons
-  
+    
   # Create a Job from an incoming JSON or XML request, and add it to the queue.
   # TODO: Add XML support.
   def self.create_from_request(h)
-    self.create(
-      :status       => CloudCrowd::PROCESSING,
+    job = self.create(
       :inputs       => h['inputs'].to_json,
       :action       => h['action'],
       :options      => (h['options'] || {}).to_json,
       :owner_email  => h['owner_email'],
       :callback_url => h['callback_url']
     )
+    job.queue_for_daemons(JSON.parse(job.inputs))
+    return job
+  end
+  
+  def before_validation_on_create
+    self.status = self.splitable? ? CloudCrowd::SPLITTING : CloudCrowd::PROCESSING
   end
   
   # After work units are marked successful, we check to see if all of them have
   # finished, if so, this job is complete.
   def check_for_completion
-    if all_work_units_complete?
-      st = any_work_units_failed? ? CloudCrowd::FAILED : CloudCrowd::SUCCEEDED
-      update_attributes({:status => st, :time => Time.now - self.created_at})
+    return unless all_work_units_complete?
+    self.status = any_work_units_failed? ? CloudCrowd::FAILED     :
+                  self.should_process?   ? CloudCrowd::PROCESSING :
+                  self.should_merge?     ? CloudCrowd::MERGING    :
+                                           CloudCrowd::SUCCEEDED
+                                           
+    outs = self.gather_outputs_from_work_units
+    
+    case self.status
+    when CloudCrowd::PROCESSING
+      save
+      outs = outs.values.map {|v| JSON.parse(v) }.flatten
+      queue_for_daemons(outs)
+    when CloudCrowd::MERGING
+      save
+      queue_for_daemons(outs.values.to_json)
+    else
+      self.outputs = outs.to_json
+      self.time = Time.now - self.created_at
+      save
       fire_callback
     end
+    return self
   end
   
   # If a callback_url is defined, post the Job's JSON to it upon completion.
@@ -62,6 +77,29 @@ class Job < ActiveRecord::Base
   # Have any of the WorkUnits failed?
   def any_work_units_failed?
     self.work_units.failed.count > 0
+  end
+  
+  def splitable?
+    self.action_class.new.respond_to? :split
+  end
+  
+  def should_merge?
+    meth = self.action_class.new.respond_to? :merge
+    meth && self.status == CloudCrowd::PROCESSING
+  end
+  
+  def should_process?
+    self.status == CloudCrowd::SPLITTING
+  end
+  
+  def action_class
+    CloudCrowd.actions(self.action)
+  end
+  
+  def gather_outputs_from_work_units
+    outs = self.work_units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
+    self.work_units.destroy_all
+    outs
   end
   
   # Calculate a rough ETA by looking at the average processing time.
@@ -99,25 +137,18 @@ class Job < ActiveRecord::Base
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
-    units = self.work_units
-    ins   = units.inject({}) {|memo, u| memo[u.input] = CloudCrowd.display_status(u.status); memo }
-    outs  = units.inject({}) {|memo, u| memo[u.input] = u.output if u.complete?; memo }
     {
       'id'        => self.id,
       'status'    => self.display_status,
-      'inputs'    => ins,
-      'outputs'   => outs,
+      'outputs'   => self.outputs,
       'eta'       => self.display_eta
     }.to_json
   end
-  
-  
-  private
-  
+    
   # When starting a new job, split up our inputs into WorkUnits, and queue them.
-  def queue_for_daemons
-    JSON.parse(self.inputs).each do |wu_input|
-      WorkUnit.create(:job => self, :input => wu_input, :status => CloudCrowd::PENDING)
+  def queue_for_daemons(input)
+    [input].flatten.each do |wu_input|
+      WorkUnit.create(:job => self, :input => wu_input, :status => self.status)
     end
   end
   

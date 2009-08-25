@@ -16,7 +16,7 @@ class FailingWorkUnitsTest < ActionController::IntegrationTest
       job.work_units.each {|unit| unit.fail('failed', 10) }
     end
     job.work_units.reload.each do |unit|
-      assert unit.status == CloudCrowd::PENDING
+      assert unit.status == CloudCrowd::PROCESSING
       assert unit.attempts == CloudCrowd.config[:work_unit_retries] - 1
       unit.fail('failed', 10)
       assert unit.reload.status == CloudCrowd::FAILED

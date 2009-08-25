@@ -41,9 +41,9 @@ module CloudCrowd
     
     get '/work' do
       begin
-        unit = WorkUnit.first(:conditions => {:status => CloudCrowd::PENDING}, :order => "created_at desc")
+        unit = WorkUnit.first(:conditions => {:status => CloudCrowd::INCOMPLETE, :taken => false}, :order => "created_at desc")
         return status(204) && '' unless unit
-        unit.update_attributes(:status => CloudCrowd::PROCESSING)
+        unit.update_attributes(:taken => true)
         unit.to_json
       rescue ActiveRecord::StaleObjectError => e
         return status(204) && ''

@@ -6,14 +6,6 @@ class WorkUnit < ActiveRecord::Base
   
   validates_presence_of :job_id, :status, :input
   
-  # Note that COMPLETE and INCOMPLETE are unions of other states.
-  named_scope 'processing', :conditions => {:status => CloudCrowd::PROCESSING}
-  named_scope 'pending',    :conditions => {:status => CloudCrowd::PENDING}
-  named_scope 'succeeded',  :conditions => {:status => CloudCrowd::SUCCEEDED}
-  named_scope 'failed',     :conditions => {:status => CloudCrowd::FAILED}
-  named_scope 'complete',   :conditions => {:status => CloudCrowd::COMPLETE}
-  named_scope 'incomplete', :conditions => {:status => CloudCrowd::INCOMPLETE}
-  
   after_save :check_for_job_completion
   
   # After saving a WorkUnit, it's Job should check if it just become complete.
@@ -46,7 +38,7 @@ class WorkUnit < ActiveRecord::Base
   # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
   def try_again
     update_attributes({
-      :status   => CloudCrowd::PENDING,
+      :taken    => false,
       :attempts => self.attempts + 1
     })
   end
@@ -64,7 +56,8 @@ class WorkUnit < ActiveRecord::Base
       'input'     => self.input,
       'attempts'  => self.attempts,
       'action'    => self.job.action,
-      'options'   => JSON.parse(self.job.options)
+      'options'   => JSON.parse(self.job.options),
+      'status'    => self.status
     }.to_json
   end
   
