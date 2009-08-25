@@ -2,6 +2,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Standard Library:
 require 'tmpdir'
+require 'erb'
 
 # Gems:
 require 'sinatra'

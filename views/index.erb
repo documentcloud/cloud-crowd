@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>Department of Records | CloudCrowd</title>
+</head>
+<body>
+	
+	<p>
+		There are currently <%= @incomplete_jobs %> jobs in process (composed of 
+		<%= @incomplete_work_units %> work units).
+	</p>
+
+	<p>
+		This CloudCrowd installation has finished <%= @completed_jobs %> jobs, totalling
+		<%= @completed_work_units %> work units.
+	</p>
+	
+</body>
+</html>

@@ -18,6 +18,14 @@ module CloudCrowd
       @error
     end
     
+    get '/' do
+      @incomplete_jobs        = Job.processing.count
+      @incomplete_work_units  = WorkUnit.incomplete.count
+      @completed_jobs         = Job.complete.count
+      @completed_work_units   = WorkUnit.complete.count
+      erb :index
+    end
+    
     post '/jobs' do
       Job.create_from_request(JSON.parse(params[:json])).to_json
     end
