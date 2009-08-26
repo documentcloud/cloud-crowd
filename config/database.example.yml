@@ -1,0 +1,6 @@
+:adapter:  mysql
+:encoding: utf8
+:username: root
+:password:
+:socket:   /tmp/mysql.sock
+:database: cloud_crowd

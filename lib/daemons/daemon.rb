@@ -1,21 +1,32 @@
-module Dogpile
+CloudCrowd.configure(ENV['CLOUD_CROWD_CONFIG'])
+
+require 'cloud_crowd/worker'
+
+module CloudCrowd
   
-  # A Dogpile::Daemon, started by the Daemons gem, runs a Dogpile::Worker in
+  # A CloudCrowd::Daemon, started by the Daemons gem, runs a CloudCrowd::Worker in
   # a loop, continually fetching and processing WorkUnits from the central
   # server. The Daemon backs off and pings central less frequently when there
   # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
-    DEFAULT_WAIT    = Dogpile::CONFIG['default_worker_wait']
-    MAX_WAIT        = Dogpile::CONFIG['max_worker_wait']
-    WAIT_MULTIPLIER = Dogpile::CONFIG['worker_wait_multiplier']
+    DEFAULT_WAIT    = CloudCrowd.config[:default_worker_wait]
+    MAX_WAIT        = CloudCrowd.config[:max_worker_wait]
+    WAIT_MULTIPLIER = CloudCrowd.config[:worker_wait_multiplier]
     
     def initialize
       @wait_time = DEFAULT_WAIT
-      @worker = Dogpile::Worker.new
+      @worker = CloudCrowd::Worker.new
+      Signal.trap('INT',  'EXIT')
+      Signal.trap('KILL', 'EXIT')
+      Signal.trap('TERM', 'EXIT')
     end
     
     # Loop forever, fetching WorkUnits.
+    # TODO: Workers busy with their work units won't die until the unit has 
+    # been finished. This should probably be wrapped in an appropriately lengthy
+    # timeout, or should be killable from the outside by terminating the thread.
+    # In either case, nasty un-cleaned-up bits might be left behind.
     def run
       loop do
         @worker.fetch_work_unit
@@ -34,4 +45,4 @@ module Dogpile
   
 end
 
-Dogpile::Daemon.new.run
+CloudCrowd::Daemon.new.run

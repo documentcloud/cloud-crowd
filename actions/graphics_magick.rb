@@ -7,7 +7,7 @@
 # +input+ as the name of a previous step; doing this will use the result of
 # that step as the source image, otherwise each step uses the original image
 # as its source.
-class GraphicsMagick < Dogpile::Action
+class GraphicsMagick < CloudCrowd::Action
   
   # Download the initial image, and run each of the specified GraphicsMagick
   # commands against it, returning the aggregate output.
@@ -24,7 +24,7 @@ class GraphicsMagick < Dogpile::Action
     in_path, out_path = input_path_for(step), output_path_for(step)
     `gm #{cmd} #{opts} #{in_path} #{out_path}`
     public_url = save(out_path)
-    JSON.generate({'name' => name, 'url' => public_url})
+    {'name' => name, 'url' => public_url}.to_json
   end
   
   # Where should the starting image be located?

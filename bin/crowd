@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "#{File.dirname(__FILE__)}/../lib/cloud_crowd/command_line"
+
+CloudCrowd::CommandLine.new

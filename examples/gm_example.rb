@@ -6,7 +6,7 @@ require 'json'
 
 RestClient.post(
 	'http://localhost:9173/jobs', 
-	{:json => JSON.generate({
+	{:json => {
 	
 		'action' => 'graphics_magick',
 		
@@ -22,7 +22,7 @@ RestClient.post(
 			'steps' => [{
 				'name' 			=> 'annotated',
 				'command' 	=> 'convert',
-				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 Dogpile!"',
+				'options'		=> '-font helvetica -fill red -draw "font-size 35; text 75,75 CloudCrowd!"',
 				'extension' => 'jpg'
 			},{
 				'name'			=> 'blurred',
@@ -38,7 +38,7 @@ RestClient.post(
 			}]
 		}
 		
-	})}
+	}.to_json}
 )
 
 # status = RestClient.get('http://localhost:9173/jobs/[job_id]')
