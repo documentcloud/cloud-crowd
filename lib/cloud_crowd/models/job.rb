@@ -33,27 +33,29 @@ class Job < ActiveRecord::Base
   # finished, if so, this job is complete.
   def check_for_completion
     return unless all_work_units_complete?
+    transition_to_next_phase               
+    output_list = gather_outputs_from_work_units
+    
+    if complete?
+      self.outputs = output_list.to_json
+      self.time = Time.now - self.created_at
+    end
+    self.save
+    
+    case self.status
+    when CloudCrowd::PROCESSING then queue_for_workers(output_list.map {|o| JSON.parse(o) }.flatten)
+    when CloudCrowd::MERGING    then queue_for_workers(output_list.to_json)
+    else                             fire_callback
+    end
+    self
+  end
+  
+  # Transition from the current phase to the next one.
+  def transition_to_next_phase
     self.status = any_work_units_failed? ? CloudCrowd::FAILED     :
                   self.splitting?        ? CloudCrowd::PROCESSING :
                   self.should_merge?     ? CloudCrowd::MERGING    :
                                            CloudCrowd::SUCCEEDED
-                                           
-    outs = self.gather_outputs_from_work_units
-    
-    case self.status
-    when CloudCrowd::PROCESSING
-      save
-      queue_for_workers(outs.map {|o| JSON.parse(o) }.flatten)
-    when CloudCrowd::MERGING
-      save
-      queue_for_workers(outs.to_json)
-    else
-      self.outputs = outs.to_json
-      self.time = Time.now - self.created_at
-      save
-      fire_callback
-    end
-    return self
   end
   
   # If a callback_url is defined, post the Job's JSON to it upon completion.
