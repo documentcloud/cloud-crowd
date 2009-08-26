@@ -2,7 +2,6 @@ TODO:
 	* Security. HTTP Basic Auth via config.yml, S3 authenticated URLs.
 	* Monitor UI -- see queue of jobs / work units.
 	* Job creation UI. Pick an action, add inputs, set options, go.
-	* Finish fleshing out the crowd command.
 	* Basic integration tests.
 	* Documentation.
 	# Benchmarking mode -- benchmark every single aspect of a job and report it.
@@ -10,3 +9,4 @@ TODO:
 DONE:
 	* Right now actions just process. Think about map / process / reduce.
 	* Basic unit tests.
+	* Finish fleshing out the crowd command.

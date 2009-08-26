@@ -5,13 +5,13 @@ module CloudCrowd
   # Public API to CloudCrowd::Action subclasses:
   # +input+, +input_path+, +file_name+, +work_directory+, +options+, +save+
   #
-  # CloudCrowd::Actions must implement a process method, which must return a 
+  # CloudCrowd::Actions must implement a +process+ method, which must return a 
   # JSON-serializeable object that will be used as the output for the work unit.
-  # Optionally, actions may define split and merge methods to do mapping
+  # Optionally, actions may define +split+ and +merge+ methods to do mapping
   # and reducing around the input.
-  # split must return an array of inputs.
-  # merge must return the output for the job.
-  # All actions run inside of their work_directory.
+  # +split+ must return an array of inputs.
+  # +merge+ must return the output for the job.
+  # All actions run inside of their individual +work_directory+.
   class Action
     
     attr_reader :input, :input_path, :file_name, :options, :work_directory
