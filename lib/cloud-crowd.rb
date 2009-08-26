@@ -17,6 +17,9 @@ module CloudCrowd
   class App < Sinatra::Default
     set :root, File.expand_path(File.dirname(__FILE__) + '/..')
   end
+  
+  # Keep the version in sync with the gemspec.
+  VERSION     = '0.0.1'
     
   # All the possible statuses for Jobs and WorkUnits
   PROCESSING  = 1

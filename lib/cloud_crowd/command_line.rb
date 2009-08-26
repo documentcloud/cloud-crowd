@@ -6,7 +6,22 @@ module CloudCrowd
     # Configuration files required for the `crowd` command to function.
     CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
     
+    # Path to the Daemons gem script which launches workers.
     WORKER_RUNNER = File.expand_path("#{File.dirname(__FILE__)}/runner.rb")
+    
+    # Command-line banner for the usage message.
+    BANNER = <<-EOS
+Usage: crowd COMMAND OPTIONS
+
+COMMANDS:
+  install       Install the CloudCrowd configuration files to the specified directory
+  server        Start up the central server (requires a database)
+  workers       Control worker daemons, use: (start | stop | restart | status | run)
+  console       Launch a CloudCrowd console, connected to the central database
+  load_schema   Load the schema into the database specified by database.yml
+
+OPTIONS:
+    EOS
     
     # Creating a CloudCrowd::CommandLine runs from the contents of ARGV.
     def initialize
@@ -38,6 +53,7 @@ module CloudCrowd
     # a single Thin server, if Thin is installed, otherwise the rackup defaults 
     # (Mongrel, falling back to WEBrick). The equivalent of Rails' script/server.
     def run_server
+      ensure_config
       require 'rubygems'
       rackup_path = File.expand_path('config.ru')
       thin_opts = Gem.available?('thin') ? '-s thin' : ''
@@ -64,11 +80,8 @@ module CloudCrowd
       install_file "#{cc_root}/actions", "#{install_path}/actions", true
     end
     
-    def install_file(source, dest, is_dir=false)
-      is_dir ? FileUtils.cp_r(source, dest) : FileUtils.cp(source, dest)
-      puts "installed #{dest}"
-    end
-    
+    # Manipulate worker daemons -- handles all commands that the Daemons gem
+    # provides: start, stop, restart, run, and status.
     def run_workers_command
       ensure_config
       command = ARGV.shift
@@ -82,6 +95,8 @@ module CloudCrowd
       end
     end
     
+    # Start up N workers, specified by argument or the number of workers in
+    # config.yml.
     def start_workers
       load_code
       num_workers = @options[:num_workers] || CloudCrowd.config[:num_workers]
@@ -90,16 +105,24 @@ module CloudCrowd
       end
     end
     
+    # For debugging, run a single worker in the current process, showing output.
     def run_worker
       exec "CLOUD_CROWD_CONFIG='#{File.expand_path('config.yml')}' ruby #{WORKER_RUNNER} run"
     end
     
+    # Stop all active workers.
     def stop_workers
       `ruby #{WORKER_RUNNER} stop`
     end
 
+    # Display the status of all active workers.
     def show_worker_status
       puts `ruby #{WORKER_RUNNER} status`
+    end
+    
+    # Print `crowd` usage.
+    def usage
+      puts @option_parser
     end
     
     
@@ -131,19 +154,13 @@ module CloudCrowd
         opts.on('-p', '--port PORT', 'central server port number') do |port_num|
           @options[:port] = port_num
         end
+        opts.on_tail('-v', '--version', 'show version') do
+          load_code
+          puts CloudCrowd::VERSION
+          exit
+        end
       end
-      @option_parser.banner = <<-EOS
-Usage: crowd COMMAND OPTIONS
-
-COMMANDS:
-    install       Install the CloudCrowd configuration files to the specified directory
-    server        Start up the central server (requires a database)
-    workers       Control worker daemons, use: (start | stop | restart | status | run)
-    console       Launch a CloudCrowd console, connected to the central database
-    load_schema   Load the schema into the database specified by database.yml
-
-OPTIONS:
-      EOS
+      @option_parser.banner = BANNER
       @option_parser.parse!(ARGV)
     end
     
@@ -162,13 +179,16 @@ OPTIONS:
       CloudCrowd.configure_database(@options[:db_config])
     end
     
+    # Exit with an explanation if the configuration files couldn't be found.
     def config_not_found
-      puts "crowd` can't find the CloudCrowd configuration directory. Please either run 'crowd' from inside of the directory, or add a CLOUD_CROWD_CONFIG variable to your environment."
+      puts "`crowd` can't find the CloudCrowd configuration directory. Please either run `crowd` from inside of the configuration directory, or add a CLOUD_CROWD_CONFIG variable to your environment."
       exit(1)
     end
     
-    def usage
-      puts @option_parser
+    # Install a file and log the installation.
+    def install_file(source, dest, is_dir=false)
+      is_dir ? FileUtils.cp_r(source, dest) : FileUtils.cp(source, dest)
+      puts "installed #{dest}"
     end
     
   end
