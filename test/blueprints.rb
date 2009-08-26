@@ -8,7 +8,7 @@ Job.blueprint do
 end
 
 WorkUnit.blueprint do
-  job_id { rand(10000) }
+  job    { Job.make }
   status { CloudCrowd::PROCESSING }
   taken  { false }
   input  { Sham.url }
