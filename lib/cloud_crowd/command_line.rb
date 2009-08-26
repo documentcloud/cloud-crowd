@@ -33,6 +33,9 @@ module CloudCrowd
         opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'Number of Worker Processes') do |num|
           @options[:num_workers] = num
         end
+        opts.on('-d', '--database-config PATH', 'Database Configuration Path') do |conf_path|
+          @options[:db_config] = conf_path
+        end
       end
       opts.parse(ARGV)
     end
@@ -48,7 +51,7 @@ module CloudCrowd
       require 'irb'
       require 'irb/completion'
       load_code
-      CloudCrowd.configure_database('database.yml')
+      connect_to_database
       IRB.start
     end
     
@@ -58,7 +61,7 @@ module CloudCrowd
     
     def load_schema
       load_code
-      CloudCrowd.configure_database('database.yml')
+      connect_to_database
       require 'cloud_crowd/schema.rb'
     end
     
@@ -104,6 +107,10 @@ module CloudCrowd
 
     def show_worker_status
       puts `ruby #{WORKER_RUNNER} status`
+    end
+    
+    def connect_to_database
+      CloudCrowd.configure_database(@options[:db_config] || 'database.yml')
     end
     
     def config_not_found

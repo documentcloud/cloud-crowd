@@ -45,7 +45,7 @@ class WorkUnit < ActiveRecord::Base
   end
   
   # The JSON representation of a WorkUnit contains common elements of its job.
-  def to_json(opts={})
+  def to_json
     {
       'id'        => self.id,
       'job_id'    => self.job_id,

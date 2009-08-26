@@ -3,4 +3,4 @@
 :username: root
 :password:
 :socket:   /tmp/mysql.sock
-:database: cloud_crowd
+:database: cloud_crowd_test

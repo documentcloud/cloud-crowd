@@ -101,10 +101,14 @@ class Job < ActiveRecord::Base
     CloudCrowd.display_status(self.status)
   end
   
+  def work_units_remaining
+    self.work_units.incomplete.count
+  end
+  
   # A JSON representation of this job includes the statuses of its component
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
-    atts = {'id' => self.id, 'status' => self.display_status, 'remaining' => self.work_units.incomplete.count}
+    atts = {'id' => self.id, 'status' => self.display_status, 'work_units_remaining' => self.work_units_remaining}
     atts.merge!({'output' => JSON.parse(self.outputs)}) if self.outputs
     atts.merge!({'time' => self.time}) if self.time
     atts.to_json

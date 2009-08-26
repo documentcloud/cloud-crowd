@@ -1,11 +1,12 @@
 require 'test_helper'
 
-class JobTest < ActiveSupport::TestCase
+class JobTest < Test::Unit::TestCase
 
   context "A CloudCrowd Job" do
         
     setup do
       @job = Job.make
+      @job.queue_for_daemons(JSON.parse(@job.inputs))
       @unit = @job.work_units.first
     end
     
