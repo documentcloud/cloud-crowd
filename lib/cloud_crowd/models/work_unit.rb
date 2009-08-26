@@ -18,6 +18,7 @@ class WorkUnit < ActiveRecord::Base
   def finish(output, time_taken)
     update_attributes({
       :status   => CloudCrowd::SUCCEEDED,
+      :taken    => false,
       :attempts => self.attempts + 1,
       :output   => output,
       :time     => time_taken
@@ -30,6 +31,7 @@ class WorkUnit < ActiveRecord::Base
     return try_again if tries < CloudCrowd.config[:work_unit_retries]
     update_attributes({
       :status   => CloudCrowd::FAILED,
+      :taken    => false,
       :attempts => tries,
       :output   => output,
       :time     => time_taken
