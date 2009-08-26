@@ -56,8 +56,11 @@ OPTIONS:
       ensure_config
       require 'rubygems'
       rackup_path = File.expand_path('config.ru')
-      thin_opts = Gem.available?('thin') ? '-s thin' : ''
-      exec "rackup -E production -p #{@options[:port]} #{thin_opts} #{rackup_path}"
+      if Gem.available? 'thin'
+        exec "thin -e production -p #{@options[:port]} -R #{rackup_path} start"
+      else
+        exec "rackup -E production -p #{@options[:port]} #{rackup_path}"
+      end
     end
     
     # Load in the database schema to the database specified in 'database.yml'.

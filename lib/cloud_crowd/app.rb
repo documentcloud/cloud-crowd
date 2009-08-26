@@ -7,17 +7,6 @@ module CloudCrowd
     
     helpers CloudCrowd::Helpers
     
-    not_found do
-      status 404
-      "page not found"
-    end
-    
-    error do
-      @error = request.env['sinatra.error']
-      status 500
-      @error
-    end
-    
     post '/jobs' do
       Job.create_from_request(JSON.parse(params[:json])).to_json
     end
