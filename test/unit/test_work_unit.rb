@@ -17,7 +17,6 @@ class WorkUnitTest < Test::Unit::TestCase
     
     should "have JSON that includes job attributes" do
       job = Job.make
-      job.queue_for_daemons(JSON.parse(job.inputs))
       json = JSON.parse(job.work_units.first.to_json)
       assert json['job_id'] == job.id
       assert json['action'] == job.action

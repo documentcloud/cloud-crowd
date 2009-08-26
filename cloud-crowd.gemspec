@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'thoughtbot-shoulda',  ['>= 2.10.2']
     s.add_development_dependency 'notahat-machinist',   ['>= 1.0.3']
     s.add_development_dependency 'rack-test',           ['>= 0.4.1']
+    s.add_development_dependency 'mocha',               ['>= 0.9.7']
   end
   
   s.files = Dir['./**/*.*']

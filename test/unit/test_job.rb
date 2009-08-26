@@ -6,13 +6,14 @@ class JobTest < Test::Unit::TestCase
         
     setup do
       @job = Job.make
-      @job.queue_for_daemons(JSON.parse(@job.inputs))
       @unit = @job.work_units.first
     end
     
     subject { @job }
     
     should_have_many :work_units
+    
+    should_validate_presence_of :status, :inputs, :action, :options
     
     should "create all of its work units as soon as the job is created" do
       assert @job.work_units.count >= 1
@@ -25,7 +26,31 @@ class JobTest < Test::Unit::TestCase
       @unit.update_attributes(:status => CloudCrowd::SUCCEEDED)
       assert @job.reload.all_work_units_complete?
     end
-        
+    
+    should "be able to create a job from a JSON request" do
+      job = Job.create_from_request(JSON.parse(<<-EOS
+      { "inputs"       : ["one", "two", "three"],
+        "action"       : "graphics_magick",
+        "owner_email"  : "bob@example.com",
+        "callback_url" : "http://example.com/callback" }
+      EOS
+      ))
+      assert job.work_units.count == 3
+      assert job.action == 'graphics_magick'
+      assert job.action_class == GraphicsMagick
+      assert job.callback_url == "http://example.com/callback"
+    end
+    
+    should "create jobs with a SPLITTING status for actions that have a split method defined" do
+      job = Job.create_from_request({'inputs' => ['1'], 'action' => 'pdf_to_images'})
+      assert job.splitting?
+    end
+    
+    should "fire a callback when a job has finished, successfully or not" do
+      Job.any_instance.expects(:fire_callback)
+      @job.work_units.first.finish('output', 10)
+    end
+            
   end
   
 end

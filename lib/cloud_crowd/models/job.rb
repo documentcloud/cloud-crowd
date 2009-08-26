@@ -12,15 +12,17 @@ class Job < ActiveRecord::Base
   # Create a Job from an incoming JSON or XML request, and add it to the queue.
   # TODO: Add XML support.
   def self.create_from_request(h)
-    job = self.create(
+    self.create(
       :inputs       => h['inputs'].to_json,
       :action       => h['action'],
       :options      => (h['options'] || {}).to_json,
       :owner_email  => h['owner_email'],
       :callback_url => h['callback_url']
     )
-    job.queue_for_daemons(JSON.parse(job.inputs))
-    return job
+  end
+  
+  def after_create
+    self.queue_for_workers(JSON.parse(self.inputs))
   end
   
   def before_validation_on_create
@@ -41,10 +43,10 @@ class Job < ActiveRecord::Base
     case self.status
     when CloudCrowd::PROCESSING
       save
-      queue_for_daemons(outs.map {|o| JSON.parse(o) }.flatten)
+      queue_for_workers(outs.map {|o| JSON.parse(o) }.flatten)
     when CloudCrowd::MERGING
       save
-      queue_for_daemons(outs.to_json)
+      queue_for_workers(outs.to_json)
     else
       self.outputs = outs.to_json
       self.time = Time.now - self.created_at
@@ -113,9 +115,10 @@ class Job < ActiveRecord::Base
     atts.merge!({'time' => self.time}) if self.time
     atts.to_json
   end
-    
-  # When starting a new job, split up our inputs into WorkUnits, and queue them.
-  def queue_for_daemons(input)
+      
+  # When starting a new job, or moving to a new stage, split up the inputs 
+  # into WorkUnits, and queue them.
+  def queue_for_workers(input)
     [input].flatten.each do |wu_input|
       WorkUnit.create(:job => self, :input => wu_input, :status => self.status)
     end
