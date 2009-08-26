@@ -5,6 +5,7 @@ TODO:
 	* Finish fleshing out the crowd command.
 	* Basic integration tests.
 	* Documentation.
+	# Benchmarking mode -- benchmark every single aspect of a job and report it.
 
 DONE:
 	* Right now actions just process. Think about map / process / reduce.

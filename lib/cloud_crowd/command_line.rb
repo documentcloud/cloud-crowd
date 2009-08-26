@@ -40,11 +40,8 @@ module CloudCrowd
     def run_server
       require 'rubygems'
       rackup_path = File.expand_path('config.ru')
-      if Gem.available? 'thin'
-        exec "thin start -R #{rackup_path} -e production -p #{@options[:port]}"
-      else
-        
-      end
+      thin_opts = Gem.available?('thin') ? '-s thin' : ''
+      exec "rackup -E production -p #{@options[:port]} #{thin_opts} #{rackup_path}"
     end
     
     def run_load_schema
@@ -73,7 +70,7 @@ module CloudCrowd
       when 'restart'  then stop_workers && start_workers
       when 'run'      then run_worker
       when 'status'   then show_worker_status
-      else                 worker_usage
+      else                 usage
       end
     end
     
@@ -116,18 +113,30 @@ module CloudCrowd
         :db_config => 'database.yml',
         :port      => 9173,
       }
-      opts = OptionParser.new do |opts|
-        opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'Number of Worker Processes') do |num|
+      @option_parser = OptionParser.new do |opts|
+        opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'number of worker processes') do |num|
           @options[:num_workers] = num
         end
-        opts.on('-d', '--database-config PATH', 'Database Configuration Path') do |conf_path|
+        opts.on('-d', '--database-config PATH', 'path to database.yml') do |conf_path|
           @options[:db_config] = conf_path
         end
-        opts.on('-p', '--port PORT', 'Central Server Port Number') do |port_num|
+        opts.on('-p', '--port PORT', 'central server port number') do |port_num|
           @options[:port] = port_num
         end
       end
-      opts.parse(ARGV)
+      @option_parser.banner = <<-EOS
+Usage: crowd COMMAND OPTIONS
+
+COMMANDS:
+    install       Install the CloudCrowd configuration files
+    server        Start up the central server (requires a database)
+    workers       Control worker daemons, use: (start | stop | restart | status | run)
+    console       Launch a CloudCrowd console, connected to the central database
+    load_schema   Load the schema into the database specified by database.yml
+
+OPTIONS:
+      EOS
+      @option_parser.parse!(ARGV)
     end
     
     # Load in the CloudCrowd module code, dependencies, lib files and models.
@@ -151,11 +160,7 @@ module CloudCrowd
     end
     
     def usage
-      puts 'Usage: lorem ipsum dolor sit amet...'
-    end
-    
-    def worker_usage
-      puts 'Use the workers like: lorem ipsum dolor sit amet...'
+      puts @option_parser
     end
     
   end
