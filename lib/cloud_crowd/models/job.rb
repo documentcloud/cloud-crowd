@@ -26,7 +26,7 @@ class Job < ActiveRecord::Base
   end
   
   def before_validation_on_create
-    self.status = self.splitable? ? CloudCrowd::SPLITTING : CloudCrowd::PROCESSING
+    self.status = self.splittable? ? CloudCrowd::SPLITTING : CloudCrowd::PROCESSING
   end
   
   # After work units are marked successful, we check to see if all of them have
@@ -81,7 +81,7 @@ class Job < ActiveRecord::Base
     self.work_units.failed.count > 0
   end
   
-  def splitable?
+  def splittable?
     self.action_class.new.respond_to? :split
   end
   
