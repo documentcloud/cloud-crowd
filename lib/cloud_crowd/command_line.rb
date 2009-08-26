@@ -44,21 +44,29 @@ module CloudCrowd
       exec "rackup -E production -p #{@options[:port]} #{thin_opts} #{rackup_path}"
     end
     
+    # Load in the database schema to the database specified in 'database.yml'.
     def run_load_schema
       load_code
       connect_to_database
       require 'cloud_crowd/schema.rb'
     end
     
+    # Install the required CloudCrowd configuration files into the specified
+    # directory, or the current one.
     def run_install
       require 'fileutils'
-      install_path = ARGV.shift
+      install_path = ARGV.shift || '.'
       cc_root = File.dirname(__FILE__) + '/../..'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
-      FileUtils.cp "#{cc_root}/config/config.example.ru", "#{install_path}/config.ru"
-      FileUtils.cp "#{cc_root}/config/config.example.yml", "#{install_path}/config.yml"
-      FileUtils.cp "#{cc_root}/config/database.example.yml", "#{install_path}/database.yml"
-      FileUtils.cp_r "#{cc_root}/actions", "#{install_path}/actions"
+      install_file "#{cc_root}/config/config.example.yml", "#{install_path}/config.yml"
+      install_file "#{cc_root}/config/config.example.ru", "#{install_path}/config.ru"
+      install_file "#{cc_root}/config/database.example.yml", "#{install_path}/database.yml"
+      install_file "#{cc_root}/actions", "#{install_path}/actions", true
+    end
+    
+    def install_file(source, dest, is_dir=false)
+      is_dir ? FileUtils.cp_r(source, dest) : FileUtils.cp(source, dest)
+      puts "installed #{dest}"
     end
     
     def run_workers_command
@@ -128,7 +136,7 @@ module CloudCrowd
 Usage: crowd COMMAND OPTIONS
 
 COMMANDS:
-    install       Install the CloudCrowd configuration files
+    install       Install the CloudCrowd configuration files to the specified directory
     server        Start up the central server (requires a database)
     workers       Control worker daemons, use: (start | stop | restart | status | run)
     console       Launch a CloudCrowd console, connected to the central database
