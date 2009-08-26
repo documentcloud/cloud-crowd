@@ -19,7 +19,7 @@ FileUtils.mkdir('log') unless File.exists?('log')
 # Daemon/Worker Dependencies.
 require "#{File.dirname(__FILE__)}/../cloud-crowd"
 
-Daemons.run("#{CloudCrowd::App.root}/lib/daemons/daemon.rb", {
+Daemons.run("#{CloudCrowd::App.root}/lib/cloud_crowd/daemon.rb", {
   :app_name   => "cloud_crowd_worker",
   :dir_mode   => :normal,
   :dir        => 'log',
