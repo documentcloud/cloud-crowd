@@ -1,5 +1,3 @@
-# TODO: Before pushing to GitHub replace 'files' with a complete file list.
-
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
   s.version   = '0.0.1'
