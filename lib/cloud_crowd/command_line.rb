@@ -6,8 +6,11 @@ module CloudCrowd
     # Configuration files required for the `crowd` command to function.
     CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
     
+    # Reference the absolute path to the root, because we're about to chdir.
+    CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
+    
     # Path to the Daemons gem script which launches workers.
-    WORKER_RUNNER = File.expand_path("#{File.dirname(__FILE__)}/runner.rb")
+    WORKER_RUNNER = File.expand_path("#{CC_ROOT}/lib/cloud_crowd/runner.rb")
     
     # Command-line banner for the usage message.
     BANNER = <<-EOS
@@ -75,12 +78,11 @@ OPTIONS:
     def run_install
       require 'fileutils'
       install_path = ARGV.shift || '.'
-      cc_root = File.dirname(__FILE__) + '/../..'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
-      install_file "#{cc_root}/config/config.example.yml", "#{install_path}/config.yml"
-      install_file "#{cc_root}/config/config.example.ru", "#{install_path}/config.ru"
-      install_file "#{cc_root}/config/database.example.yml", "#{install_path}/database.yml"
-      install_file "#{cc_root}/actions", "#{install_path}/actions", true
+      install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
+      install_file "#{CC_ROOT}/config/config.example.ru", "#{install_path}/config.ru"
+      install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
+      install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     
     # Manipulate worker daemons -- handles all commands that the Daemons gem
@@ -135,8 +137,7 @@ OPTIONS:
     # the CLOUD_CROWD_CONFIG environment variable. Exit if they're not found.
     def ensure_config
       return if @config_found
-      config_dir = ENV['CLOUD_CROWD_CONFIG'] || '.'
-      Dir.chdir config_dir
+      Dir.chdir @options[:config_path]
       CONFIG_FILES.all? {|f| File.exists? f } ? @config_dir = true : config_not_found
     end
     
@@ -144,15 +145,19 @@ OPTIONS:
     # TODO: Think about parsing options per sub-command separately.
     def parse_options
       @options = {
-        :db_config => 'database.yml',
-        :port      => 9173,
+        :db_config    => 'database.yml',
+        :port         => 9173,
+        :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.',
       }
       @option_parser = OptionParser.new do |opts|
-        opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'number of worker processes') do |num|
-          @options[:num_workers] = num
+        opts.on('-c', '--config PATH', 'path to configuration directory') do |conf_path|
+          @options[:config_path] = conf_path
         end
         opts.on('-d', '--database-config PATH', 'path to database.yml') do |conf_path|
           @options[:db_config] = conf_path
+        end
+        opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'number of worker processes') do |num|
+          @options[:num_workers] = num
         end
         opts.on('-p', '--port PORT', 'central server port number') do |port_num|
           @options[:port] = port_num
@@ -172,7 +177,7 @@ OPTIONS:
     def load_code
       ensure_config
       require 'rubygems'
-      require File.dirname(__FILE__) + '/../cloud-crowd'
+      require "#{CC_ROOT}/lib/cloud-crowd"
       CloudCrowd.configure('config.yml')
     end
     
@@ -184,7 +189,7 @@ OPTIONS:
     
     # Exit with an explanation if the configuration files couldn't be found.
     def config_not_found
-      puts "`crowd` can't find the CloudCrowd configuration directory. Please either run `crowd` from inside of the configuration directory, or add a CLOUD_CROWD_CONFIG variable to your environment."
+      puts "`crowd` can't find the CloudCrowd configuration directory. Please either run `crowd` from inside of the configuration directory, or use `crowd -c path/to/config`"
       exit(1)
     end
     

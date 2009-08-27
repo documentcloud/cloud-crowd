@@ -5,7 +5,7 @@ TODO:
 	* Documentation. (document inside of config.yml, too)
 	* Pare down the code that the workers are loading to the absolute minimum.
 	* Unit tests for lib/
-	* Think about having completing a work unit respond with another one,
+	* Think about having the completion of a work unit respond with another one,
 	  instead of having to make a second request.
 
 DONE:
