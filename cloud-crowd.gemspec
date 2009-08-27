@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.executables   = ['crowd']
   
-  s.post_install_message = "Run `crowd help` for information on using CloudCrowd."
+  # s.post_install_message = "Run `crowd --help` for information on using CloudCrowd."
   s.rubyforge_project    = 'cloud-crowd'
   s.has_rdoc             = true
   
@@ -51,6 +51,7 @@ lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
 lib/cloud_crowd/core_ext.rb
 lib/cloud_crowd/daemon.rb
+lib/cloud_crowd/helpers/authorization.rb
 lib/cloud_crowd/helpers/resources.rb
 lib/cloud_crowd/helpers/urls.rb
 lib/cloud_crowd/helpers.rb
@@ -62,8 +63,9 @@ lib/cloud_crowd/schema.rb
 lib/cloud_crowd/worker.rb
 test/acceptance/test_failing_work_units.rb
 test/blueprints.rb
-test/config/test_config.yml
-test/config/test_database.yml
+test/config/config.yml
+test/config/database.yml
+test/config/actions/failure_testing.rb
 test/test_helper.rb
 test/unit/test_job.rb
 test/unit/test_work_unit.rb

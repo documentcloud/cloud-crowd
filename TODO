@@ -3,8 +3,7 @@ TODO:
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
 	* Documentation. (document inside of config.yml, too)
-	* Pare down the code that the workers are loading to the absolute minimum.
-	* Unit tests for lib/
+	* Unit tests for lib.
 	* Think about having the completion of a work unit respond with another one,
 	  instead of having to make a second request.
 
@@ -15,4 +14,6 @@ DONE:
 	* Security. HTTP Basic Auth via config.yml,
 	* Security. S3 authenticated URLs.
 	* Benchmarking mode -- benchmark every single aspect of a job and report it.
+	* Pare down the code that the workers are loading to the absolute minimum.
+	
 
