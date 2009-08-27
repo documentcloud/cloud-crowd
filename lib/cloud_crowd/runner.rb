@@ -4,11 +4,14 @@
 
 # CloudCrowd::App.root = File.expand_path(File.dirname(__FILE__) + '/../..') unless defined?(CloudCrowd::App.root)
 
-# Standard Lib and Gems
+# Standard Libs
 require 'fileutils'
+require 'benchmark'
+require 'socket'
+
+# Gems
 require 'rubygems'
 require 'daemons'
-require 'socket'
 require 'yaml'
 require 'json'
 require 'rest_client'

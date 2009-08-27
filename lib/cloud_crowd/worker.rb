@@ -65,7 +65,7 @@ module CloudCrowd
     end
     
     # Executes the current work unit, catching all exceptions as failures.
-    def run
+    def run_work_unit
       begin
         @action = CloudCrowd.actions(@action_name).new
         @action.configure(@status, @input, @options, @store)
@@ -81,6 +81,13 @@ module CloudCrowd
       ensure
         clear_work_unit
       end
+    end
+    
+    # Wraps +run_work_unit+ to benchmark the execution time, if requested.
+    def run
+      return run_work_unit unless @options['benchmark']
+      status = CloudCrowd.display_status(@status)
+      log("ran #{@action_name}/#{status} in " + Benchmark.measure { run_work_unit }.to_s)
     end
     
     
