@@ -90,7 +90,7 @@ module CloudCrowd
     # for the central server.
     def central_server_resource
       params = [CENTRAL_URL]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_authentication]
+      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
       RestClient::Resource.new(*params)
     end
     

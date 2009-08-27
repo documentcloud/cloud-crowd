@@ -21,7 +21,7 @@ module CloudCrowd
       end
       
       def authorize(login, password)
-        return true unless CloudCrowd.config[:use_authentication]
+        return true unless CloudCrowd.config[:use_http_authentication]
         return CloudCrowd.config[:login] == login &&
                CloudCrowd.config[:password] == password
       end

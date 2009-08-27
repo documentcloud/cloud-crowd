@@ -10,7 +10,7 @@ module CloudCrowd
     helpers CloudCrowd::Helpers
     
     before do
-      login_required if CloudCrowd.config[:use_authentication]
+      login_required if CloudCrowd.config[:use_http_authentication]
     end
     
     # Start a new job. Accepts a JSON representation of the job-to-be.

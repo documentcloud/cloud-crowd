@@ -11,8 +11,10 @@ class GraphicsMagick < CloudCrowd::Action
   
   # Download the initial image, and run each of the specified GraphicsMagick
   # commands against it, returning the aggregate output.
-  def run
-    return options['steps'].map {|step| run_step(step) }
+  def process
+    result = {}
+    options['steps'].each {|step| result[step['name']] = run_step(step) }
+    result.to_json
   end
   
   # Run an individual step (single GraphicsMagick command) in a shell-injection
@@ -20,11 +22,10 @@ class GraphicsMagick < CloudCrowd::Action
   # URL as the result.
   # TODO: +system+ wasn't working, figure out some other way to escape.
   def run_step(step)
-    name, cmd, opts, ext = step['name'], step['command'], step['options'], step['extension']
+    cmd, opts = step['command'], step['options']
     in_path, out_path = input_path_for(step), output_path_for(step)
     `gm #{cmd} #{opts} #{in_path} #{out_path}`
-    public_url = save(out_path)
-    {'name' => name, 'url' => public_url}.to_json
+    save(out_path)    
   end
   
   # Where should the starting image be located?

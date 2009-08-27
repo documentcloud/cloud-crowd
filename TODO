@@ -1,5 +1,4 @@
 TODO:
-	* Security. S3 authenticated URLs.
 	* Monitor UI -- see queue of jobs / work units.
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
@@ -13,3 +12,4 @@ DONE:
 	* Basic unit tests.
 	* Finish fleshing out the crowd command.
 	* Security. HTTP Basic Auth via config.yml,
+	* Security. S3 authenticated URLs.

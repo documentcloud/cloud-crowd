@@ -7,6 +7,7 @@ module CloudCrowd
     include FileUtils
     
     def initialize
+      @use_auth = CloudCrowd.config[:use_s3_authentication]
       mkdir_p temp_storage_path unless File.exists? temp_storage_path
     end
     
@@ -15,10 +16,12 @@ module CloudCrowd
       "#{Dir.tmpdir}/cloud_crowd_tmp"
     end
     
-    # Copy a finished file from our local storage to S3.
+    # Copy a finished file from our local storage to S3. Save it publicly if
+    # we're not configured to use S3 authentication.
     def save(local_path, save_path)
       ensure_s3_connection
-      @bucket.put(save_path, File.open(local_path), {}, 'public-read')
+      permission = @use_auth ? 'private' : 'public-read'
+      @bucket.put(save_path, File.open(local_path), {}, permission)
     end
     
     # Cleanup all S3 files for a job that's been completed and retrieved.
@@ -27,9 +30,11 @@ module CloudCrowd
       @bucket.delete_folder("#{job.action}/job_#{job.id}")
     end
     
-    # Return the S3 public URL for a finshed file.
+    # Return the S3 public URL for a finshed file. Authenticated links expire
+    # after one day by default.
     def url(save_path)
-      @bucket.key(save_path).public_link
+      @use_auth ? @s3.interface.get_link(@bucket, save_path) :
+                  @bucket.key(save_path).public_link
     end
     
     private

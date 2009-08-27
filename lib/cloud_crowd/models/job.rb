@@ -113,7 +113,7 @@ class Job < ActiveRecord::Base
   # WorkUnits, as well as any completed outputs.
   def to_json(opts={})
     atts = {'id' => self.id, 'status' => self.display_status, 'work_units_remaining' => self.work_units_remaining}
-    atts.merge!({'output' => JSON.parse(self.outputs)}) if self.outputs
+    atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
     atts.merge!({'time' => self.time}) if self.time
     atts.to_json
   end

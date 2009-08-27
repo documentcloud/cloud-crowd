@@ -6,10 +6,11 @@
 :work_unit_retries:       3
 
 :central_server:          http://localhost:9173
-:use_authentication:      no
+:use_http_authentication: no
 :login:                   [your login name]
 :password:                [your password]
 
+:use_s3_authentication:   no
 :s3_bucket:               [your CloudCrowd bucket]
 :aws_access_key:          [your AWS access key]
 :aws_secret_key:          [your AWS secret access key]
