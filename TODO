@@ -1,13 +1,15 @@
 TODO:
-	* Security. HTTP Basic Auth via config.yml, S3 authenticated URLs.
+	* Security. S3 authenticated URLs.
 	* Monitor UI -- see queue of jobs / work units.
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
 	* Documentation. (document inside of config.yml, too)
-	# Benchmarking mode -- benchmark every single aspect of a job and report it.
-	# Pare down the code that the workers are loading to the absolute minimum.
+	* Benchmarking mode -- benchmark every single aspect of a job and report it.
+	* Pare down the code that the workers are loading to the absolute minimum.
+	* Unit tests for lib/
 
 DONE:
 	* Right now actions just process. Think about map / process / reduce.
 	* Basic unit tests.
 	* Finish fleshing out the crowd command.
+	* Security. HTTP Basic Auth via config.yml,
