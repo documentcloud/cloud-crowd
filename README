@@ -51,7 +51,7 @@
 		>> mate /etc/cloud-crowd/config.yml
 		>> mate /etc/cloud-cloud/database.yml
 		
-		# Write your actions, and install them into your config/actions directory.
+		# Write your actions, and install them into the 'actions' subdirectory.
 		# CloudCrowd comes with some default actions as an example.
 		
 		# To spin up the central server (make sure that you include its location
