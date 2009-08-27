@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date      = '2009-08-23'
 
   s.homepage    = "http://documentcloud.org" # wiki page on github?  
-  s.summary     = "Better living through MapReduce"
+  s.summary     = "Better living through Map --> Ruby --> Reduce"
   s.description = <<-EOS
     The crowd, suddenly there where there was nothing before, is a mysterious and
     universal phenomenon. A few people may have been standing together -- five, ten
