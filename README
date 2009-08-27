@@ -63,7 +63,7 @@
 		
 		>> thin -R config.ru --servers 3 -e production start
 		
-		# Any server that supports rack should work with the rackup file.
+		# Any server that supports Rack should work with the rackup file.
 		
 		# Then, to spin up 10 workers:
 		
