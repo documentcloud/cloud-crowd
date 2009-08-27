@@ -11,15 +11,17 @@ module CloudCrowd
     # connection to S3. This AssetStore gets passed into each action, for use
     # as it is run.
     def initialize
-      @id = $$
+      @id       = $$
       @hostname = Socket.gethostname
-      @store = CloudCrowd::AssetStore.new
+      @store    = CloudCrowd::AssetStore.new
+      @server   = central_server_resource
+      log 'started'
     end
     
     # Ask the central server for a new WorkUnit.
     def fetch_work_unit
       keep_trying_to "fetch a new work unit" do
-        unit_json = RestClient.get("#{CENTRAL_URL}/work")
+        unit_json = @server['/work'].get
         return unless unit_json # No content means no work for us.
         @start_time = Time.now
         parse_work_unit unit_json
@@ -31,7 +33,7 @@ module CloudCrowd
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
         data = completion_params.merge({:status => 'succeeded', :output => result})
-        RestClient.put("#{CENTRAL_URL}/work/#{data[:id]}", data)
+        @server["/work/#{data[:id]}"].put(data)
         log "finished #{@action_name} in #{data[:time]} seconds"
       end
     end
@@ -40,7 +42,7 @@ module CloudCrowd
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
         data = completion_params.merge({:status => 'failed', :output => exception.message})
-        RestClient.put("#{CENTRAL_URL}/work/#{data[:id]}", data)
+        @server["/work/#{data[:id]}"].put(data)
         log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
     end
@@ -83,6 +85,14 @@ module CloudCrowd
     
     
     private
+    
+    # Keep an authenticated (if configured to enable authentication) resource 
+    # for the central server.
+    def central_server_resource
+      params = [CENTRAL_URL]
+      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_authentication]
+      RestClient::Resource.new(*params)
+    end
     
     # Common parameters to send back to central, regardless of success or failure.
     def completion_params

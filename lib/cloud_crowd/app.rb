@@ -5,7 +5,13 @@ module CloudCrowd
     # static serves files from /public, methodoverride allows the _method param.
     enable :static, :methodoverride
     
+    set :authorization_realm, "CloudCrowd"
+    
     helpers CloudCrowd::Helpers
+    
+    before do
+      login_required if CloudCrowd.config[:use_authentication]
+    end
     
     # Start a new job. Accepts a JSON representation of the job-to-be.
     post '/jobs' do
@@ -47,6 +53,12 @@ module CloudCrowd
       else             return error(500, "Completing a work unit must specify status.")
       end
       return status(204) && ''
+    end
+    
+    # To monitor the central server with Monit, God, Nagios, or another 
+    # monitoring tool, you can hit /heartbeat to check.
+    get '/heartbeat' do
+      "buh-bump"
     end
     
   end
