@@ -19,7 +19,7 @@ module CloudCrowd
   end
   
   # Keep the version in sync with the gemspec.
-  VERSION     = '0.0.1'
+  VERSION     = '0.0.2'
     
   # A Job is processing if its WorkUnits in the queue to be handled by workers.
   PROCESSING  = 1
