@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date      = '2009-08-23'
 
   s.homepage    = "http://documentcloud.org" # wiki page on github?  
-  s.summary     = "MapReduce your files in style and comfort."
+  s.summary     = "Better living through MapReduce"
   s.description = <<-EOS
     The crowd, suddenly there where there was nothing before, is a mysterious and
     universal phenomenon. A few people may have been standing together -- five, ten
@@ -38,5 +38,34 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'mocha',               ['>= 0.9.7']
   end
   
-  s.files = Dir['./**/*.*']
+  s.files = %w(
+actions/graphics_magick.rb
+cloud-crowd.gemspec
+config/config.example.ru
+config/config.example.yml
+config/database.example.yml
+lib/cloud-crowd.rb
+lib/cloud_crowd/action.rb
+lib/cloud_crowd/app.rb
+lib/cloud_crowd/asset_store.rb
+lib/cloud_crowd/command_line.rb
+lib/cloud_crowd/core_ext.rb
+lib/cloud_crowd/daemon.rb
+lib/cloud_crowd/helpers/resources.rb
+lib/cloud_crowd/helpers/urls.rb
+lib/cloud_crowd/helpers.rb
+lib/cloud_crowd/models/job.rb
+lib/cloud_crowd/models/work_unit.rb
+lib/cloud_crowd/models.rb
+lib/cloud_crowd/runner.rb
+lib/cloud_crowd/schema.rb
+lib/cloud_crowd/worker.rb
+test/acceptance/test_failing_work_units.rb
+test/blueprints.rb
+test/config/test_config.yml
+test/config/test_database.yml
+test/test_helper.rb
+test/unit/test_job.rb
+test/unit/test_work_unit.rb
+)
 end
