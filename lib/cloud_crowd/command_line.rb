@@ -184,6 +184,7 @@ OPTIONS:
     # Establish a connection to the central server's database. Not all commands
     # require this.
     def connect_to_database
+      require 'cloud_crowd/models'
       CloudCrowd.configure_database(@options[:db_config])
     end
     

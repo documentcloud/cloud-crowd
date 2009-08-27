@@ -1,22 +1,18 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
-# Standard Library:
-require 'tmpdir'
-require 'erb'
-
-# Gems:
-require 'sinatra'
-require 'activerecord'
+# Common Gems:
 require 'json'
-require 'daemons'
 require 'rest_client'
 require 'right_aws'
 
+# Common CloudCrowd libs:
+require 'cloud_crowd/core_ext'
+require 'cloud_crowd/action'
+
 module CloudCrowd
   
-  class App < Sinatra::Default
-    set :root, File.expand_path(File.dirname(__FILE__) + '/..')
-  end
+  # Root directory of the CloudCrowd gem.
+  ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')
   
   # Keep the version in sync with the gemspec.
   VERSION     = '0.0.2'
@@ -56,6 +52,7 @@ module CloudCrowd
     
     # Configure CloudCrowd by passing in the path to +config.yml+.
     def configure(config_path)
+      @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load_file(config_path)
     end
 
@@ -77,20 +74,16 @@ module CloudCrowd
     def actions(name)
       action_class = name.camelize
       begin
+        raise NameError, "can't find the #{action_class} Action" unless Module.constants.include?(action_class)
         Module.const_get(action_class)
       rescue NameError => e
-        require "#{CloudCrowd::App.root}/actions/#{name}"
-        retry
+        user_action     = "#{@config_path}/actions/#{name}"
+        default_action  = "#{CloudCrowd::ROOT}/actions/#{name}"
+        require user_action and retry    if File.exists? "#{user_action}.rb"
+        require default_action and retry if File.exists? "#{default_action}.rb"
+        raise e
       end
     end
   end
   
 end
-
-# CloudCrowd:
-require 'cloud_crowd/core_ext'
-require 'cloud_crowd/models'
-require 'cloud_crowd/asset_store'
-require 'cloud_crowd/action'
-require 'cloud_crowd/helpers'
-require 'cloud_crowd/app'

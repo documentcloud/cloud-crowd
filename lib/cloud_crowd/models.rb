@@ -1,3 +1,5 @@
+require 'activerecord'
+
 module CloudCrowd
   module ModelStatus
     

@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 module CloudCrowd
 
   # The CloudCrowd::AssetStore should provide a common API for stashing and retrieving
