@@ -3,7 +3,7 @@ TODO:
 	* Monitor UI -- see queue of jobs / work units.
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
-	* Documentation.
+	* Documentation. (document inside of config.yml, too)
 	# Benchmarking mode -- benchmark every single aspect of a job and report it.
 
 DONE:
