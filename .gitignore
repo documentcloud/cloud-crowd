@@ -1,3 +1,4 @@
+.autotest
 log
 tmp
 db/*.sqlite3
