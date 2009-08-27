@@ -1,30 +1,64 @@
+                                                                               
+           _  _                                                                
+          ( `   )_                                                             
+         (    )    `)                                                          
+       (_   (_ .  _) _)                                                        
+                                      _                                        
+                                     (  )                                      
+      _ .                         ( `  ) . )                                   
+    (  _ )_                      (_, _(  ,_)_)                                 
+  (_  _(_ ,)                                                                   
+                                                                               
+           _  _               ___ _             _  ___                   _     
+          ( `   )_           / __| |___ _  _ __| |/ __|_ _ _____ __ ____| |    
+         (    )    `)       | (__| / _ \ || / _` | (__| '_/ _ \ V  V / _` |    
+       (_   (_ .  _) _)      \___|_\___/\_,_\__,_|\___|_| \___/\_/\_/\__,_|    
+                                                                               
+                                                     _                         
+                                                    (  )                       
+                  _, _ .                         ( `  ) . )                    
+                 ( (  _ )_                      (_, _(  ,_)_)                  
+               (_(_  _(_ ,)                                                    
+                                                                               
+                                                                               
+                                                                               
+	~ CloudCrowd ~
 
-           _  _
-          ( `   )_
-         (    )    `)
-       (_   (_ .  _) _)
-                                      _
-                                     (  )
-      _ .                         ( `  ) . )
-    (  _ )_                      (_, _(  ,_)_)
-  (_  _(_ ,)
-                                                         
-           _  _               ___ _             _  ___                   _                             \ _ /
-          ( `   )_           / __| |___ _  _ __| |/ __|_ _ _____ __ ____| |                          -= (_) =-
-         (    )    `)       | (__| / _ \ || / _` | (__| '_/ _ \ V  V / _` |                            /   \
-       (_   (_ .  _) _)      \___|_\___/\_,_\__,_|\___|_| \___/\_/\_/\__,_|                              |
+		* A batch-processing system, map-reduce style
+		* Write your scripts in Ruby
+		* Built for Amazon EC2 and S3
+		* split -> process -> merge
+		* As easy as `gem install cloud-crowd`
+	
+	
+	~ Getting started ~
+	
+		# Install the gem (documentcloud-cloud-crowd until the first official release).
+		>> sudo gem install cloud-crowd
+		
+		# Install the CloudCrowd configuration files to a location of your choosing.
+		>> crowd install /etc/cloud-crowd
+		# Now, you can use the full complement of `crowd` commands from inside of
+		# this configuration directory. To see the available commands:
+		>> crowd --help
+		
+		# Edit the configuration files to your satisfaction, and add AWS credentials.
+		>> mate /etc/cloud-crowd/config.yml
+		>> mate /etc/cloud-cloud/database.yml
+		
+		# Write your actions, and install them into your config/actions directory.
+		# CloudCrowd comes with some default actions as an example.
+		
+		# To spin up the central server (make sure that you include its location
+		# in config.yml), either:
+		>> crowd server
+		# or:
+		>> thin -R config.ru --servers 3 -e production start
+		# Any server that supports rack should work with the rackup file.
+		
+		# Then, to spin up 10 workers:
+		>> crowd workers start -n 10
+		# To spin up workers remotely, install the 'cloud-crowd' gem, and copy over
+		# your configuration directory.
 
-                                                     _
-                                                    (  )
-                  _, _ .                         ( `  ) . )
-                 ( (  _ )_                      (_, _(  ,_)_)
-               (_(_  _(_ ,)
-
-
-
-CloudCrowd is:
-	* A batch-processing system, map-reduce style
-	* Write your scripts in Ruby
-	* Built for EC2 and S3
-	* split -> process -> merge
-	* As easy as `gem install cloud-crowd`
+	
