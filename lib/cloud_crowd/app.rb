@@ -1,8 +1,3 @@
-require 'erb'
-require 'sinatra'
-require 'cloud_crowd/models'
-require 'cloud_crowd/helpers'
-
 module CloudCrowd
   
   class App < Sinatra::Default
@@ -10,7 +5,7 @@ module CloudCrowd
     # static serves files from /public, methodoverride allows the _method param.
     enable :static, :methodoverride
     
-    set :root,                CloudCrowd::ROOT
+    set :root, CloudCrowd::ROOT
     set :authorization_realm, "CloudCrowd"
     
     helpers CloudCrowd::Helpers

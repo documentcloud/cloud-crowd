@@ -5,7 +5,7 @@ class JobTest < Test::Unit::TestCase
   context "A CloudCrowd Job" do
         
     setup do
-      @job = Job.make
+      @job = CloudCrowd::Job.make
       @unit = @job.work_units.first
     end
     
@@ -32,7 +32,7 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "be able to create a job from a JSON request" do
-      job = Job.create_from_request(JSON.parse(<<-EOS
+      job = CloudCrowd::Job.create_from_request(JSON.parse(<<-EOS
       { "inputs"       : ["one", "two", "three"],
         "action"       : "graphics_magick",
         "owner_email"  : "bob@example.com",
@@ -46,13 +46,13 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "create jobs with a SPLITTING status for actions that have a split method defined" do
-      job = Job.create_from_request({'inputs' => ['1'], 'action' => 'pdf_to_images'})
+      job = CloudCrowd::Job.create_from_request({'inputs' => ['1'], 'action' => 'pdf_to_images'})
       assert job.splittable?
       assert job.splitting?
     end
     
     should "fire a callback when a job has finished, successfully or not" do
-      Job.any_instance.expects(:fire_callback)
+      CloudCrowd::Job.any_instance.expects(:fire_callback)
       @job.work_units.first.finish('output', 10)
       assert @job.all_work_units_complete?
     end

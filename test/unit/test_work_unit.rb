@@ -5,7 +5,7 @@ class WorkUnitTest < Test::Unit::TestCase
   context "A WorkUnit" do
     
     setup do
-      @unit = WorkUnit.make
+      @unit = CloudCrowd::WorkUnit.make
       @job = @unit.job
     end
     
@@ -26,7 +26,7 @@ class WorkUnitTest < Test::Unit::TestCase
     end
     
     should "have JSON that includes job attributes" do
-      job = Job.make
+      job = CloudCrowd::Job.make
       unit_data = JSON.parse(job.work_units.first.to_json)
       assert unit_data['job_id'] == job.id
       assert unit_data['action'] == job.action

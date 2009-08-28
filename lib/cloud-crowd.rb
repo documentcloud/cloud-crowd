@@ -1,15 +1,39 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
-require 'json'
-require 'rest_client'
-require 'right_aws'
+require 'rubygems'
+gem 'activerecord'
+gem 'daemons'
+gem 'json'
+gem 'rest-client'
+gem 'right_aws'
+gem 'sinatra'
 
 # Common CloudCrowd libs:
 require 'cloud_crowd/core_ext'
-require 'cloud_crowd/action'
+
+# Autoloading for all the pieces which may or may not be needed:
+autoload :ActiveRecord, 'activerecord'
+autoload :Benchmark,    'benchmark'
+autoload :Daemons,      'daemons'
+autoload :ERB,          'erb'
+autoload :FileUtils,    'fileutils'
+autoload :JSON,         'json'
+autoload :RestClient,   'rest_client'
+autoload :RightAws,     'right_aws'
+autoload :Sinatra,      'sinatra'
+autoload :Socket,       'socket'
+autoload :YAML,         'yaml'
 
 module CloudCrowd
+  
+  # Autoload all the CloudCrowd classes which may not be required.
+  autoload :App,        'cloud_crowd/app'
+  autoload :Action,     'cloud_crowd/action'
+  autoload :AssetStore, 'cloud_crowd/asset_store'
+  autoload :Helpers,    'cloud_crowd/helpers'
+  autoload :Job,        'cloud_crowd/models'
+  autoload :WorkUnit,   'cloud_crowd/models'
   
   # Root directory of the CloudCrowd gem.
   ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')

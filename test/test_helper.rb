@@ -2,8 +2,6 @@ require 'rubygems'
 
 here = File.dirname(__FILE__)
 require File.expand_path(here + "/../lib/cloud-crowd")
-require 'cloud_crowd/app'
-
 CloudCrowd.configure(here + '/config/config.yml')
 CloudCrowd.configure_database(here + '/config/database.yml')
 
