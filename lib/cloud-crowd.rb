@@ -111,7 +111,7 @@ module CloudCrowd
         Module.const_get(action_class)
       rescue NameError => e
         user_action     = "#{@config_path}/actions/#{name}"
-        default_action  = "#{CloudCrowd::ROOT}/actions/#{name}"
+        default_action  = "#{ROOT}/actions/#{name}"
         require user_action and retry    if File.exists? "#{user_action}.rb"
         require default_action and retry if File.exists? "#{default_action}.rb"
         raise e

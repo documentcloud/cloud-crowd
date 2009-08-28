@@ -16,7 +16,7 @@ module CloudCrowd
     
     def initialize
       @wait_time = MIN_WAIT
-      @worker = CloudCrowd::Worker.new
+      @worker = Worker.new
       Signal.trap('INT',  'EXIT')
       Signal.trap('KILL', 'EXIT')
       Signal.trap('TERM', 'EXIT')

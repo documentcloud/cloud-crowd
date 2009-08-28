@@ -10,7 +10,7 @@ module CloudCrowd
     def initialize
       @id       = $$
       @hostname = Socket.gethostname
-      @store    = CloudCrowd::AssetStore.new
+      @store    = AssetStore.new
       @server   = CloudCrowd.central_server
       log 'started'
     end
@@ -69,9 +69,9 @@ module CloudCrowd
         @action = CloudCrowd.actions(@action_name).new
         @action.configure(@status, @input, @options, @store)
         result = case @status
-        when CloudCrowd::PROCESSING then @action.process
-        when CloudCrowd::SPLITTING  then @action.split
-        when CloudCrowd::MERGING    then @action.merge
+        when PROCESSING then @action.process
+        when SPLITTING  then @action.split
+        when MERGING    then @action.merge
         else raise "Work units must specify their status."
         end
         complete_work_unit(result)

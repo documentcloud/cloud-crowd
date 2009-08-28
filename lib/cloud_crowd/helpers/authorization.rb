@@ -33,7 +33,7 @@ module CloudCrowd
         @auth ||= Rack::Auth::Basic::Request.new(request.env)
       end
       
-      def unauthorized!(realm = CloudCrowd::App.authorization_realm)
+      def unauthorized!(realm = App.authorization_realm)
         response['WWW-Authenticate'] = "Basic realm=\"#{realm}\""
         halt 401, 'Authorization Required'
       end

@@ -5,10 +5,10 @@ module CloudCrowd
     # static serves files from /public, methodoverride allows the _method param.
     enable :static, :methodoverride
     
-    set :root, CloudCrowd::ROOT
+    set :root, ROOT
     set :authorization_realm, "CloudCrowd"
     
-    helpers CloudCrowd::Helpers
+    helpers Helpers
     
     before do
       login_required if CloudCrowd.config[:use_http_authentication]

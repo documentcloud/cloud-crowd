@@ -160,7 +160,7 @@ OPTIONS:
         end
         opts.on_tail('-v', '--version', 'show version') do
           load_code
-          puts "CloudCrowd version #{CloudCrowd::VERSION}"
+          puts "CloudCrowd version #{VERSION}"
           exit
         end
       end

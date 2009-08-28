@@ -5,7 +5,7 @@ module CloudCrowd
   # of inputs (usually public urls to files), an action (the name of a script that 
   # CloudCrowd knows how to run), and, eventually a corresponding list of output.
   class Job < ActiveRecord::Base
-    include CloudCrowd::ModelStatus
+    include ModelStatus
     
     has_many :work_units, :dependent => :destroy
     
@@ -28,7 +28,7 @@ module CloudCrowd
     end
     
     def before_validation_on_create
-      self.status = self.splittable? ? CloudCrowd::SPLITTING : CloudCrowd::PROCESSING
+      self.status = self.splittable? ? SPLITTING : PROCESSING
     end
     
     # After work units are marked successful, we check to see if all of them have
@@ -45,19 +45,19 @@ module CloudCrowd
       self.save
       
       case self.status
-      when CloudCrowd::PROCESSING then queue_for_workers(output_list.map {|o| JSON.parse(o) }.flatten)
-      when CloudCrowd::MERGING    then queue_for_workers(output_list.to_json)
-      else                             fire_callback
+      when PROCESSING then queue_for_workers(output_list.map {|o| JSON.parse(o) }.flatten)
+      when MERGING    then queue_for_workers(output_list.to_json)
+      else                 fire_callback
       end
       self
     end
     
     # Transition from the current phase to the next one.
     def transition_to_next_phase
-      self.status = any_work_units_failed? ? CloudCrowd::FAILED     :
-                    self.splitting?        ? CloudCrowd::PROCESSING :
-                    self.should_merge?     ? CloudCrowd::MERGING    :
-                                             CloudCrowd::SUCCEEDED
+      self.status = any_work_units_failed? ? FAILED     :
+                    self.splitting?        ? PROCESSING :
+                    self.should_merge?     ? MERGING    :
+                                             SUCCEEDED
     end
     
     # If a callback_url is defined, post the Job's JSON to it upon completion.
@@ -71,7 +71,7 @@ module CloudCrowd
     
     # Cleaning up after a job will remove all of its files from S3.
     def cleanup
-      CloudCrowd::AssetStore.new.cleanup_job(self)
+      AssetStore.new.cleanup_job(self)
     end
     
     # Have all of the WorkUnits finished? We could trade reads for writes here

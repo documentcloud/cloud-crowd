@@ -3,7 +3,7 @@ module CloudCrowd
   # A WorkUnit is an atomic chunk of work from a job, processing a single input
   # through a single action. All WorkUnits receive the same options.
   class WorkUnit < ActiveRecord::Base
-    include CloudCrowd::ModelStatus
+    include ModelStatus
     
     belongs_to :job
     
@@ -14,7 +14,7 @@ module CloudCrowd
     # Find the Nth available WorkUnit in the queue, and take it out.
     def self.dequeue(offset=0)
       unit = self.first(
-        :conditions => {:status => CloudCrowd::INCOMPLETE, :taken => false}, 
+        :conditions => {:status => INCOMPLETE, :taken => false}, 
         :order      => "created_at asc",
         :offset     => offset
       )
@@ -29,7 +29,7 @@ module CloudCrowd
     # Mark this unit as having finished successfully.
     def finish(output, time_taken)
       update_attributes({
-        :status   => CloudCrowd::SUCCEEDED,
+        :status   => SUCCEEDED,
         :taken    => false,
         :attempts => self.attempts + 1,
         :output   => output,
@@ -42,7 +42,7 @@ module CloudCrowd
       tries = self.attempts + 1
       return try_again if tries < CloudCrowd.config[:work_unit_retries]
       update_attributes({
-        :status   => CloudCrowd::FAILED,
+        :status   => FAILED,
         :taken    => false,
         :attempts => tries,
         :output   => output,
