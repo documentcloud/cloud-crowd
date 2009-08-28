@@ -1,15 +1,16 @@
 module CloudCrowd
   
   class App < Sinatra::Default
-        
-    # static serves files from /public, methodoverride allows the _method param.
-    enable :static, :methodoverride
     
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
     
     helpers Helpers
     
+    # static serves files from /public, methodoverride allows the _method param.
+    enable :static, :methodoverride
+    
+    # Enabling HTTP Authentication turns it on for all requests.
     before do
       login_required if CloudCrowd.config[:use_http_authentication]
     end
@@ -51,7 +52,7 @@ module CloudCrowd
           current_work_unit.fail(params[:output], params[:time])
           dequeue_work_unit(1)
         else             
-          return error(500, "Completing a work unit must specify status.")
+          error(500, "Completing a work unit must specify status.")
         end
       end
     end

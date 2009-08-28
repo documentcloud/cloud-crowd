@@ -45,6 +45,9 @@ module CloudCrowd
       end
     end
     
+    # We expect and require internal communication between the central server
+    # and the workers to succeed. If it fails for any reason, log it, and then 
+    # keep trying the same request.
     def keep_trying_to(title)
       begin
         yield

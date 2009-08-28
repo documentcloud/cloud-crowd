@@ -18,7 +18,7 @@ module CloudCrowd
     
     # Configuring a new Action sets up all of the read-only variables that
     # form the bulk of the API for action subclasses. (Paths to read from and
-    # write to).
+    # write to). It creates the work_directory and moves into it.
     def configure(status, input, options, store)
       @input, @options, @store = input, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']

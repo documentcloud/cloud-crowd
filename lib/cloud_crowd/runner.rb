@@ -1,7 +1,6 @@
 # This is the script that kicks off a single CloudCrowd::Daemon. Rely on 
 # cloud-crowd.rb for autoloading of all the code we need.
 
-# Daemon/Worker Dependencies.
 require "#{File.dirname(__FILE__)}/../cloud-crowd"
 
 FileUtils.mkdir('log') unless File.exists?('log')

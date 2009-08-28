@@ -4,6 +4,7 @@ module CloudCrowd
   module Helpers
     module Authorization
       
+      # Ensure that the request includes the correct credentials.
       def login_required
         return if authorized?
         unauthorized! unless auth.provided?
@@ -12,14 +13,13 @@ module CloudCrowd
         request.env['REMOTE_USER'] = auth.username
       end
       
+      # Has the request been authenticated?
       def authorized?
         !!request.env['REMOTE_USER']
       end
       
-      def current_user
-        request.env['REMOTE_USER']
-      end
-      
+      # A request is authorized if its login and password match those stored
+      # in config.yml, or if authentication is disabled.
       def authorize(login, password)
         return true unless CloudCrowd.config[:use_http_authentication]
         return CloudCrowd.config[:login] == login &&

@@ -23,6 +23,8 @@ module CloudCrowd
       )
     end
     
+    # Creating a job creates its corresponding work units, adding them 
+    # to the queue.
     def after_create
       self.queue_for_workers(JSON.parse(self.inputs))
     end
@@ -32,7 +34,7 @@ module CloudCrowd
     end
     
     # After work units are marked successful, we check to see if all of them have
-    # finished, if so, this job is complete.
+    # finished, if so, continue on to the next phase of the job. 
     def check_for_completion
       return unless all_work_units_complete?
       transition_to_next_phase               
@@ -52,11 +54,11 @@ module CloudCrowd
       self
     end
     
-    # Transition from the current phase to the next one.
+    # Transition this Job's status to the following one.
     def transition_to_next_phase
       self.status = any_work_units_failed? ? FAILED     :
                     self.splitting?        ? PROCESSING :
-                    self.should_merge?     ? MERGING    :
+                    self.mergeable?        ? MERGING    :
                                              SUCCEEDED
     end
     
@@ -85,18 +87,23 @@ module CloudCrowd
       self.work_units.failed.count > 0
     end
     
+    # This job is splittable if its Action has a +split+ method.
     def splittable?
-      self.action_class.new.respond_to? :split
+      self.action_class.public_instance_methods.include? 'split'
     end
     
-    def should_merge?
-      self.processing? && self.action_class.new.respond_to?(:merge)
+    # This job is mergeable if its Action has a +merge+ method.
+    def mergeable?
+      self.processing? && self.action_class.public_instance_methods.include?('merge')
     end
     
+    # Retrieve the class for this Job's Action, loading it if necessary.
     def action_class
       CloudCrowd.actions(self.action)
     end
     
+    # When the WorkUnits are all finished, gather all their outputs together
+    # before removing them from the database entirely.
     def gather_outputs_from_work_units
       outs = self.work_units.complete.map {|wu| wu.output }
       self.work_units.complete.destroy_all
@@ -107,6 +114,7 @@ module CloudCrowd
       CloudCrowd.display_status(self.status)
     end
     
+    # How complete is this Job?
     def percent_complete
       return 0   if splitting?
       return 100 if complete?

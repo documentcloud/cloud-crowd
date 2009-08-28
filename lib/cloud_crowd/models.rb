@@ -1,4 +1,7 @@
 module CloudCrowd
+  
+  # Adds named scopes and query methods for every CloudCrowd status to
+  # both Jobs and WorkUnits.
   module ModelStatus
     
     def self.included(klass)
