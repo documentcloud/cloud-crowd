@@ -10,6 +10,8 @@ module CloudCrowd
     has_many :work_units, :dependent => :destroy
     
     validates_presence_of :status, :inputs, :action, :options
+    
+    before_destroy :cleanup
       
     # Create a Job from an incoming JSON or XML request, and add it to the queue.
     # TODO: Add XML support.
