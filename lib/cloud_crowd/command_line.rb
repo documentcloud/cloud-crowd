@@ -14,6 +14,8 @@ module CloudCrowd
     
     # Command-line banner for the usage message.
     BANNER = <<-EOS
+CloudCrowd is a Ruby & AWS batch processing system, MapReduce style.    
+
 Usage: crowd COMMAND OPTIONS
 
 COMMANDS:
@@ -127,7 +129,7 @@ OPTIONS:
     
     # Print `crowd` usage.
     def usage
-      puts @option_parser
+      puts "\n#{@option_parser}\n"
     end
     
     
