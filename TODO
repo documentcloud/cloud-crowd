@@ -3,11 +3,6 @@ TODO:
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
 	* Unit tests for lib.
-	* Think about having the completion of a work unit respond with another one,
-	  instead of having to make a second request.
-	* Think about having a failed work unit shuffle off to the end of the queue,
-		instead of going again right away (and probably being handed back to the
-		very same daemon).
 
 DONE:
 	* Right now actions just process. Think about map / process / reduce.
@@ -18,4 +13,9 @@ DONE:
 	* Benchmarking mode -- benchmark every single aspect of a job and report it.
 	* Pare down the code that the workers are loading to the absolute minimum.
 	* Documentation. (document inside of config.yml, too)
+	* Think about having the completion of a work unit respond with another one,
+	  instead of having to make a second request.
+	* Think about having a failed work unit shuffle off to the end of the queue,
+		instead of going again right away (and probably being handed back to the
+		very same daemon).
 

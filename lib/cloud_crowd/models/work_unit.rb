@@ -11,6 +11,16 @@ module CloudCrowd
     
     after_save :check_for_job_completion
     
+    # Find the Nth available WorkUnit in the queue, and take it out.
+    def self.dequeue(offset=0)
+      unit = self.first(
+        :conditions => {:status => CloudCrowd::INCOMPLETE, :taken => false}, 
+        :order      => "created_at asc",
+        :offset     => offset
+      )
+      unit ? unit.update_attributes(:taken => true) && unit : nil
+    end
+    
     # After saving a WorkUnit, it's Job should check if it just become complete.
     def check_for_job_completion
       self.job.check_for_completion if complete?

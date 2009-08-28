@@ -31,9 +31,11 @@ module CloudCrowd
       loop do
         @worker.fetch_work_unit
         if @worker.has_work?
-          @worker.run
           @wait_time = MIN_WAIT
-          sleep 0.01 # So as to listen for incoming signals.
+          while @worker.has_work?
+            @worker.run
+            sleep 0.01 # So as to listen for incoming signals.
+          end
         else
           @wait_time = [@wait_time * WAIT_MULTIPLIER, MAX_WAIT].min
           sleep @wait_time

@@ -35,29 +35,29 @@ module CloudCrowd
     # Internal method for worker daemons to fetch the work unit at the front
     # of the queue. Work unit is marked as taken and handed off to the worker.
     get '/work' do
-      begin
-        unit = WorkUnit.first(:conditions => {:status => CloudCrowd::INCOMPLETE, :taken => false}, :order => "created_at desc")
-        return status(204) && '' unless unit
-        unit.update_attributes(:taken => true)
-        unit.to_json
-      rescue ActiveRecord::StaleObjectError => e
-        return status(204) && ''
-      end
+      dequeue_work_unit
     end
     
     # When workers are done with their unit, either successfully on in failure,
-    # they mark it back on the central server.
+    # they mark it back on the central server and retrieve another. Failures
+    # pull from one down in the queue, so as to not repeat the same unit.
     put '/work/:work_unit_id' do
-      case params[:status]
-      when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
-      when 'failed'    then current_work_unit.fail(params[:output], params[:time])
-      else             return error(500, "Completing a work unit must specify status.")
+      handle_conflicts(409) do
+        case params[:status]
+        when 'succeeded'
+          current_work_unit.finish(params[:output], params[:time])
+          dequeue_work_unit
+        when 'failed'
+          current_work_unit.fail(params[:output], params[:time])
+          dequeue_work_unit(1)
+        else             
+          return error(500, "Completing a work unit must specify status.")
+        end
       end
-      return status(204) && ''
     end
     
     # To monitor the central server with Monit, God, Nagios, or another 
-    # monitoring tool, you can hit /heartbeat to check.
+    # monitoring tool, you can hit /heartbeat to make sure.
     get '/heartbeat' do
       "buh-bump"
     end
