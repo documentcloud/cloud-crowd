@@ -51,7 +51,8 @@ module CloudCrowd
       return @store.url(save_path)
     end
     
-    # After the Action has finished, we remove the work directory.
+    # After the Action has finished, we remove the work directory and return
+    # to the root directory (where daemons run by default).
     def cleanup_work_directory
       Dir.chdir '/'
       FileUtils.rm_r(@work_directory)

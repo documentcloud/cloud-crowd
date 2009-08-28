@@ -6,7 +6,7 @@ module CloudCrowd
     # Configuration files required for the `crowd` command to function.
     CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
     
-    # Reference the absolute path to the root, because we're about to chdir.
+    # Reference the absolute path to the root.
     CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
     
     # Path to the Daemons gem script which launches workers.
@@ -58,7 +58,7 @@ OPTIONS:
     def run_server
       ensure_config
       require 'rubygems'
-      rackup_path = File.expand_path('config.ru')
+      rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
       if Gem.available? 'thin'
         exec "thin -e production -p #{@options[:port]} -R #{rackup_path} start"
       else
@@ -106,13 +106,13 @@ OPTIONS:
       load_code
       num_workers = @options[:num_workers] || CloudCrowd.config[:num_workers]
       num_workers.times do
-        `CLOUD_CROWD_CONFIG='#{File.expand_path('config.yml')}' ruby #{WORKER_RUNNER} start`
+        `CLOUD_CROWD_CONFIG='#{File.expand_path(@options[:config_path] + "/config.yml")}' ruby #{WORKER_RUNNER} start`
       end
     end
     
     # For debugging, run a single worker in the current process, showing output.
     def run_worker
-      exec "CLOUD_CROWD_CONFIG='#{File.expand_path('config.yml')}' ruby #{WORKER_RUNNER} run"
+      exec "CLOUD_CROWD_CONFIG='#{File.expand_path(@options[:config_path] + "/config.yml")}' ruby #{WORKER_RUNNER} run"
     end
     
     # Stop all active workers.
@@ -137,24 +137,20 @@ OPTIONS:
     # the CLOUD_CROWD_CONFIG environment variable. Exit if they're not found.
     def ensure_config
       return if @config_found
-      Dir.chdir @options[:config_path]
-      CONFIG_FILES.all? {|f| File.exists? f } ? @config_dir = true : config_not_found
+      found = CONFIG_FILES.all? {|f| File.exists? "#{@options[:config_path]}/#{f}" }
+      found ? @config_dir = true : config_not_found
     end
     
     # Parse all options for all actions.
     # TODO: Think about parsing options per sub-command separately.
     def parse_options
       @options = {
-        :db_config    => 'database.yml',
         :port         => 9173,
-        :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.',
+        :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.'
       }
       @option_parser = OptionParser.new do |opts|
         opts.on('-c', '--config PATH', 'path to configuration directory') do |conf_path|
           @options[:config_path] = conf_path
-        end
-        opts.on('-d', '--database-config PATH', 'path to database.yml') do |conf_path|
-          @options[:db_config] = conf_path
         end
         opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'number of worker processes') do |num|
           @options[:num_workers] = num
@@ -178,14 +174,14 @@ OPTIONS:
       ensure_config
       require 'rubygems'
       require "#{CC_ROOT}/lib/cloud-crowd"
-      CloudCrowd.configure('config.yml')
+      CloudCrowd.configure("#{@options[:config_path]}/config.yml")
     end
     
     # Establish a connection to the central server's database. Not all commands
     # require this.
     def connect_to_database
       require 'cloud_crowd/models'
-      CloudCrowd.configure_database(@options[:db_config])
+      CloudCrowd.configure_database("#{@options[:config_path]}/database.yml")
     end
     
     # Exit with an explanation if the configuration files couldn't be found.
