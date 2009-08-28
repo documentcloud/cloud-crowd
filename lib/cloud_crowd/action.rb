@@ -43,8 +43,8 @@ module CloudCrowd
       path
     end
     
-    # Takes a local filesystem path, and returns the public url on S3 where the 
-    # file was saved. 
+    # Takes a local filesystem path, and returns the public (or authenticated) 
+    # url on S3 where the file was saved. 
     def save(file_path)
       save_path = File.join(s3_storage_path, File.basename(file_path))
       @store.save(file_path, save_path)
@@ -65,7 +65,7 @@ module CloudCrowd
     # [action_name]/job_[job_id]/unit_[work_unit_it]
     def storage_prefix
       path_parts = []
-      path_parts << underscore(self.class.to_s)
+      path_parts << Inflector.underscore(self.class)
       path_parts << "job_#{@job_id}"
       path_parts << "unit_#{@work_unit_id}" if @work_unit_id
       @storage_prefix ||= File.join(path_parts)
@@ -73,15 +73,6 @@ module CloudCrowd
     
     def s3_storage_path
       @s3_storage_path ||= storage_prefix
-    end
-    
-    # Pilfered from the ActiveSupport::Inflector.
-    def underscore(word)
-      word.to_s.gsub(/::/, '/').
-        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-        gsub(/([a-z\d])([A-Z])/,'\1_\2').
-        tr("-", "_").
-        downcase
     end
     
   end

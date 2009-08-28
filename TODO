@@ -3,6 +3,7 @@ TODO:
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
 	* Unit tests for lib.
+	* Replace work_units_remaining with a percentage_complete
 
 DONE:
 	* Right now actions just process. Think about map / process / reduce.
@@ -18,4 +19,3 @@ DONE:
 	* Think about having a failed work unit shuffle off to the end of the queue,
 		instead of going again right away (and probably being handed back to the
 		very same daemon).
-

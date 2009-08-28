@@ -11,9 +11,6 @@ gem 'rest-client'
 gem 'right_aws'
 gem 'sinatra'
 
-# Common CloudCrowd libs:
-require 'cloud_crowd/core_ext'
-
 # Autoloading for all the pieces which may or may not be needed:
 autoload :ActiveRecord, 'activerecord'
 autoload :Benchmark,    'benchmark'
@@ -34,6 +31,7 @@ module CloudCrowd
   autoload :Action,     'cloud_crowd/action'
   autoload :AssetStore, 'cloud_crowd/asset_store'
   autoload :Helpers,    'cloud_crowd/helpers'
+  autoload :Inflector,  'cloud_crowd/inflector'
   autoload :Job,        'cloud_crowd/models'
   autoload :WorkUnit,   'cloud_crowd/models'
   
@@ -107,7 +105,7 @@ module CloudCrowd
     # so we lazy-load them. Think about a variant of this for installing and
     # loading actions into a running CloudCrowd cluster on the fly.
     def actions(name)
-      action_class = name.camelize
+      action_class = Inflector.camelize(name)
       begin
         raise NameError, "can't find the #{action_class} Action" unless Module.constants.include?(action_class)
         Module.const_get(action_class)
