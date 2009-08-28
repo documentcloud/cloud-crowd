@@ -7,14 +7,14 @@ module CloudCrowd
     
     belongs_to :job
     
-    validates_presence_of :job_id, :status, :input
+    validates_presence_of :job_id, :status, :input, :action
     
     after_save :check_for_job_completion
     
     # Find the Nth available WorkUnit in the queue, and take it out.
-    def self.dequeue(offset=0)
+    def self.dequeue(enabled_actions=[], offset=0)
       unit = self.first(
-        :conditions => {:status => INCOMPLETE, :taken => false}, 
+        :conditions => {:status => INCOMPLETE, :taken => false, :action => enabled_actions}, 
         :order      => "created_at asc",
         :offset     => offset
       )
@@ -65,7 +65,7 @@ module CloudCrowd
         'job_id'    => self.job_id,
         'input'     => self.input,
         'attempts'  => self.attempts,
-        'action'    => self.job.action,
+        'action'    => self.action,
         'options'   => JSON.parse(self.job.options),
         'status'    => self.status
       }.to_json

@@ -8,17 +8,18 @@ module CloudCrowd
     # connection to S3. This AssetStore gets passed into each action, for use
     # as it is run.
     def initialize
-      @id       = $$
-      @hostname = Socket.gethostname
-      @store    = AssetStore.new
-      @server   = CloudCrowd.central_server
+      @id               = $$
+      @hostname         = Socket.gethostname
+      @store            = AssetStore.new
+      @server           = CloudCrowd.central_server
+      @enabled_actions  = CloudCrowd.actions.keys
       log 'started'
     end
     
     # Ask the central server for a new WorkUnit.
     def fetch_work_unit
       keep_trying_to "fetch a new work unit" do
-        unit_json = @server['/work'].get
+        unit_json = @server['/work'].post(base_params)
         setup_work_unit(unit_json)
       end
     end
@@ -69,7 +70,7 @@ module CloudCrowd
     # Executes the current work unit, catching all exceptions as failures.
     def run_work_unit
       begin
-        @action = CloudCrowd.actions(@action_name).new
+        @action = CloudCrowd.actions[@action_name].new
         @action.configure(@status, @input, @options, @store)
         result = case @status
         when PROCESSING then @action.process
@@ -93,9 +94,18 @@ module CloudCrowd
     
     private
     
-    # Common parameters to send back to central, regardless of success or failure.
+    # Common parameters to send back to central.
+    def base_params
+      @base_params ||= {:enabled_actions => @enabled_actions.join(',')}
+    end
+    
+    # Common parameters to send back to central upon unit completion, 
+    # regardless of success or failure.
     def completion_params
-      {:id => @options['work_unit_id'], :time => Time.now - @start_time}
+      base_params.merge({
+        :id       => @options['work_unit_id'], 
+        :time     => Time.now - @start_time 
+      })
     end
     
     # Extract our instance variables from a WorkUnit's JSON.

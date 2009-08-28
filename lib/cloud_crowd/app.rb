@@ -35,7 +35,7 @@ module CloudCrowd
     
     # Internal method for worker daemons to fetch the work unit at the front
     # of the queue. Work unit is marked as taken and handed off to the worker.
-    get '/work' do
+    post '/work' do
       dequeue_work_unit
     end
     

@@ -12,4 +12,5 @@ CloudCrowd::WorkUnit.blueprint do
   status { CloudCrowd::PROCESSING }
   taken  { false }
   input  { Sham.url }
+  action { 'graphics_magick' }
 end

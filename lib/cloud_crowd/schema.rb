@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer  "status",                          :null => false
     t.integer  "job_id",                          :null => false
     t.text     "input",                           :null => false
+    t.string   "action",                          :null => false
     t.integer  "attempts",     :default => 0,     :null => false
     t.integer  "lock_version", :default => 0,     :null => false
     t.boolean  "taken",        :default => false, :null => false
@@ -29,6 +30,6 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   add_index "work_units", ["job_id"], :name => "index_work_units_on_job_id"
-  add_index "work_units", ["status", "taken"], :name => "index_work_units_on_status_and_taken"
+  add_index "work_units", ["status", "taken", "action"], :name => "index_work_units_on_status_and_taken_and_action"
 
 end

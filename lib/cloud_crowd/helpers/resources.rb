@@ -14,7 +14,8 @@ module CloudCrowd
       # with no content.
       def dequeue_work_unit(offset=0)
         handle_conflicts do
-          unit = WorkUnit.dequeue(offset)
+          actions = params[:enabled_actions].split(',')
+          unit = WorkUnit.dequeue(actions, offset)
           return status(204) && '' unless unit
           unit.to_json
         end

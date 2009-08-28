@@ -101,21 +101,19 @@ module CloudCrowd
       DISPLAY_STATUS_MAP[status]
     end
     
-    # Some workers might not ever need to load all the installed actions,
-    # so we lazy-load them. Think about a variant of this for installing and
-    # loading actions into a running CloudCrowd cluster on the fly.
-    def actions(name)
-      action_class = Inflector.camelize(name)
-      begin
-        raise NameError, "can't find the #{action_class} Action" unless Module.constants.include?(action_class)
-        Module.const_get(action_class)
-      rescue NameError => e
-        user_action     = "#{@config_path}/actions/#{name}"
-        default_action  = "#{ROOT}/actions/#{name}"
-        require user_action and retry    if File.exists? "#{user_action}.rb"
-        require default_action and retry if File.exists? "#{default_action}.rb"
-        raise e
+    # At load time, load in all the CloudCrowd::Actions available in the actions
+    # folder. The actions that are present are the actions enabled for the 
+    # current server or worker.
+    def actions
+      return @actions if @actions
+      @actions = {}
+      paths = Dir["#{ROOT}/actions/*.rb"] + Dir["#{@config_path}/actions/*.rb"]
+      paths.each do |path|
+        name = File.basename(path, File.extname(path))
+        require path
+        @actions[name] = Module.const_get(Inflector.camelize(name))
       end
+      @actions
     end
   end
   

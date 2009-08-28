@@ -99,7 +99,7 @@ module CloudCrowd
     
     # Retrieve the class for this Job's Action, loading it if necessary.
     def action_class
-      CloudCrowd.actions(self.action)
+      CloudCrowd.actions[self.action]
     end
     
     # When the WorkUnits are all finished, gather all their outputs together
@@ -135,7 +135,12 @@ module CloudCrowd
     # into WorkUnits, and queue them.
     def queue_for_workers(input)
       [input].flatten.each do |wu_input|
-        WorkUnit.create(:job => self, :input => wu_input, :status => self.status)
+        WorkUnit.create(
+          :job    => self, 
+          :action => self.action, 
+          :input  => wu_input, 
+          :status => self.status
+        )
       end
     end
     
