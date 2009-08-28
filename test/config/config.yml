@@ -1,5 +1,5 @@
 :num_workers:             4
-:default_worker_wait:     1
+:min_worker_wait:         1
 :max_worker_wait:         20
 :worker_wait_multiplier:  1.3
 :worker_retry_wait:       5

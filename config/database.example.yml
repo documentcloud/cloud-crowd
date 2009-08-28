@@ -1,3 +1,6 @@
+# This is a standard ActiveRecord database.yml file. You can configure it 
+# to use any database that ActiveRecord supports.
+
 :adapter:  mysql
 :encoding: utf8
 :username: root

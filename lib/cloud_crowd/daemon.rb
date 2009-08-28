@@ -10,12 +10,12 @@ module CloudCrowd
   # isn't any work to be done, and speeds back up when there is.
   class Daemon
     
-    DEFAULT_WAIT    = CloudCrowd.config[:default_worker_wait]
+    MIN_WAIT        = CloudCrowd.config[:min_worker_wait]
     MAX_WAIT        = CloudCrowd.config[:max_worker_wait]
     WAIT_MULTIPLIER = CloudCrowd.config[:worker_wait_multiplier]
     
     def initialize
-      @wait_time = DEFAULT_WAIT
+      @wait_time = MIN_WAIT
       @worker = CloudCrowd::Worker.new
       Signal.trap('INT',  'EXIT')
       Signal.trap('KILL', 'EXIT')
@@ -32,7 +32,7 @@ module CloudCrowd
         @worker.fetch_work_unit
         if @worker.has_work?
           @worker.run
-          @wait_time = DEFAULT_WAIT
+          @wait_time = MIN_WAIT
           sleep 0.01 # So as to listen for incoming signals.
         else
           @wait_time = [@wait_time * WAIT_MULTIPLIER, MAX_WAIT].min

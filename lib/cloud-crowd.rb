@@ -1,3 +1,5 @@
+# The Grand Central of code loading...
+
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
