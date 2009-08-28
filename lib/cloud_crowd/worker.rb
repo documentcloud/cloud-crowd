@@ -1,10 +1,7 @@
 module CloudCrowd
   
   class Worker
-        
-    CENTRAL_URL = CloudCrowd.config[:central_server]
-    RETRY_WAIT = CloudCrowd.config[:worker_retry_wait]
-    
+            
     attr_reader :action
     
     # Spinning up a worker will create a new AssetStore with a persistent
@@ -14,7 +11,7 @@ module CloudCrowd
       @id       = $$
       @hostname = Socket.gethostname
       @store    = CloudCrowd::AssetStore.new
-      @server   = central_server_resource
+      @server   = CloudCrowd.central_server
       log 'started'
     end
     
@@ -52,10 +49,11 @@ module CloudCrowd
       begin
         yield
       rescue Exception => e
-        log "failed to #{title} -- retry in #{RETRY_WAIT} seconds"
+        wait_time = CloudCrowd.config[:worker_retry_wait] 
+        log "failed to #{title} -- retry in #{wait_time} seconds"
         log e.message
         log e.backtrace
-        sleep RETRY_WAIT
+        sleep wait_time
         retry
       end
     end
@@ -91,14 +89,6 @@ module CloudCrowd
     
     
     private
-    
-    # Keep an authenticated (if configured to enable authentication) resource 
-    # for the central server.
-    def central_server_resource
-      params = [CENTRAL_URL]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
-      RestClient::Resource.new(*params)
-    end
     
     # Common parameters to send back to central, regardless of success or failure.
     def completion_params

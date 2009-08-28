@@ -88,6 +88,15 @@ module CloudCrowd
       configuration = YAML.load_file(config_path)
       ActiveRecord::Base.establish_connection(configuration)
     end
+    
+    # Keep an authenticated (if configured to enable authentication) resource 
+    # for the central server.
+    def central_server
+      return @central_server if @central_server
+      params = [CloudCrowd.config[:central_server]]
+      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
+      @central_server = RestClient::Resource.new(*params)
+    end
 
     # Return the readable status name of an internal CloudCrowd status number.
     def display_status(status)
