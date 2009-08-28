@@ -17,7 +17,7 @@ class FailingWorkUnitsTest < Test::Unit::TestCase
     (CloudCrowd.config[:work_unit_retries] - 1).times do
       job.work_units.each {|unit| unit.fail('failed', 10) }
     end
-    assert job.reload.work_units_remaining == 3
+    assert job.reload.percent_complete == 0
     job.work_units.reload.each_with_index do |unit, i|
       assert unit.processing?
       assert unit.attempts == CloudCrowd.config[:work_unit_retries] - 1

@@ -107,14 +107,17 @@ module CloudCrowd
       CloudCrowd.display_status(self.status)
     end
     
-    def work_units_remaining
-      self.work_units.incomplete.count
+    def percent_complete
+      return 0   if splitting?
+      return 100 if complete?
+      return 99  if merging?
+      (work_units.complete.count / work_units.count.to_f * 100).round
     end
     
     # A JSON representation of this job includes the statuses of its component
     # WorkUnits, as well as any completed outputs.
     def to_json(opts={})
-      atts = {'id' => self.id, 'status' => self.display_status, 'work_units_remaining' => self.work_units_remaining}
+      atts = {'id' => self.id, 'status' => self.display_status, 'percent_complete' => self.percent_complete}
       atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
       atts.merge!({'time' => self.time}) if self.time
       atts.to_json

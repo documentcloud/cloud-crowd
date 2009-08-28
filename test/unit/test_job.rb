@@ -17,7 +17,7 @@ class JobTest < Test::Unit::TestCase
     
     should "create all of its work units as soon as the job is created" do
       assert @job.work_units.count >= 1
-      assert @job.work_units_remaining == 1
+      assert @job.percent_complete == 0
       assert @job.processing?
       assert @unit.processing?
       assert !@job.all_work_units_complete?
@@ -27,7 +27,7 @@ class JobTest < Test::Unit::TestCase
       assert !@job.all_work_units_complete?
       @unit.update_attributes(:status => CloudCrowd::SUCCEEDED, :output => 'hello')
       assert @job.reload.all_work_units_complete?
-      assert @job.work_units_remaining == 0
+      assert @job.percent_complete == 100
       assert @job.outputs == "[\"hello\"]"
     end
     
