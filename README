@@ -39,7 +39,7 @@
 		
 		# Install the CloudCrowd configuration files to a location of your choosing.
 		
-		>> crowd install /etc/cloud-crowd
+		>> crowd install ~/config/cloud-crowd
 		
 		# Now, you can use the full complement of `crowd` commands from inside of
 		# this configuration directory. To see the available commands:
@@ -48,8 +48,8 @@
 		
 		# Edit the configuration files to your satisfaction, and add AWS credentials.
 		
-		>> mate /etc/cloud-crowd/config.yml
-		>> mate /etc/cloud-cloud/database.yml
+		>> mate ~/config/cloud-crowd/config.yml
+		>> mate ~/config/cloud-crowd/database.yml
 		
 		# Write your actions, and install them into the 'actions' subdirectory.
 		# CloudCrowd comes with some default actions as an example.
