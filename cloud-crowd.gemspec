@@ -49,12 +49,12 @@ lib/cloud_crowd/action.rb
 lib/cloud_crowd/app.rb
 lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
-lib/cloud_crowd/core_ext.rb
 lib/cloud_crowd/daemon.rb
 lib/cloud_crowd/helpers/authorization.rb
 lib/cloud_crowd/helpers/resources.rb
 lib/cloud_crowd/helpers/urls.rb
 lib/cloud_crowd/helpers.rb
+lib/cloud_crowd/inflector.rb
 lib/cloud_crowd/models/job.rb
 lib/cloud_crowd/models/work_unit.rb
 lib/cloud_crowd/models.rb
