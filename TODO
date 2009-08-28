@@ -3,6 +3,8 @@ TODO:
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Basic integration tests.
 	* Unit tests for lib.
+	* Look into Grand Central Dispatch for ideas about how to implement
+		Job ordering/piping.
 
 DONE:
 	* Right now actions just process. Think about map / process / reduce.
