@@ -58,13 +58,14 @@ module CloudCrowd
       })
     end
     
-    def parsed_output
-      output_is_json? ? JSON.parse(output) : output
-    end
-    
-    # FIXME!
+    # Is the output of this work unit in JSON format?
     def output_is_json?
-      ['{', '[', '('].include? output[0..0]
+      @output_is_json if defined?(@output_is_json)
+      JSON.parse(output)
+    rescue JSON::ParserError
+      @output_is_json = false
+    else
+      @output_is_json = true
     end
     
     # The JSON representation of a WorkUnit contains common elements of its job.
