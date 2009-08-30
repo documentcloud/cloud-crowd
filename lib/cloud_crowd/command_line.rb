@@ -62,9 +62,9 @@ OPTIONS:
       require 'rubygems'
       rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
       if Gem.available? 'thin'
-        exec "thin -e production -p #{@options[:port]} -R #{rackup_path} start"
+        exec "thin -e #{@options[:environment]} -p #{@options[:port]} -R #{rackup_path} start"
       else
-        exec "rackup -E production -p #{@options[:port]} #{rackup_path}"
+        exec "rackup -E #{@options[:environment]} -p #{@options[:port]} #{rackup_path}"
       end
     end
     
@@ -147,6 +147,7 @@ OPTIONS:
     def parse_options
       @options = {
         :port         => 9173,
+        :environment  => 'production',
         :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.'
       }
       @option_parser = OptionParser.new do |opts|
@@ -158,6 +159,9 @@ OPTIONS:
         end
         opts.on('-p', '--port PORT', 'central server port number') do |port_num|
           @options[:port] = port_num
+        end
+        opts.on('-e', '--environment ENV', 'Sinatra environment (code reloading)') do |env|
+          @options[:environment] = env
         end
         opts.on_tail('-v', '--version', 'show version') do
           load_code
