@@ -12,9 +12,7 @@ class GraphicsMagick < CloudCrowd::Action
   # Download the initial image, and run each of the specified GraphicsMagick
   # commands against it, returning the aggregate output.
   def process
-    result = {}
-    options['steps'].each {|step| result[step['name']] = run_step(step) }
-    result.to_json
+    options['steps'].inject({}) {|h, step| h[step['name']] = run_step(step); h }
   end
   
   # Run an individual step (single GraphicsMagick command) in a shell-injection

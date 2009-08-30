@@ -25,7 +25,7 @@ class JobTest < Test::Unit::TestCase
     
     should "know its completion status" do
       assert !@job.all_work_units_complete?
-      @unit.update_attributes(:status => CloudCrowd::SUCCEEDED, :output => 'hello')
+      @unit.update_attributes(:status => CloudCrowd::SUCCEEDED, :output => '{"output":"hello"}')
       assert @job.reload.all_work_units_complete?
       assert @job.percent_complete == 100
       assert @job.outputs == "[\"hello\"]"
@@ -53,7 +53,7 @@ class JobTest < Test::Unit::TestCase
     
     should "fire a callback when a job has finished, successfully or not" do
       CloudCrowd::Job.any_instance.expects(:fire_callback)
-      @job.work_units.first.finish('output', 10)
+      @job.work_units.first.finish('{"output":"output"}', 10)
       assert @job.all_work_units_complete?
     end
     

@@ -108,8 +108,7 @@ module CloudCrowd
     # before removing them from the database entirely.
     def gather_outputs_from_work_units
       units = self.work_units.complete
-      is_json = units.first.output_is_json?
-      outs = units.map {|u| is_json ? JSON.parse(u.output) : u.output }
+      outs = self.work_units.complete.map {|u| JSON.parse(u.output)['output'] }
       self.work_units.complete.destroy_all
       outs
     end

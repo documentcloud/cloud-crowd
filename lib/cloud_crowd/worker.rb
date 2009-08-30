@@ -78,7 +78,7 @@ module CloudCrowd
         when MERGING    then @action.merge
         else raise "Work units must specify their status."
         end
-        complete_work_unit(result)
+        complete_work_unit({'output' => result}.to_json)
       rescue Exception => e
         fail_work_unit(e)
       end
