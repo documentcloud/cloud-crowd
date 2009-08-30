@@ -1,6 +1,6 @@
 .autotest
 log
-hidden
+raws
 tmp
 db/*.sqlite3
 raw

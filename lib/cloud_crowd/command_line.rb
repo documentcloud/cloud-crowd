@@ -144,7 +144,6 @@ OPTIONS:
     end
     
     # Parse all options for all actions.
-    # TODO: Think about parsing options per sub-command separately.
     def parse_options
       @options = {
         :port         => 9173,

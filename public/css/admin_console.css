@@ -1,0 +1,35 @@
+body {
+  background: #c7c7c7;
+  font-family: Arial;
+  font-size: 12px;
+}
+
+#queue {
+  position: absolute;
+  top: 100px; left: 100px; right: 100px;
+  height: 77px;
+}
+  #queue_fill {
+    position: absolute;
+    width: 100%; height: 75px;
+    border: 1px solid #5c5c5c;
+    -moz-border-radius: 10px; -webkit-border-radius: 10px;
+    background: transparent url(/images/queue_fill.png) repeat-x 0px -1px;
+  }
+  #queue .job {
+    position: relative;
+    margin-top: 1px;
+    height: 75px;
+    background: blue;
+    float: left;
+    overflow: hidden;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+  }
+    #queue .job_id {
+      color: #c7c7c7;
+      font-size: 14px;
+      position: absolute;
+      bottom: 8px; left: 8px;
+      z-index: 10;
+    }

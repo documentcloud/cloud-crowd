@@ -50,6 +50,7 @@ lib/cloud_crowd/app.rb
 lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
 lib/cloud_crowd/daemon.rb
+lib/cloud_crowd/exceptions.rb
 lib/cloud_crowd/helpers/authorization.rb
 lib/cloud_crowd/helpers/resources.rb
 lib/cloud_crowd/helpers.rb
@@ -60,6 +61,12 @@ lib/cloud_crowd/models.rb
 lib/cloud_crowd/runner.rb
 lib/cloud_crowd/schema.rb
 lib/cloud_crowd/worker.rb
+public/css/admin_console.css
+public/css/reset.css
+public/images/queue_fill.png
+public/js/admin_console.js
+public/js/jquery-1.3.2.js
+views/index.erb
 test/acceptance/test_failing_work_units.rb
 test/blueprints.rb
 test/config/config.yml

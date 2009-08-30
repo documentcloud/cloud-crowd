@@ -99,9 +99,11 @@ module CloudCrowd
       self.processing? && self.action_class.public_instance_methods.include?('merge')
     end
     
-    # Retrieve the class for this Job's Action, loading it if necessary.
+    # Retrieve the class for this Job's Action.
     def action_class
-      CloudCrowd.actions[self.action]
+      klass = CloudCrowd.actions[self.action]
+      return klass if klass
+      raise ActionNotFound, "no action named: '#{self.action}' could be found"
     end
     
     # When the WorkUnits are all finished, gather all their outputs together
@@ -124,6 +126,12 @@ module CloudCrowd
       return 99  if merging?
       (work_units.complete.count / work_units.count.to_f * 100).round
     end
+    
+    # How long has this Job taken?
+    def time_taken
+      return self.time if self.time
+      Time.now - self.created_at
+    end
         
     # When starting a new job, or moving to a new stage, split up the inputs 
     # into WorkUnits, and queue them.
@@ -141,9 +149,14 @@ module CloudCrowd
     # A JSON representation of this job includes the statuses of its component
     # WorkUnits, as well as any completed outputs.
     def to_json(opts={})
-      atts = {'id' => self.id, 'status' => self.display_status, 'percent_complete' => self.percent_complete}
+      atts = {
+        'id'                => self.id, 
+        'status'            => self.display_status, 
+        'percent_complete'  => self.percent_complete,
+        'work_units'        => self.work_units.count,
+        'time_taken'        => self.time_taken
+      }
       atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
-      atts.merge!({'time' => self.time}) if self.time
       atts.to_json
     end
     

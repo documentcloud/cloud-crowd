@@ -2,6 +2,13 @@ module CloudCrowd
   module Helpers
     module Resources
       
+      # Convenience for responding with JSON.
+      def json(obj)
+        content_type :json
+        return status(204) && '{}' unless obj
+        obj.to_json
+      end
+      
       def current_job
         @job ||= Job.find_by_id(params[:job_id]) or raise Sinatra::NotFound
       end
@@ -15,9 +22,7 @@ module CloudCrowd
       def dequeue_work_unit(offset=0)
         handle_conflicts do
           actions = params[:enabled_actions].split(',')
-          unit = WorkUnit.dequeue(actions, offset)
-          return status(204) && '' unless unit
-          unit.to_json
+          WorkUnit.dequeue(actions, offset)
         end
       end
       
