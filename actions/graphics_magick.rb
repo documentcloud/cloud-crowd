@@ -14,7 +14,7 @@ class GraphicsMagick < CloudCrowd::Action
   def process
     result = {}
     options['steps'].each {|step| result[step['name']] = run_step(step) }
-    result.to_json
+    result
   end
   
   # Run an individual step (single GraphicsMagick command) in a shell-injection

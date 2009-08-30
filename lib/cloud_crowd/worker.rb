@@ -27,7 +27,7 @@ module CloudCrowd
     # Return output to the central server, marking the current work unit as done.
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
-        data = completion_params.merge({:status => 'succeeded', :output => result})
+        data = completion_params.merge({:status => 'succeeded', :output => result.to_json})
         unit_json = @server["/work/#{data[:id]}"].put(data)
         log "finished #{@action_name} in #{data[:time]} seconds"
         clear_work_unit

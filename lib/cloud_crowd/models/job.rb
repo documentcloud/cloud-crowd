@@ -107,7 +107,7 @@ module CloudCrowd
     # When the WorkUnits are all finished, gather all their outputs together
     # before removing them from the database entirely.
     def gather_outputs_from_work_units
-      outs = self.work_units.complete.map {|wu| wu.output }
+      outs = self.work_units.complete.map {|wu| JSON.parse(wu.output) }
       self.work_units.complete.destroy_all
       outs
     end
@@ -123,15 +123,6 @@ module CloudCrowd
       return 99  if merging?
       (work_units.complete.count / work_units.count.to_f * 100).round
     end
-    
-    # A JSON representation of this job includes the statuses of its component
-    # WorkUnits, as well as any completed outputs.
-    def to_json(opts={})
-      atts = {'id' => self.id, 'status' => self.display_status, 'percent_complete' => self.percent_complete}
-      atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
-      atts.merge!({'time' => self.time}) if self.time
-      atts.to_json
-    end
         
     # When starting a new job, or moving to a new stage, split up the inputs 
     # into WorkUnits, and queue them.
@@ -144,6 +135,15 @@ module CloudCrowd
           :status => self.status
         )
       end
+    end
+    
+    # A JSON representation of this job includes the statuses of its component
+    # WorkUnits, as well as any completed outputs.
+    def to_json(opts={})
+      atts = {'id' => self.id, 'status' => self.display_status, 'percent_complete' => self.percent_complete}
+      atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
+      atts.merge!({'time' => self.time}) if self.time
+      atts.to_json
     end
     
   end
