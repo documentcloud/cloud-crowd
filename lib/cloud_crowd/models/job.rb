@@ -107,7 +107,7 @@ module CloudCrowd
     # When the WorkUnits are all finished, gather all their outputs together
     # before removing them from the database entirely.
     def gather_outputs_from_work_units
-      outs = self.work_units.complete.map {|wu| JSON.parse(wu.output) }
+      outs = self.work_units.complete.map {|wu| wu.parsed_output }
       self.work_units.complete.destroy_all
       outs
     end
