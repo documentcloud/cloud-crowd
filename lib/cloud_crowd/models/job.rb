@@ -132,6 +132,11 @@ module CloudCrowd
       return self.time if self.time
       Time.now - self.created_at
     end
+    
+    # Generate an 8-bit Hex color code, based in the Job's id.
+    def color
+      @color ||= Digest::MD5.hexdigest(self.id.to_s)[-7...-1]
+    end
         
     # When starting a new job, or moving to a new stage, split up the inputs 
     # into WorkUnits, and queue them.
@@ -150,7 +155,8 @@ module CloudCrowd
     # WorkUnits, as well as any completed outputs.
     def to_json(opts={})
       atts = {
-        'id'                => self.id, 
+        'id'                => self.id,
+        'color'             => self.color,
         'status'            => self.display_status, 
         'percent_complete'  => self.percent_complete,
         'work_units'        => self.work_units.count,

@@ -21,11 +21,10 @@ window.Console = {
     });
     $.each(this._jobs, function() {
       this.width  = (this.work_units / totalUnits) * 100;
-      this.color  = [Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255)];
     });
     queue.html('');
     $.each(this._jobs.reverse(), function() {
-      queue.append('<div class="job" style="width:' + this.width + '%; background:rgb(' + this.color.join(',') + ');"><div class="job_id">#' + this.id + '</div></div>');
+      queue.append('<div class="job" style="width:' + this.width + '%; background: #' + this.color + ';"><div class="job_id">#' + this.id + '</div></div>');
     });
   }
   
