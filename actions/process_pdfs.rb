@@ -46,14 +46,14 @@ class ProcessPdfs < CloudCrowd::Action
     end
     
     names = Dir['*.txt'].map {|fn| fn.sub(/_\d+(_\w+)?\.txt\Z/, '') }.uniq
-    dirs = names.map {|n| ["#{n}/text"] + options['images'].map {|i| "#{n}/images/#{i['name']}" } }.flatten
+    dirs = names.map {|n| ["#{n}/text/full", "#{n}/text/pages"] + options['images'].map {|i| "#{n}/images/#{i['name']}" } }.flatten
     FileUtils.mkdir_p(dirs)
     
     Dir['*.*'].each do |file|
       ext = File.extname(file)
       name = file.sub(/_\d+(_\w+)?#{ext}\Z/, '')
       if ext == '.txt'
-        FileUtils.mv(file, "#{name}/text/#{file}")
+        FileUtils.mv(file, "#{name}/text/pages/#{file}")
       else
         suffix      = file.match(/_([^_]+)#{ext}\Z/)[1]
         sans_suffix = file.sub(/_([^_]+)#{ext}\Z/, ext)
@@ -61,7 +61,7 @@ class ProcessPdfs < CloudCrowd::Action
       end
     end
     
-    names.each {|n| `cat #{n}/text/*.txt > #{n}/text/#{n}.txt` }
+    names.each {|n| `cat #{n}/text/pages/*.txt > #{n}/text/full/#{n}.txt` }
     
     `tar -czf processed_pdfs.tar *`
     save("processed_pdfs.tar")

@@ -13,7 +13,7 @@ RestClient.post(
 		'options' => {
 		  
 		  'batch_size' => 7,
-		  		  
+		  
 		  'images' => [{
 				'name' 			=> '700',
 				'options'		=> '-resize 700x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03',
