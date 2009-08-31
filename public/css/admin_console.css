@@ -26,10 +26,26 @@ body {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
   }
-    #queue .job_id {
-      color: #c7c7c7;
-      font-size: 14px;
+    #queue .completion {
+      position: absolute;
+      bottom: -1px;
+      height: 30px;
+      background: black;
+      border: 1px solid white;
+      -moz-border-radius: 10px; -webkit-border-radius: 10px;
+      opacity: 0.5;
+      overflow: hidden;
+    }
+    #queue .percent_complete {
       position: absolute;
       bottom: 8px; left: 8px;
+      color: #c7c7c7;
+      z-index: 10;
+    }
+    #queue .job_id {
+      color: #333;
+      font-size: 14px;
+      position: absolute;
+      top: 8px; left: 8px;
       z-index: 10;
     }

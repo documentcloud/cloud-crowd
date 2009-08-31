@@ -22,7 +22,7 @@ module CloudCrowd
     
     # Get the JSON for every active job in the queue.
     get '/jobs' do
-      json Job.all
+      json Job.incomplete
     end
     
     # To monitor the central server with Monit, God, Nagios, or another 
