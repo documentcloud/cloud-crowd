@@ -15,12 +15,12 @@ RestClient.post(
 		  'batch_size' => 7,
 		  		  
 		  'images' => [{
-				'name' 			=> 'normal',
+				'name' 			=> '700',
 				'options'		=> '-resize 700x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03',
 				'extension' => 'gif'
 			},{
-				'name' 			=> 'large',
-				'options'		=> '-resize 1050x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03',
+				'name' 			=> '1000',
+				'options'		=> '-resize 1000x -density 220 -depth 4 -unsharp 0.5x0.5+0.5+0.03',
 				'extension' => 'gif'
 			}]
 		  

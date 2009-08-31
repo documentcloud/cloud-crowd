@@ -63,7 +63,9 @@ module CloudCrowd
     
     # Convert an unsafe URL into a filesystem-friendly filename.
     def safe_filename(url)
+      ext = File.extname(url)
       name = File.basename(url).gsub(/%\d+/, '-').gsub(/[^a-zA-Z0-9_\-.]/, '')
+      File.basename(name, ext).gsub('.', '-') + ext
     end
     
     # The directory prefix to use for both local and S3 storage.

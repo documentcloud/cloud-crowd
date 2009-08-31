@@ -4,9 +4,12 @@
 class ProcessPdfs < CloudCrowd::Action
   
   # Split up a large pdf into single-page pdfs.
+  # The double pdftk shuffle fixes the document xrefs.
   def split
-    `pdftk #{input_path} burst output "#{file_name}_%05d.pdf"`
+    `pdftk #{input_path} burst output "#{file_name}_%05d.pdf_temp"`
     FileUtils.rm input_path
+    pdfs = Dir["*.pdf_temp"]
+    pdfs.each {|pdf| `pdftk #{pdf} output #{File.basename(pdf, '.pdf_temp')}.pdf`}
     pdfs = Dir["*.pdf"]
     batch_size = options['batch_size']
     batches = (pdfs.length / batch_size.to_f).ceil
@@ -43,22 +46,22 @@ class ProcessPdfs < CloudCrowd::Action
     end
     
     names = Dir['*.txt'].map {|fn| fn.sub(/_\d+(_\w+)?\.txt\Z/, '') }.uniq
-    dirs = names.map {|n| ["text/#{n}"] + options['images'].map {|i| "#{i['name']}/#{n}" } }.flatten
+    dirs = names.map {|n| ["#{n}/text"] + options['images'].map {|i| "#{n}/images/#{i['name']}" } }.flatten
     FileUtils.mkdir_p(dirs)
     
     Dir['*.*'].each do |file|
       ext = File.extname(file)
       name = file.sub(/_\d+(_\w+)?#{ext}\Z/, '')
       if ext == '.txt'
-        FileUtils.mv(file, "text/#{name}/#{file}")
+        FileUtils.mv(file, "#{name}/text/#{file}")
       else
         suffix      = file.match(/_([^_]+)#{ext}\Z/)[1]
         sans_suffix = file.sub(/_([^_]+)#{ext}\Z/, ext)
-        FileUtils.mv(file, "#{suffix}/#{name}/#{sans_suffix}")    
+        FileUtils.mv(file, "#{name}/images/#{suffix}/#{sans_suffix}")
       end
     end
     
-    names.each {|n| `cat text/*/#{n}*.txt > #{n}.txt` }
+    names.each {|n| `cat #{n}/text/*.txt > #{n}/text/#{n}.txt` }
     
     `tar -czf processed_pdfs.tar *`
     save("processed_pdfs.tar")
@@ -70,8 +73,8 @@ class ProcessPdfs < CloudCrowd::Action
   def generate_images_commands(command_list)
     Dir["*.pdf"].each do |pdf| 
       name = File.basename(pdf, File.extname(pdf))
-      options['images'].each do |version|
-        command_list << "gm convert #{version['options']} #{pdf} #{name}_#{version['name']}.#{version['extension']}"
+      options['images'].each do |i|
+        command_list << "gm convert #{i['options']} #{pdf} #{name}_#{i['name']}.#{i['extension']}"
       end
     end
   end
