@@ -26,7 +26,7 @@ module CloudCrowd
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
       Dir.chdir @work_directory
       unless status == MERGING
-        @input_path = File.join(@work_directory, File.basename(@input))
+        @input_path = File.join(@work_directory, safe_filename(@input))
         @file_name = File.basename(@input_path, File.extname(@input_path))
         download(@input, @input_path)
       end
@@ -39,7 +39,7 @@ module CloudCrowd
     
     # Download a file to the specified path using curl.
     def download(url, path)
-      `curl -s "#{url}" > #{path}`
+      `curl -s "#{url}" > "#{path}"`
       path
     end
     
@@ -60,6 +60,11 @@ module CloudCrowd
     
     
     private
+    
+    # Convert an unsafe URL into a filesystem-friendly filename.
+    def safe_filename(url)
+      name = File.basename(url).gsub(/%\d+/, '-').gsub(/[^a-zA-Z0-9_\-.]/, '')
+    end
     
     # The directory prefix to use for both local and S3 storage.
     # [action_name]/job_[job_id]/unit_[work_unit_it]

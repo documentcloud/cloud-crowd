@@ -1,6 +1,9 @@
+// Think about pulling in the DCJS framework, instead of just raw jQuery here.
 window.Console = {
   
   POLL_INTERVAL : 3000,
+  
+  ANIMATION_SPEED : 300,
   
   initialize : function() {
     this._queue = $('#jobs');
@@ -20,8 +23,8 @@ window.Console = {
   },
   
   updateJob : function(job, jobEl) {
-    jobEl.animate({width : job.width + '%'});
-    $('.completion', jobEl).animate({width : job.percent_complete + '%'});
+    jobEl.animate({width : job.width + '%'}, this.ANIMATION_SPEED);
+    $('.completion', jobEl).animate({width : job.percent_complete + '%'}, this.ANIMATION_SPEED);
     $('.percent_complete', jobEl).html(job.percent_complete + '%');
   },
   

@@ -1,0 +1,86 @@
+# Depends on working pdftk, gm (GraphicsMagick), and pdftotext (Poppler) commands.
+# Splits a pdf into batches of N pages, creates their thumbnails and icons,
+# and merges all the images back into a tar archive for convenient download.
+class ProcessPdfs < CloudCrowd::Action
+  
+  # Split up a large pdf into single-page pdfs.
+  def split
+    `pdftk #{input_path} burst output "#{file_name}_%05d.pdf"`
+    FileUtils.rm input_path
+    pdfs = Dir["*.pdf"]
+    batch_size = options['batch_size']
+    batches = (pdfs.length / batch_size.to_f).ceil
+    batches.times do |batch_num|
+      tar_path = "#{sprintf('%05d', batch_num)}.tar"
+      batch_pdfs = pdfs[batch_num*batch_size...(batch_num + 1)*batch_size]
+      `tar -czf #{tar_path} #{batch_pdfs.join(' ')}`
+    end
+    Dir["*.tar"].map {|tar| save(tar) }.to_json
+  end
+
+  # Convert a pdf page into different-sized thumbnails.
+  def process
+    `tar -xzf #{input_path}`
+    FileUtils.rm input_path
+    cmds = []
+    generate_images_commands(cmds)
+    generate_text_commands(cmds)
+    system cmds.join(' && ')
+    FileUtils.rm Dir['*.pdf']
+    `tar -czf #{file_name}.tar *`
+    save("#{file_name}.tar")
+  end
+  
+  # Merge all of the resulting images, all of the resulting text files, and
+  # the concatenated merge of the full-text into a single tar archive, ready to
+  # use in the DocumentViewer.
+  def merge
+    JSON.parse(input).each do |batch_url|
+      batch_path = File.basename(batch_url)
+      download(batch_url, batch_path)
+      `tar -xzf #{batch_path}`
+      FileUtils.rm batch_path
+    end
+    
+    names = Dir['*.txt'].map {|fn| fn.sub(/_\d+(_\w+)?\.txt\Z/, '') }.uniq
+    dirs = names.map {|n| ["text/#{n}"] + options['images'].map {|i| "#{i['name']}/#{n}" } }.flatten
+    FileUtils.mkdir_p(dirs)
+    
+    Dir['*.*'].each do |file|
+      ext = File.extname(file)
+      name = file.sub(/_\d+(_\w+)?#{ext}\Z/, '')
+      if ext == '.txt'
+        FileUtils.mv(file, "text/#{name}/#{file}")
+      else
+        suffix      = file.match(/_([^_]+)#{ext}\Z/)[1]
+        sans_suffix = file.sub(/_([^_]+)#{ext}\Z/, ext)
+        FileUtils.mv(file, "#{suffix}/#{name}/#{sans_suffix}")    
+      end
+    end
+    
+    names.each {|n| `cat text/*/#{n}*.txt > #{n}.txt` }
+    
+    `tar -czf processed_pdfs.tar *`
+    save("processed_pdfs.tar")
+  end
+  
+  
+  private
+  
+  def generate_images_commands(command_list)
+    Dir["*.pdf"].each do |pdf| 
+      name = File.basename(pdf, File.extname(pdf))
+      options['images'].each do |version|
+        command_list << "gm convert #{version['options']} #{pdf} #{name}_#{version['name']}.#{version['extension']}"
+      end
+    end
+  end
+  
+  def generate_text_commands(command_list)
+    Dir["*.pdf"].each do |pdf|
+      name = File.basename(pdf, File.extname(pdf))
+      command_list << "pdftotext -enc UTF-8 -layout -q #{pdf} #{name}.txt"
+    end
+  end
+
+end
