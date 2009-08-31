@@ -40,10 +40,14 @@ Gem::Specification.new do |s|
   
   s.files = %w(
 actions/graphics_magick.rb
+actions/process_pdfs.rb
 cloud-crowd.gemspec
 config/config.example.ru
 config/config.example.yml
 config/database.example.yml
+EPIGRAPHS
+examples/graphics_magick_example.rb
+examples/process_pdfs_example.rb
 lib/cloud-crowd.rb
 lib/cloud_crowd/action.rb
 lib/cloud_crowd/app.rb
@@ -61,19 +65,22 @@ lib/cloud_crowd/models.rb
 lib/cloud_crowd/runner.rb
 lib/cloud_crowd/schema.rb
 lib/cloud_crowd/worker.rb
+LICENSE
 public/css/admin_console.css
 public/css/reset.css
 public/images/queue_fill.png
 public/js/admin_console.js
 public/js/jquery-1.3.2.js
-views/index.erb
+README
 test/acceptance/test_failing_work_units.rb
 test/blueprints.rb
+text/config/config.ru
 test/config/config.yml
 test/config/database.yml
 test/config/actions/failure_testing.rb
 test/test_helper.rb
 test/unit/test_job.rb
 test/unit/test_work_unit.rb
+views/index.erb
 )
 end
