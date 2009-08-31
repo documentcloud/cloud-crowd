@@ -35,7 +35,7 @@ module CloudCrowd
     
     # Start a new job. Accepts a JSON representation of the job-to-be.
     post '/jobs' do
-      json Job.create_from_request(JSON.parse(params[:json]))
+      json Job.create_from_request(JSON.parse(params[:job]))
     end
     
     # Check the status of a job, returning the output if finished, and the

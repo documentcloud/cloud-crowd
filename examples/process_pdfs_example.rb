@@ -1,6 +1,6 @@
 RestClient.post(
 	'http://localhost:9173/jobs',
-	{:json => {
+	{:job => {
 	
 		'action' => 'process_pdfs',
 		

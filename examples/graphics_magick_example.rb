@@ -6,7 +6,7 @@ require 'json'
 
 RestClient.post(
 	'http://localhost:9173/jobs', 
-	{:json => {
+	{:job => {
 	
 		'action' => 'graphics_magick',
 		
