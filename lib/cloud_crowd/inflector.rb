@@ -1,7 +1,7 @@
 module CloudCrowd
   
   # Pilfered in parts from the ActiveSupport::Inflector.
-  module Inflector
+  module Inflector #:nodoc:
   
     def self.camelize(word)
       word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }

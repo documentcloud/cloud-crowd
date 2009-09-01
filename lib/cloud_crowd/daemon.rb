@@ -6,8 +6,13 @@ module CloudCrowd
   
   # A CloudCrowd::Daemon, started by the Daemons gem, runs a CloudCrowd::Worker in
   # a loop, continually fetching and processing WorkUnits from the central
-  # server. The Daemon backs off and pings central less frequently when there
-  # isn't any work to be done, and speeds back up when there is.
+  # server. 
+  # 
+  # The Daemon backs off and pings the central server less frequently 
+  # when there isn't any work to be done, and speeds back up when there is.
+  #
+  # The `crowd` command responds to all the usual methods that the Daemons gem
+  # supports.
   class Daemon
     
     MIN_WAIT        = CloudCrowd.config[:min_worker_wait]

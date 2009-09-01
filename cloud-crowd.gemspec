@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.0.4'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2009-08-23'
+  s.version   = '0.0.5'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2009-09-1'
 
   s.homepage    = "http://documentcloud.org" # wiki page on github?  
   s.summary     = "Better living through Map --> Ruby --> Reduce"
@@ -24,8 +24,9 @@ Gem::Specification.new do |s|
   
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
-  s.rdoc_options      << '--title' << 'CloudCrowd | Better Living through Map --> Ruby --> Reduce' <<
-                         '--main'  << 'README' <<
+  s.rdoc_options      << '--title'    << 'CloudCrowd | Better Living through Map --> Ruby --> Reduce' <<
+                         '--exclude'  << 'test' <<
+                         '--main'     << 'README' <<
                          '--all'
   
   s.add_dependency 'sinatra',       ['>= 0.9.4']

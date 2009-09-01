@@ -1,7 +1,9 @@
-# After sinatra-authorization...
-
 module CloudCrowd
   module Helpers
+    
+    # Authorization takes after sinatra-authorization... See 
+    # http://github.com/integrity/sinatra-authorization
+    # for the original.
     module Authorization
       
       # Ensure that the request includes the correct credentials.
@@ -19,7 +21,9 @@ module CloudCrowd
       end
       
       # A request is authorized if its login and password match those stored
-      # in config.yml, or if authentication is disabled.
+      # in config.yml, or if authentication is disabled. If authentication is
+      # turned on, then every request is authenticated, including between 
+      # the worker daemons and the central server.
       def authorize(login, password)
         return true unless CloudCrowd.config[:use_http_authentication]
         return CloudCrowd.config[:login] == login &&

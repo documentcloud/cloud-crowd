@@ -2,24 +2,31 @@ require 'tmpdir'
 
 module CloudCrowd
 
-  # The CloudCrowd::AssetStore should provide a common API for stashing and retrieving
-  # assets via URLs, in production this will be S3 but in development it may
-  # be the filesystem or /tmp.
+  # The AssetStore provides a common API for storing files and returning URLs 
+  # that can access them. In production this will be S3 but in development 
+  # it may be the filesystem.
+  #
+  # You shouldn't need to use the AssetStore directly -- Action's +download+
+  # and +save+ methods use it behind the scenes.
   class AssetStore
     include FileUtils
     
+    # Creating an AssetStore will determine wether to save private or public
+    # files on S3, depending on the value of <tt>use_s3_authentication</tt> in 
+    # <tt>config.yml</tt>.
     def initialize
       @use_auth = CloudCrowd.config[:use_s3_authentication]
       mkdir_p temp_storage_path unless File.exists? temp_storage_path
     end
     
-    # Path to CloudCrowd's temporary local storage.
+    # Get the path to CloudCrowd's temporary local storage. All actions run
+    # in subdirectories of this.
     def temp_storage_path
       "#{Dir.tmpdir}/cloud_crowd_tmp"
     end
     
-    # Copy a finished file from our local storage to S3. Save it publicly if
-    # we're not configured to use S3 authentication.
+    # Copy a finished file from our local storage to S3. Save it publicly unless
+    # we're configured to use S3 authentication.
     def save(local_path, save_path)
       ensure_s3_connection
       permission = @use_auth ? 'private' : 'public-read'

@@ -1,5 +1,13 @@
 module CloudCrowd
   
+  # The Worker, run at intervals by the Daemon, fetches WorkUnits from the
+  # central server and dispatches Actions to process them. Workers only fetch
+  # units that they are able to handle (for which they have an action in their
+  # actions directory). If communication with the central server is interrupted, 
+  # the WorkUnit will repeatedly attempt to complete its unit -- every 
+  # +worker_retry_wait+ seconds. Any exceptions that take place during 
+  # the course of the Action will cause the Worker to mark the WorkUnit as 
+  # having failed.
   class Worker
             
     attr_reader :action
@@ -16,7 +24,7 @@ module CloudCrowd
       log 'started'
     end
     
-    # Ask the central server for a new WorkUnit.
+    # Ask the central server for the first WorkUnit in line.
     def fetch_work_unit
       keep_trying_to "fetch a new work unit" do
         unit_json = @server['/work'].post(base_params)
@@ -70,8 +78,7 @@ module CloudCrowd
     # Executes the current work unit, catching all exceptions as failures.
     def run_work_unit
       begin
-        @action = CloudCrowd.actions[@action_name].new
-        @action.configure(@status, @input, @options, @store)
+        @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, @store)
         result = case @status
         when PROCESSING then @action.process
         when SPLITTING  then @action.split
@@ -84,7 +91,7 @@ module CloudCrowd
       end
     end
     
-    # Wraps +run_work_unit+ to benchmark the execution time, if requested.
+    # Wraps <tt>run_work_unit</tt> to benchmark the execution time, if requested.
     def run
       return run_work_unit unless @options['benchmark']
       status = CloudCrowd.display_status(@status)
@@ -126,8 +133,8 @@ module CloudCrowd
       puts "Worker ##{@id}: #{message}"
     end
     
-    # When we're done with a unit, clear out our ivars to make way for the next.
-    # Also, remove all of the previous unit's temporary storage.
+    # When we're done with a unit, clear out our instance variables to make way 
+    # for the next one. Also, remove all of the unit's temporary storage.
     def clear_work_unit
       @action.cleanup_work_directory
       @action, @action_name, @input, @options, @start_time = nil, nil, nil, nil, nil

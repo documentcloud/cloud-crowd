@@ -47,6 +47,7 @@ OPTIONS:
     def run_console
       require 'irb'
       require 'irb/completion'
+      require 'pp'
       load_code
       connect_to_database
       IRB.start

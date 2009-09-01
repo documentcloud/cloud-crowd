@@ -40,7 +40,7 @@ module CloudCrowd
   ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')
   
   # Keep the version in sync with the gemspec.
-  VERSION     = '0.0.4'
+  VERSION     = '0.0.5'
     
   # A Job is processing if its WorkUnits in the queue to be handled by workers.
   PROCESSING  = 1
@@ -108,8 +108,7 @@ module CloudCrowd
     # this actions property, which behaves like a hash. At load time, we
     # load all installed Actions and CloudCrowd's default Actions into it.
     # If you wish to have certain workers be specialized to only handle certain 
-    # Actions, then install only those into their <tt>config_dir/actions</tt> 
-    # directory.
+    # Actions, then install only those into the actions directory.
     def actions
       return @actions if @actions
       @actions = {}

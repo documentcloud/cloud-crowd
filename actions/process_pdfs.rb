@@ -1,6 +1,9 @@
 # Depends on working pdftk, gm (GraphicsMagick), and pdftotext (Poppler) commands.
 # Splits a pdf into batches of N pages, creates their thumbnails and icons,
-# and merges all the images back into a tar archive for convenient download.
+# as specified in the Job options, gets the text for every page, and merges 
+# it all back into a tar archive for convenient download.
+#
+# See <tt>examples/process_pdfs_example.rb</tt> for more information.
 class ProcessPdfs < CloudCrowd::Action
   
   # Split up a large pdf into single-page pdfs.
@@ -21,7 +24,7 @@ class ProcessPdfs < CloudCrowd::Action
     Dir["*.tar"].map {|tar| save(tar) }.to_json
   end
 
-  # Convert a pdf page into different-sized thumbnails.
+  # Convert a pdf page into different-sized thumbnails. Grab the text.
   def process
     `tar -xzf #{input_path}`
     FileUtils.rm input_path
@@ -36,7 +39,7 @@ class ProcessPdfs < CloudCrowd::Action
   
   # Merge all of the resulting images, all of the resulting text files, and
   # the concatenated merge of the full-text into a single tar archive, ready to
-  # use in the DocumentViewer.
+  # for download.
   def merge
     JSON.parse(input).each do |batch_url|
       batch_path = File.basename(batch_url)
