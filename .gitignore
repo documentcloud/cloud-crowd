@@ -2,6 +2,7 @@
 log
 raws
 tmp
+doc
 db/*.sqlite3
 raw
 config/config.ru

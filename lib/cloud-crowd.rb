@@ -75,21 +75,22 @@ module CloudCrowd
   class << self
     attr_reader :config
     
-    # Configure CloudCrowd by passing in the path to +config.yml+.
+    # Configure CloudCrowd by passing in the path to <tt>config.yml</tt>.
     def configure(config_path)
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load_file(config_path)
     end
 
     # Configure the CloudCrowd central database (and connect to it), by passing
-    # in a path to +database.yml+.
+    # in a path to <tt>database.yml</tt>. The file should use the standard 
+    # ActiveRecord connection format.
     def configure_database(config_path)
       configuration = YAML.load_file(config_path)
       ActiveRecord::Base.establish_connection(configuration)
     end
     
-    # Keep an authenticated (if configured to enable authentication) resource 
-    # for the central server.
+    # Get a reference to the central server, including authentication, 
+    # if configured.
     def central_server
       return @central_server if @central_server
       params = [CloudCrowd.config[:central_server]]
@@ -97,14 +98,17 @@ module CloudCrowd
       @central_server = RestClient::Resource.new(*params)
     end
 
-    # Return the readable status name of an internal CloudCrowd status number.
+    # Return the displayable status name of an internal CloudCrowd status number.
     def display_status(status)
       DISPLAY_STATUS_MAP[status]
     end
     
-    # At load time, load in all the CloudCrowd::Actions available in the actions
-    # folder. The actions that are present are the actions enabled for the 
-    # current server or worker.
+    # CloudCrowd::Actions are requested dynamically by name. Access them through
+    # this actions property, which behaves like a hash. At load time, we
+    # load all installed Actions and CloudCrowd's default Actions into it.
+    # If you wish to have certain workers be specialized to only handle certain 
+    # Actions, then install only those into their <tt>config_dir/actions</tt> 
+    # directory.
     def actions
       return @actions if @actions
       @actions = {}

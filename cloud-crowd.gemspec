@@ -25,7 +25,8 @@ Gem::Specification.new do |s|
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
   s.rdoc_options      << '--title' << 'CloudCrowd | Better Living through Map --> Ruby --> Reduce' <<
-                         '--main'  << 'README'
+                         '--main'  << 'README' <<
+                         '--all'
   
   s.add_dependency 'sinatra',       ['>= 0.9.4']
   s.add_dependency 'activerecord',  ['>= 2.3.3']
