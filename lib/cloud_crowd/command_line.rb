@@ -143,7 +143,7 @@ OPTIONS:
       found ? @config_dir = true : config_not_found
     end
     
-    # Parse all options for all actions.
+    # Parse all options for all commands.
     def parse_options
       @options = {
         :port         => 9173,

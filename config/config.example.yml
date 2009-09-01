@@ -19,6 +19,11 @@
 :login:                   [your login name]
 :password:                [your password]
 
+# By default, CloudCrowd looks for installed actions inside the 'actions'
+# subdirectory of this configuration folder. 'actions_path' allows you to install
+# them in a different location.
+# :actions_path: /path/to/actions
+
 # Set the following numbers to tweak the configuration of your worker daemons. 
 # Optimum results will depend on proportion of the Memory/CPU/IO bottlenecks
 # in your actions, the number of central servers you have running, and your

@@ -99,6 +99,7 @@ module CloudCrowd
     end
 
     # Return the displayable status name of an internal CloudCrowd status number.
+    # (See the above constants).
     def display_status(status)
       DISPLAY_STATUS_MAP[status]
     end
@@ -112,8 +113,10 @@ module CloudCrowd
     def actions
       return @actions if @actions
       @actions = {}
-      paths = Dir["#{ROOT}/actions/*.rb"] + Dir["#{@config_path}/actions/*.rb"]
-      paths.each do |path|
+      default_actions = Dir["#{ROOT}/actions/*.rb"]
+      custom_actions  = Dir["#{CloudCrowd.config[:actions_path]}/*.rb"] || 
+                        Dir["#{@config_path}/actions/*.rb"]
+      (default_actions + custom_actions).each do |path|
         name = File.basename(path, File.extname(path))
         require path
         @actions[name] = Module.const_get(Inflector.camelize(name))
