@@ -15,13 +15,17 @@ Gem::Specification.new do |s|
   
   s.authors     = ['Jeremy Ashkenas']
   s.email       = 'jeremy@documentcloud.org'
+  s.rubyforge_project    = 'cloud-crowd'
   
   s.require_paths = ['lib']
   s.executables   = ['crowd']
   
   # s.post_install_message = "Run `crowd --help` for information on using CloudCrowd."
-  s.rubyforge_project    = 'cloud-crowd'
-  s.has_rdoc             = true
+  
+  s.has_rdoc          = true
+  s.extra_rdoc_files  = ['README']
+  s.rdoc_options      << '--title' << 'CloudCrowd | Better Living through Map --> Ruby --> Reduce' <<
+                         '--main'  << 'README'
   
   s.add_dependency 'sinatra',       ['>= 0.9.4']
   s.add_dependency 'activerecord',  ['>= 2.3.3']
@@ -74,7 +78,7 @@ public/js/jquery-1.3.2.js
 README
 test/acceptance/test_failing_work_units.rb
 test/blueprints.rb
-text/config/config.ru
+test/config/config.ru
 test/config/config.yml
 test/config/database.yml
 test/config/actions/failure_testing.rb

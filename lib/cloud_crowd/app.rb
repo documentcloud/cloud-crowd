@@ -1,5 +1,20 @@
 module CloudCrowd
   
+  # The main CloudCrowd (Sinatra) application. The actions are:
+  #
+  # == Admin
+  # [get /] Render the admin console, with a progress meter for running jobs.
+  # [get /jobs] Get the combined JSON of every active job in the queue.
+  # [get /heartbeat] Returns 200 OK to let monitoring tools know the server's up.
+  # 
+  # == Public API
+  # [post /jobs] Begin a new Job. Post with a JSON representation of the job-to-be. (see examples).
+  # [get /jobs/:job_id] Check the status of a Job. Response includes output, if the Job has finished.
+  # [delete /jobs/:job_id] Clean up a Job when you're done downloading the results. Removes all intermediate files.
+  #
+  # == Internal Workers API
+  # [post /work] Dequeue the next WorkUnit, and hand it off to the worker.
+  # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
   class App < Sinatra::Default
     
     set :root, ROOT
