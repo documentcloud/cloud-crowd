@@ -25,6 +25,9 @@ autoload :Sinatra,      'sinatra'
 autoload :Socket,       'socket'
 autoload :YAML,         'yaml'
 
+# Common code which should really be required in every circumstance.
+require 'cloud_crowd/exceptions'
+
 module CloudCrowd
   
   # Autoload all the CloudCrowd classes which may not be required.
@@ -112,10 +115,10 @@ module CloudCrowd
     def actions
       return @actions if @actions
       @actions = {}
-      default_actions = Dir["#{ROOT}/actions/*.rb"]
-      custom_actions  = Dir["#{CloudCrowd.config[:actions_path]}/*.rb"] || 
-                        Dir["#{@config_path}/actions/*.rb"]
-      (default_actions + custom_actions).each do |path|
+      default_actions   = Dir["#{ROOT}/actions/*.rb"]
+      installed_actions = Dir["#{@config_path}/actions/*.rb"]
+      custom_actions    = Dir["#{CloudCrowd.config[:actions_path]}/*.rb"]
+      (default_actions + installed_actions + custom_actions).each do |path|
         name = File.basename(path, File.extname(path))
         require path
         @actions[name] = Module.const_get(Inflector.camelize(name))

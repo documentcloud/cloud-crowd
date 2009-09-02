@@ -17,13 +17,13 @@ module CloudCrowd
     # +enabled_actions+ must be passed to whitelist the types of WorkUnits than
     # can be retrieved for processing. Optionally, specify the +offset+ to peek
     # further on in line.
-    def self.dequeue(enabled_actions=[], offset=0)
+    def self.dequeue(worker_name, enabled_actions=[], offset=0)
       unit = self.first(
-        :conditions => {:status => INCOMPLETE, :taken => false, :action => enabled_actions}, 
+        :conditions => {:status => INCOMPLETE, :worker => nil, :action => enabled_actions}, 
         :order      => "created_at asc",
         :offset     => offset
       )
-      unit ? unit.update_attributes(:taken => true) && unit : nil
+      unit ? unit.update_attributes(:worker => worker_name) && unit : nil
     end
     
     # After saving a WorkUnit, its Job should check if it just became complete.
@@ -35,7 +35,7 @@ module CloudCrowd
     def finish(output, time_taken)
       update_attributes({
         :status   => SUCCEEDED,
-        :taken    => false,
+        :worker   => nil,
         :attempts => self.attempts + 1,
         :output   => output,
         :time     => time_taken
@@ -48,7 +48,7 @@ module CloudCrowd
       return try_again if tries < CloudCrowd.config[:work_unit_retries]
       update_attributes({
         :status   => FAILED,
-        :taken    => false,
+        :worker   => nil,
         :attempts => tries,
         :output   => output,
         :time     => time_taken
@@ -58,7 +58,7 @@ module CloudCrowd
     # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
     def try_again
       update_attributes({
-        :taken    => false,
+        :worker   => nil,
         :attempts => self.attempts + 1
       })
     end

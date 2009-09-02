@@ -10,7 +10,7 @@ end
 CloudCrowd::WorkUnit.blueprint do
   job    { CloudCrowd::Job.make }
   status { CloudCrowd::PROCESSING }
-  taken  { false }
+  worker { nil }
   input  { Sham.url }
   action { 'graphics_magick' }
 end

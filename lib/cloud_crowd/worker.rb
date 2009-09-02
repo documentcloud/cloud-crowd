@@ -5,10 +5,13 @@ module CloudCrowd
   # units that they are able to handle (for which they have an action in their
   # actions directory). If communication with the central server is interrupted, 
   # the WorkUnit will repeatedly attempt to complete its unit -- every 
-  # +worker_retry_wait+ seconds. Any exceptions that take place during 
+  # Worker::RETRY_WAIT seconds. Any exceptions that take place during 
   # the course of the Action will cause the Worker to mark the WorkUnit as 
   # having failed.
   class Worker
+    
+    # Wait five seconds to retry, after internal communcication errors.
+    RETRY_WAIT = 5
             
     attr_reader :action
     
@@ -18,6 +21,7 @@ module CloudCrowd
     def initialize
       @id               = $$
       @hostname         = Socket.gethostname
+      @name             = "#{@id}@#{@hostname}"
       @store            = AssetStore.new
       @server           = CloudCrowd.central_server
       @enabled_actions  = CloudCrowd.actions.keys
@@ -61,11 +65,10 @@ module CloudCrowd
       begin
         yield
       rescue Exception => e
-        wait_time = CloudCrowd.config[:worker_retry_wait] 
-        log "failed to #{title} -- retry in #{wait_time} seconds"
+        log "failed to #{title} -- retry in #{RETRY_WAIT} seconds"
         log e.message
         log e.backtrace
-        sleep wait_time
+        sleep RETRY_WAIT
         retry
       end
     end
@@ -103,7 +106,10 @@ module CloudCrowd
     
     # Common parameters to send back to central.
     def base_params
-      @base_params ||= {:enabled_actions => @enabled_actions.join(',')}
+      @base_params ||= {
+        :worker_name    => @name, 
+        :worker_actions => @enabled_actions.join(',')
+      }
     end
     
     # Common parameters to send back to central upon unit completion, 

@@ -17,7 +17,7 @@ module CloudCrowd
     
     MIN_WAIT        = CloudCrowd.config[:min_worker_wait]
     MAX_WAIT        = CloudCrowd.config[:max_worker_wait]
-    WAIT_MULTIPLIER = CloudCrowd.config[:worker_wait_multiplier]
+    WAIT_MULTIPLIER = 1.5
     
     def initialize
       @wait_time = MIN_WAIT

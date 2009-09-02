@@ -20,8 +20,8 @@
 :password:                [your password]
 
 # By default, CloudCrowd looks for installed actions inside the 'actions'
-# subdirectory of this configuration folder. 'actions_path' allows you to install
-# them in a different location.
+# subdirectory of this configuration folder. 'actions_path' allows you to load
+# additional actions from a location of your choice.
 # :actions_path: /path/to/actions
 
 # Set the following numbers to tweak the configuration of your worker daemons. 
@@ -37,14 +37,6 @@
 
 # The maximum number of seconds a worker waits between checking the job queue.
 :max_worker_wait:         20
-
-# The backoff multiplier the worker uses to slow down the check interval when 
-# there's no work in the queue.
-:worker_wait_multiplier:  1.3
-
-# The number of seconds a worker waits to retry when there's some kind of 
-# internal error (ie. the central server fails to respond)
-:worker_retry_wait:       5
 
 # The number of separate attempts that will be made to process an individual
 # work unit, before marking it as having failed.

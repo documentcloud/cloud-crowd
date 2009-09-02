@@ -24,8 +24,8 @@ module CloudCrowd
       # with no content.
       def dequeue_work_unit(offset=0)
         handle_conflicts do
-          actions = params[:enabled_actions].split(',')
-          WorkUnit.dequeue(actions, offset)
+          worker, actions = params[:worker_name], params[:worker_actions].split(',')
+          WorkUnit.dequeue(worker, actions, offset)
         end
       end
       
