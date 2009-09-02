@@ -67,6 +67,7 @@ lib/cloud_crowd/helpers.rb
 lib/cloud_crowd/inflector.rb
 lib/cloud_crowd/models/job.rb
 lib/cloud_crowd/models/work_unit.rb
+lib/cloud_crowd/models/worker_record.rb
 lib/cloud_crowd/models.rb
 lib/cloud_crowd/runner.rb
 lib/cloud_crowd/schema.rb

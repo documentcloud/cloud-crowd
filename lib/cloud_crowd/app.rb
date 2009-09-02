@@ -15,6 +15,7 @@ module CloudCrowd
   # == Internal Workers API
   # [post /work] Dequeue the next WorkUnit, and hand it off to the worker.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
+  # [put /worker] Keep a record of an actively running worker.
   class App < Sinatra::Default
     
     set :root, ROOT
@@ -66,6 +67,8 @@ module CloudCrowd
       json nil
     end
     
+    # INTERNAL WORKER DAEMON API:
+    
     # Internal method for worker daemons to fetch the work unit at the front
     # of the queue. Work unit is marked as taken and handed off to the worker.
     post '/work' do
@@ -88,6 +91,12 @@ module CloudCrowd
           error(500, "Completing a work unit must specify status.")
         end
       end
+    end
+    
+    # Every so often workers check in to let the central server know that
+    # they're still alive. Keep up-to-date records
+    put '/worker' do
+      WorkerRecord.register(params)
     end
     
   end

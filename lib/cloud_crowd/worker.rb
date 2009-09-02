@@ -10,6 +10,10 @@ module CloudCrowd
   # having failed.
   class Worker
     
+    # The time between worker check-ins with the central server, informing
+    # it of the current status, and simply that it's still alive.
+    CHECK_IN_INTERVAL = 60
+    
     # Wait five seconds to retry, after internal communcication errors.
     RETRY_WAIT = 5
             
@@ -56,6 +60,19 @@ module CloudCrowd
         clear_work_unit
         setup_work_unit(unit_json)
       end
+    end
+    
+    # Check in with the central server. Let it know the condition of the work 
+    # thread, the action and status we're processing, and our hostname and PID.
+    def check_in(thread_status)
+      @server["/worker"].put({
+        :name          => @name,
+        :thread_status => thread_status,
+        :job_id        => @options['job_id'],
+        :work_unit_id  => @options['work_unit_id'],
+        :action        => @action_name,
+        :action_status => @status
+      })
     end
     
     # We expect and require internal communication between the central server
