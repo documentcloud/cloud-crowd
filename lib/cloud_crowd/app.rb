@@ -96,7 +96,8 @@ module CloudCrowd
     # Every so often workers check in to let the central server know that
     # they're still alive. Keep up-to-date records
     put '/worker' do
-      WorkerRecord.register(params)
+      params[:terminated] ? WorkerRecord.check_out(params) : WorkerRecord.check_in(params)
+      json nil
     end
     
   end

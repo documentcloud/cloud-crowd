@@ -16,9 +16,14 @@ module CloudCrowd
     named_scope :alive, lambda { {:conditions => ['updated_at > ?', Time.now - EXPIRES_AFTER]} }
     
     # Save a Worker's current status to the database.
-    def self.register(params)
+    def self.check_in(params)
       self.find_or_create_by_name(params[:name]).update_attributes(params)
     end
+    
+    # Remove a terminated Worker's record from the database.
+    def self.check_out(params)
+      self.destroy_all :name => params[:name]
+    end 
     
     # We consider the worker to be alive if it's checked in more recently
     # than twice the expected interval ago.

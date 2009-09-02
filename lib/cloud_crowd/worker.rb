@@ -68,10 +68,18 @@ module CloudCrowd
       @server["/worker"].put({
         :name          => @name,
         :thread_status => thread_status,
-        :job_id        => @options['job_id'],
-        :work_unit_id  => @options['work_unit_id'],
+        :job_id        => @options && @options['job_id'],
+        :work_unit_id  => @options && @options['work_unit_id'],
         :action        => @action_name,
-        :action_status => @status
+        :status        => @status
+      })
+    end
+    
+    # Inform the central server that this worker is finished.
+    def check_out
+      @server["/worker"].put({
+        :name       => @name,
+        :terminated => true
       })
     end
     
