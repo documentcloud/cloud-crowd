@@ -75,7 +75,14 @@ lib/cloud_crowd/worker.rb
 LICENSE
 public/css/admin_console.css
 public/css/reset.css
+public/images/bullet_green.png
+public/images/bullet_white.png
+public/images/cloud_hand.png
+public/images/header_back.png
+public/images/logo.png
 public/images/queue_fill.png
+public/images/sidebar_bottom.png
+public/images/sidebar_top.png
 public/js/admin_console.js
 public/js/jquery-1.3.2.js
 README

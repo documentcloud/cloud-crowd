@@ -7,14 +7,17 @@ window.Console = {
   
   initialize : function() {
     this._queue = $('#jobs');
-    this.getJobs();
+    this.getStatus();
   },
   
-  getJobs : function() {
-    $.get('/jobs', null, function(resp) {
-      Console._jobs = resp;
+  getStatus : function() {
+    $.get('/status', null, function(resp) {
+      Console._jobs     = resp.jobs;
+      Console._workers  = resp.workers;
+      $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
       Console.renderJobs();
-      setTimeout(Console.getJobs, Console.POLL_INTERVAL);
+      Console.renderWorkers();
+      setTimeout(Console.getStatus, Console.POLL_INTERVAL);
     }, 'json');
   },
   
@@ -36,14 +39,20 @@ window.Console = {
       jobIds.push(this.id);
       totalUnits += this.work_units; 
     });
-    $.each(this._jobs, function() {
+    $.each($('.job'), function() {
+      if (jobIds.indexOf(parseInt(this.id.replace(/\D/g, ''), 10)) < 0) $(this).remove();
+    });
+    $.each(this._jobs.reverse(), function() {
       this.width  = (this.work_units / totalUnits) * 100;
       var jobEl = $('#job_' + this.id);
       jobEl[0] ? Console.updateJob(this, jobEl) : Console.renderJob(this);
     });
-    $.each($('.job'), function() {
-      if (jobIds.indexOf(parseInt(this.id.replace(/\D/g, ''), 10)) < 0) $(this).remove();
-    });
+  },
+  
+  renderWorkers : function() {
+    $('#workers').html($.map(this._workers, function(w) { 
+      return '<div class="worker ' + w.thread_status + '">' + w.name + '</div>';
+    }).join(''));
   }
   
 };

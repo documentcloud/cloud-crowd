@@ -11,12 +11,31 @@
 
 <body>
 	<div id="container">
+		
+		<div id="header">
+			<div id="logo"></div>
+		</div>
+		
 		<div id="queue">
+			<div id="no_jobs" class="small_caps">no jobs running&hellip;</div>
 			<div id="jobs">
 				<%# Render target for jobs. %>
 			</div>
 			<div id="queue_fill"></div>
 		</div>
+		
+		<div id="sidebar">
+			<div id="sidebar_top" class="sidebar_back"></div>
+			<div id="sidebar_background"></div>
+			<div id="sidebar_bottom" class="sidebar_back"></div>
+			<div id="sidebar_header" class="small_caps">
+				Active Worker Daemons
+			</div>
+			<div id="workers">
+				<%# Render target for workers. %>
+			</div>
+		</div>
+		
 	</div>
 </body>
 </html>

@@ -4,7 +4,7 @@ module CloudCrowd
   #
   # == Admin
   # [get /] Render the admin console, with a progress meter for running jobs.
-  # [get /jobs] Get the combined JSON of every active job in the queue.
+  # [get /status] Get the combined JSON of every active job and worker.
   # [get /heartbeat] Returns 200 OK to let monitoring tools know the server's up.
   # 
   # == Public API
@@ -36,9 +36,10 @@ module CloudCrowd
       erb :index
     end
     
-    # Get the JSON for every active job in the queue.
-    get '/jobs' do
-      json Job.incomplete
+    # Get the JSON for every active job in the queue and every active worker
+    # in the system.
+    get '/status' do
+      json 'jobs' => Job.incomplete, 'workers' => WorkerRecord.alive
     end
     
     # To monitor the central server with Monit, God, Nagios, or another 

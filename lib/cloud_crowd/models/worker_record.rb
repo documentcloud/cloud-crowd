@@ -17,7 +17,8 @@ module CloudCrowd
     
     # Save a Worker's current status to the database.
     def self.check_in(params)
-      self.find_or_create_by_name(params[:name]).update_attributes(params)
+      attrs = params.to_hash.merge({:updated_at => Time.now})
+      self.find_or_create_by_name(params[:name]).update_attributes(attrs)
     end
     
     # Remove a terminated Worker's record from the database.
@@ -31,7 +32,7 @@ module CloudCrowd
       updated_at > Time.now - EXPIRES_AFTER
     end
     
-    # Derive the worker process id on the remote machine from the name.
+    # Derive the Worker's PID on the remote machine from the name.
     def pid
       @pid ||= self.name.split('@').first
     end
@@ -39,6 +40,10 @@ module CloudCrowd
     # Derive the hostname from the Worker's name.
     def hostname
       @hostname ||= self.name.split('@').last
+    end
+    
+    def to_json(opts={})
+      {'name' => name, 'thread_status' => thread_status}.to_json
     end
     
   end

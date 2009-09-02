@@ -27,6 +27,11 @@ module CloudCrowd
     def complete?;    COMPLETE.include?(self.status);     end
     def incomplete?;  INCOMPLETE.include?(self.status);   end
     
+    # Get the displayable status name of the model's status code.
+    def display_status
+      CloudCrowd.display_status(self.status)
+    end
+    
   end
 end
 

@@ -97,11 +97,6 @@ module CloudCrowd
       raise ActionNotFound, "no action named: '#{self.action}' could be found"
     end
     
-    # Get the displayable status name of the Job's status code.
-    def display_status
-      CloudCrowd.display_status(self.status)
-    end
-    
     # How complete is this Job?
     def percent_complete
       return 0   if splitting?
