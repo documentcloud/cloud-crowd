@@ -25,7 +25,7 @@ body {
 
 #queue {
   position: absolute;
-  top: 16px; left: 325px; right: 15px;
+  top: 16px; left: 327px; right: 15px;
   height: 77px;
   overflow: hidden;
 }
@@ -145,3 +145,18 @@ body {
       #workers .worker.merging {
         background: url(/images/bullet_green.png) no-repeat left center;
       }
+      
+#graphs {
+  position: absolute;
+  top: 127px; left: 327px; right: 15px;
+  overflow: hidden;
+}
+  .graph_title {
+    color: #333;
+    font-size: 16px;
+    text-shadow: 0px 1px 1px #eee;
+    margin-bottom: 10px;
+  }
+  .graph {
+    height: 200px;
+  }

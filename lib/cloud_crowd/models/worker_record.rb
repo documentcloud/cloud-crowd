@@ -11,7 +11,10 @@ module CloudCrowd
     
     validates_presence_of :name, :thread_status
     
+    before_destroy :clear_work_units
+    
     named_scope :alive, lambda { {:conditions => ['updated_at > ?', Time.now - EXPIRES_AFTER]} }
+    named_scope :dead,  lambda { {:conditions => ['updated_at <= ?', Time.now - EXPIRES_AFTER]} }
     
     # Save a Worker's current status to the database.
     def self.check_in(params)
@@ -21,9 +24,7 @@ module CloudCrowd
     
     # Remove a terminated Worker's record from the database.
     def self.check_out(params)
-      record = self.find_by_name(params[:name])
-      WorkUnit.update_all('worker_record_id = null', "worker_record_id = #{record.id}")
-      record.destroy
+      self.find_by_name(params[:name]).destroy
     end 
     
     # We consider the worker to be alive if it's checked in more recently
@@ -47,6 +48,13 @@ module CloudCrowd
         'name'    => name, 
         'status'  => work_unit && work_unit.display_status,
       }.to_json
+    end
+    
+    
+    private
+    
+    def clear_work_units
+      WorkUnit.update_all('worker_record_id = null', "worker_record_id = #{id}")
     end
     
   end

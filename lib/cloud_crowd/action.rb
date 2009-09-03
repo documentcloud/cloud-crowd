@@ -57,7 +57,7 @@ module CloudCrowd
     # to the root directory (where daemons run by default).
     def cleanup_work_directory
       Dir.chdir '/'
-      FileUtils.rm_r(@work_directory)
+      FileUtils.rm_r(@work_directory) if File.exists?(@work_directory)
     end
     
     
