@@ -118,6 +118,14 @@ body {
     top: 5px; left: 8px;
     color: #404040;
   }
+    #sidebar_header.no_workers .no_workers,
+    #sidebar_header .has_workers {
+      display: block;
+    }
+    #sidebar_header .no_workers,
+    #sidebar_header.no_workers .has_workers {
+      display: none;
+    }
   #workers {
     position: absolute;
     padding: 4px 0;

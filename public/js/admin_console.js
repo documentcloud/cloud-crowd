@@ -53,6 +53,9 @@ window.Console = {
   },
   
   renderWorkers : function() {
+    var header = $('#sidebar_header');
+    $('.has_workers', header).html(this._workers.length + " Active Worker Daemons");
+    header.toggleClass('no_workers', this._workers.length <= 0);
     $('#workers').html($.map(this._workers, function(w) { 
       return '<div class="worker ' + w.status + '" title="status: ' + w.status + '">' + w.name + '</div>';
     }).join(''));
