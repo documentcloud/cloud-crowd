@@ -18,8 +18,8 @@ body {
 }
   #logo {
     position: absolute;
-    left: 16px; top: 16px;
-    width: 266px; height: 78px;
+    left: 37px; top: 9px;
+    width: 236px; height: 91px;
     background: url(/images/logo.png);
   }
 
@@ -118,7 +118,7 @@ body {
     padding: 2px 0;
     top: 21px; left: 8px; bottom: 21px;
     width: 290px;
-    overflow: auto;
+    overflow-y: auto; overflow-x: hidden;
   }
     #workers .worker {
       margin: 8px 0;
