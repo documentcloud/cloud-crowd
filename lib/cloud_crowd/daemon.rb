@@ -63,8 +63,8 @@ module CloudCrowd
     # Checks in to let the central server know it's still alive every 
     # CHECK_IN_INTERVAL seconds. Restarts the work_thread if it has died.
     def run_monitor
-      sleep Worker::CHECK_IN_INTERVAL
       Thread.new do
+        sleep Worker::CHECK_IN_INTERVAL
         loop do
           @work_thread = run_monitor unless @work_thread.alive? || @exit_started
           @worker.check_in(@work_thread.status)
