@@ -22,12 +22,14 @@ window.Console = {
   },
   
   renderJob : function(job) {
-    this._queue.prepend('<div class="job" id="job_' + job.id + '" style="width:' + job.width + '%; background: #' + job.color + ';"><div class="completion" style="width:' + job.percent_complete + '%;"></div><div class="percent_complete">' + job.percent_complete + '%</div><div class="job_id">#' + job.id + '</div></div>');
+    this._queue.prepend('<div class="job" id="job_' + job.id + '" style="width:' + job.width + '%; background: #' + job.color + ';"><div class="completion done_' + job.percent_complete + '" style="width:' + job.percent_complete + '%;"></div><div class="percent_complete">' + job.percent_complete + '%</div><div class="job_id">#' + job.id + '</div></div>');
   },
   
   updateJob : function(job, jobEl) {
-    jobEl.animate({width : job.width + '%'}, this.ANIMATION_SPEED);
-    $('.completion', jobEl).animate({width : job.percent_complete + '%'}, this.ANIMATION_SPEED);
+    jobEl.css({width : job.width + '%'});
+    var completion = $('.completion', jobEl);
+    completion.animate({width : job.percent_complete + '%'}, this.ANIMATION_SPEED);
+    completion[0].className = completion[0].className.replace(/\b\done_d+\b/, 'done_' + job.percent_complete);
     $('.percent_complete', jobEl).html(job.percent_complete + '%');
   },
   
