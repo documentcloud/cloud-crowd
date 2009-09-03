@@ -30,8 +30,10 @@ module CloudCrowd
     
     # Spin up our worker and monitoring threads. The monitor's the boss, and 
     # will feel no compunction in killing the worker thread if necessary.
+    # Check in before starting up. If check in fails, there's no sense in going.
     def run
-      @work_thread    = run_worker
+      @worker.check_in('starting')
+      @work_thread = run_worker
       @monitor_thread = run_monitor
       @monitor_thread.join
     end
@@ -61,6 +63,7 @@ module CloudCrowd
     # Checks in to let the central server know it's still alive every 
     # CHECK_IN_INTERVAL seconds. Restarts the work_thread if it has died.
     def run_monitor
+      sleep Worker::CHECK_IN_INTERVAL
       Thread.new do
         loop do
           @work_thread = run_monitor unless @work_thread.alive? || @exit_started

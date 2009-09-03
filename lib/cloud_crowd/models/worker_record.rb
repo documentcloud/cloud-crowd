@@ -19,7 +19,7 @@ module CloudCrowd
     # Save a Worker's current status to the database.
     def self.check_in(params)
       attrs = {:thread_status => params[:thread_status], :updated_at => Time.now}
-      self.find_or_create_by_name(params[:name]).update_attributes(attrs)
+      self.find_or_create_by_name(params[:name]).update_attributes!(attrs)
     end
     
     # Remove a terminated Worker's record from the database.

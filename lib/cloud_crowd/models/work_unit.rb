@@ -67,7 +67,7 @@ module CloudCrowd
     # When a Worker checks out a WorkUnit, establish the connection between
     # WorkUnit and WorkerRecord.
     def assign_to(worker_name)
-      self.worker_record = WorkerRecord.find_by_name(worker_name)
+      self.worker_record = WorkerRecord.find_by_name!(worker_name)
       self.save ? self : nil
     end
     
