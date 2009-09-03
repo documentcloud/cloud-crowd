@@ -4,12 +4,10 @@ module CloudCrowd
   # Every time it checks in, we keep track of its status. The attributes shown
   # here may lag their actual values by up to Worker::CHECK_IN_INTERVAL seconds.
   class WorkerRecord < ActiveRecord::Base
-    include ModelStatus
-    
+        
     EXPIRES_AFTER = 2 * Worker::CHECK_IN_INTERVAL
     
-    belongs_to :job
-    belongs_to :work_unit
+    has_one :work_unit
     
     validates_presence_of :name, :thread_status
     
@@ -17,13 +15,15 @@ module CloudCrowd
     
     # Save a Worker's current status to the database.
     def self.check_in(params)
-      attrs = params.to_hash.merge({:updated_at => Time.now})
+      attrs = {:thread_status => params[:thread_status], :updated_at => Time.now}
       self.find_or_create_by_name(params[:name]).update_attributes(attrs)
     end
     
     # Remove a terminated Worker's record from the database.
     def self.check_out(params)
-      self.destroy_all :name => params[:name]
+      record = self.find_by_name(params[:name])
+      WorkUnit.update_all('worker_record_id = null', "worker_record_id = #{record.id}")
+      record.destroy
     end 
     
     # We consider the worker to be alive if it's checked in more recently
@@ -43,7 +43,10 @@ module CloudCrowd
     end
     
     def to_json(opts={})
-      {'name' => name, 'thread_status' => thread_status}.to_json
+      {
+        'name'    => name, 
+        'status'  => work_unit && work_unit.display_status,
+      }.to_json
     end
     
   end

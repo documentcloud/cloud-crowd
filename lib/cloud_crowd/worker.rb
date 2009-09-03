@@ -67,11 +67,7 @@ module CloudCrowd
     def check_in(thread_status)
       @server["/worker"].put({
         :name          => @name,
-        :thread_status => thread_status,
-        :job_id        => @options && @options['job_id'],
-        :work_unit_id  => @options && @options['work_unit_id'],
-        :action        => @action_name,
-        :status        => @status
+        :thread_status => thread_status
       })
     end
     

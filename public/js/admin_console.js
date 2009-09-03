@@ -1,4 +1,5 @@
 // Think about pulling in the DCJS framework, instead of just raw jQuery here.
+// Leaving it hacked together like this just cries out for templates, dunnit?
 window.Console = {
   
   POLL_INTERVAL : 3000,
@@ -53,7 +54,7 @@ window.Console = {
   
   renderWorkers : function() {
     $('#workers').html($.map(this._workers, function(w) { 
-      return '<div class="worker ' + w.thread_status + '">' + w.name + '</div>';
+      return '<div class="worker ' + w.status + '" title="status: ' + w.status + '">' + w.name + '</div>';
     }).join(''));
   }
   

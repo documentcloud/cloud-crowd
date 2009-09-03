@@ -34,10 +34,10 @@ class WorkUnitTest < Test::Unit::TestCase
     end
     
     should "be able to retry, on failure" do
-      @unit.update_attribute :worker, '4059@document-cloud.local'
+      @unit.update_attribute :worker_record_id, 10
       assert @unit.attempts == 0
       @unit.fail('oops', 10)
-      assert @unit.worker == nil
+      assert @unit.worker_record == nil
       assert @unit.attempts == 1
       assert @unit.processing?
       @unit.fail('oops again', 10)

@@ -97,7 +97,7 @@ body {
     position: absolute;
     top: 21px; bottom: 21px;
     width: 298px;
-    background: #e6e6e6;
+    background: #e0e0e0;
     border: 1px solid #8b8b8b;
     border-top: 0; border-bottom: 0;
   }
@@ -120,16 +120,20 @@ body {
   }
   #workers {
     position: absolute;
-    padding: 2px 0;
+    padding: 4px 0;
     top: 21px; left: 8px; bottom: 21px;
     width: 290px;
     overflow-y: auto; overflow-x: hidden;
   }
     #workers .worker {
-      margin: 8px 0;
+      margin: 4px 0;
       padding-left: 18px;
-      background: url(/images/bullet_green.png) no-repeat left center;
+      font-size: 11px;
+      line-height: 18px;
+      background: url(/images/bullet_white.png) no-repeat left center;
     }
-      #workers .worker.sleep {
-        background: url(/images/bullet_white.png) no-repeat left center;
+      #workers .worker.processing,
+      #workers .worker.splitting,
+      #workers .worker.merging {
+        background: url(/images/bullet_green.png) no-repeat left center;
       }

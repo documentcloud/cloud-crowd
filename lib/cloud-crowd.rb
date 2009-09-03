@@ -106,7 +106,7 @@ module CloudCrowd
     # Return the displayable status name of an internal CloudCrowd status number.
     # (See the above constants).
     def display_status(status)
-      DISPLAY_STATUS_MAP[status]
+      DISPLAY_STATUS_MAP[status] || 'unknown'
     end
     
     # CloudCrowd::Actions are requested dynamically by name. Access them through

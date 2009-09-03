@@ -39,7 +39,7 @@ module CloudCrowd
     # Get the JSON for every active job in the queue and every active worker
     # in the system.
     get '/status' do
-      json 'jobs' => Job.incomplete, 'workers' => WorkerRecord.alive
+      json 'jobs' => Job.incomplete, 'workers' => WorkerRecord.alive(:order => 'name desc')
     end
     
     # To monitor the central server with Monit, God, Nagios, or another 

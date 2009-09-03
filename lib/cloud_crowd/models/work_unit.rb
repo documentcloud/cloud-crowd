@@ -8,6 +8,7 @@ module CloudCrowd
     include ModelStatus
     
     belongs_to :job
+    belongs_to :worker_record
     
     validates_presence_of :job_id, :status, :input, :action
     
@@ -19,11 +20,11 @@ module CloudCrowd
     # further on in line.
     def self.dequeue(worker_name, enabled_actions=[], offset=0)
       unit = self.first(
-        :conditions => {:status => INCOMPLETE, :worker => nil, :action => enabled_actions}, 
+        :conditions => {:status => INCOMPLETE, :worker_record_id => nil, :action => enabled_actions}, 
         :order      => "created_at asc",
         :offset     => offset
       )
-      unit ? unit.update_attributes(:worker => worker_name) && unit : nil
+      unit ? unit.assign_to(worker_name) : nil
     end
     
     # After saving a WorkUnit, its Job should check if it just became complete.
@@ -34,11 +35,11 @@ module CloudCrowd
     # Mark this unit as having finished successfully.
     def finish(output, time_taken)
       update_attributes({
-        :status   => SUCCEEDED,
-        :worker   => nil,
-        :attempts => self.attempts + 1,
-        :output   => output,
-        :time     => time_taken
+        :status         => SUCCEEDED,
+        :worker_record  => nil,
+        :attempts       => self.attempts + 1,
+        :output         => output,
+        :time           => time_taken
       })
     end
     
@@ -47,20 +48,27 @@ module CloudCrowd
       tries = self.attempts + 1
       return try_again if tries < CloudCrowd.config[:work_unit_retries]
       update_attributes({
-        :status   => FAILED,
-        :worker   => nil,
-        :attempts => tries,
-        :output   => output,
-        :time     => time_taken
+        :status         => FAILED,
+        :worker_record  => nil,
+        :attempts       => tries,
+        :output         => output,
+        :time           => time_taken
       })
     end
     
     # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
     def try_again
       update_attributes({
-        :worker   => nil,
-        :attempts => self.attempts + 1
+        :worker_record  => nil,
+        :attempts       => self.attempts + 1
       })
+    end
+    
+    # When a Worker checks out a WorkUnit, establish the connection between
+    # WorkUnit and WorkerRecord.
+    def assign_to(worker_name)
+      self.worker_record = WorkerRecord.find_by_name(worker_name)
+      self.save ? self : nil
     end
     
     # The JSON representation of a WorkUnit shares the Job's options with all
