@@ -22,6 +22,25 @@ body {
     width: 236px; height: 91px;
     background: url(/images/logo.png);
   }
+  
+#disconnected {
+  position: absolute;
+  top: 122px; right: 15px;
+  background: #7f7f7f;
+  color: #333;
+  border: 1px solid #555;
+  font-size: 10px;
+  line-height: 18px;
+  padding: 3px 4px 1px 4px;
+  -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
+}
+  #disconnected .server_error {
+    float: left;
+    width: 16px; height: 16px;
+    background: url(/images/server_error.png);
+    opacity: 0.7;
+    margin-right: 3px;
+  }
 
 #queue {
   position: absolute;
@@ -44,7 +63,7 @@ body {
     left: 0; right: 0; top: 0;
     height: 75px;
     border: 1px solid #5c5c5c;
-    -moz-border-radius: 10px; -webkit-border-radius: 10px;
+    -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px;
     background: transparent url(/images/queue_fill.png) repeat-x 0px -1px;
   }
     #queue.no_jobs #queue_fill {

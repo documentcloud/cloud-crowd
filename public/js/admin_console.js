@@ -36,6 +36,7 @@ window.Console = {
     this._histories = [this._jobsHistory, this._workersHistory, this._workUnitsHistory];
     this._queue = $('#jobs');
     this._workerInfo = $('#worker_info');
+    this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
     $('#workers .worker').live('click', Console.getWorkerInfo);
     this.getStatus();
@@ -44,17 +45,21 @@ window.Console = {
   // Request the lastest status of all jobs and workers, re-render or update
   // the DOM to reflect.
   getStatus : function() {
-    $.get('/status', null, function(resp) {
+    $.ajax({url : '/status', dataType : 'json', success : function(resp) {
       Console._jobs           = resp.jobs;
       Console._workers        = resp.workers;
       Console._workUnitCount  = resp.work_unit_count;
       Console.recordDataPoint();
+      if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
       $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
       Console.renderJobs();
       Console.renderWorkers();
       Console.renderGraphs();
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
-    }, 'json');
+    }, error : function(request, status, errorThrown) {
+      if (!Console._disconnected.is(':visible')) Console._disconnected.fadeIn(Console.ANIMATION_SPEED);
+      setTimeout(Console.getStatus, Console.POLL_INTERVAL);
+    }});
   },
   
   // Render an individual job afresh.
