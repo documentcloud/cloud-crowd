@@ -1,3 +1,13 @@
+#!/usr/bin/env ruby -rubygems
+
+require 'restclient'
+require 'json'
+
+# This example demonstrates a fairly complicated PDF-processing action, designed
+# to extract the PDF's text, and produce GIF versions of each page. The action
+# (actions/process_pdfs.rb) shows an example of using all three steps,
+# split, process, and merge.
+
 RestClient.post(
 	'http://localhost:9173/jobs',
 	{:job => {

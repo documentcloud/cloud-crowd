@@ -45,7 +45,7 @@ module CloudCrowd
       keep_trying_to "complete work unit" do
         data = completion_params.merge({:status => 'succeeded', :output => result})
         unit_json = @server["/work/#{data[:id]}"].put(data)
-        log "finished #{@action_name} in #{data[:time]} seconds"
+        log "finished #{display_work_unit} in #{data[:time]} seconds"
         clear_work_unit
         setup_work_unit(unit_json)
       end
@@ -56,7 +56,7 @@ module CloudCrowd
       keep_trying_to "mark work unit as failed" do
         data = completion_params.merge({:status => 'failed', :output => {'output' => exception.message}.to_json})
         unit_json = @server["/work/#{data[:id]}"].put(data)
-        log "failed #{@action_name} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
+        log "failed #{display_work_unit} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
         clear_work_unit
         setup_work_unit(unit_json)
       end
@@ -82,6 +82,7 @@ module CloudCrowd
         :name       => @name,
         :terminated => true
       })
+      log 'exiting'
     end
     
     # We expect and require internal communication between the central server
@@ -102,6 +103,11 @@ module CloudCrowd
     # Does this Worker have a job to do?
     def has_work?
       @action_name && @input && @options
+    end
+    
+    # Loggable string of the current work unit.
+    def display_work_unit
+      "unit ##{@options['work_unit_id']} (#{@action_name})"
     end
     
     # Executes the current work unit, catching all exceptions as failures.
@@ -156,7 +162,7 @@ module CloudCrowd
       @options['job_id'] = unit['job_id']
       @options['work_unit_id'] = unit['id']
       @options['attempts'] ||= unit['attempts']
-      log "fetched work unit ##{@options['work_unit_id']} for #{@action_name}"
+      log "fetched #{display_work_unit}"
       return true
     end
     

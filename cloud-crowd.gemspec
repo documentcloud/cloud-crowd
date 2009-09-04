@@ -47,6 +47,7 @@ Gem::Specification.new do |s|
   s.files = %w(
 actions/graphics_magick.rb
 actions/process_pdfs.rb
+actions/word_count.rb
 cloud-crowd.gemspec
 config/config.example.ru
 config/config.example.yml
@@ -54,6 +55,7 @@ config/database.example.yml
 EPIGRAPHS
 examples/graphics_magick_example.rb
 examples/process_pdfs_example.rb
+examples/word_count_example.rb
 lib/cloud-crowd.rb
 lib/cloud_crowd/action.rb
 lib/cloud_crowd/app.rb

@@ -6,8 +6,8 @@
 # See <tt>examples/process_pdfs_example.rb</tt> for more information.
 class ProcessPdfs < CloudCrowd::Action
   
-  # Split up a large pdf into single-page pdfs.
-  # The double pdftk shuffle fixes the document xrefs.
+  # Split up a large pdf into single-page pdfs. Batch them into 'batch_size'
+  # chunks for processing. The double pdftk shuffle fixes the document xrefs.
   def split
     `pdftk #{input_path} burst output "#{file_name}_%05d.pdf_temp"`
     FileUtils.rm input_path

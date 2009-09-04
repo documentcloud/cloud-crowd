@@ -1,11 +1,13 @@
-# Inside of a restclient session:
-# This is a fancy example that produces black and white, annotated, and blurred
-# versions of a list of URLs downloaded from the web.
+#!/usr/bin/env ruby -rubygems
 
+require 'restclient'
 require 'json'
 
-RestClient.post(
-	'http://localhost:9173/jobs', 
+# This example demonstrates the GraphicsMagick action by taking in a list of
+# five images, and producing annotated, blurred, and black and white versions
+# of each image. See actions/graphics_magick.rb
+
+RestClient.post('http://localhost:9173/jobs', 
 	{:job => {
 	
 		'action' => 'graphics_magick',
@@ -40,9 +42,3 @@ RestClient.post(
 		
 	}.to_json}
 )
-
-# status = RestClient.get('http://localhost:9173/jobs/[job_id]')
-
-# puts JSON.parse(RestClient.get('http://localhost:9173/jobs/[job_id]'))['outputs'].values.map {|v| 
-#		JSON.parse(v).map {|v| v['url']} 
-#	}.flatten.join("\n")
