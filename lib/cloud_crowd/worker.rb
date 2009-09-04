@@ -65,13 +65,18 @@ module CloudCrowd
     # Check in with the central server. Let it know the condition of the work 
     # thread, the action and status we're processing, and our hostname and PID.
     def check_in(thread_status)
-      @server["/worker"].put({
-        :name          => @name,
-        :thread_status => thread_status
-      })
+      keep_trying_to "check in with central" do
+        @server["/worker"].put({
+          :name          => @name,
+          :thread_status => thread_status
+        })
+      end
     end
     
-    # Inform the central server that this worker is finished.
+    # Inform the central server that this worker is finished. This is the only
+    # remote method that doesn't retry on connection errors -- if the worker 
+    # can't connect to the central server while it's trying to shutdown, it 
+    # should close, regardless.
     def check_out
       @server["/worker"].put({
         :name       => @name,
