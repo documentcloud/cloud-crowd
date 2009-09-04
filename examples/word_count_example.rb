@@ -37,3 +37,5 @@ RestClient.post('http://localhost:9173/jobs',
 		
 	}.to_json}
 )
+
+# With 23 Workers running, and over Wifi, it counted all the words in 5.5 secs.
