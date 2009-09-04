@@ -41,10 +41,16 @@ module CloudCrowd
     # larger -- keep it in mind.
     get '/status' do
       json(
-        'incomplete_jobs' => Job.incomplete, 
-        'complete_jobs'   => Job.complete.all(:select => 'id').map(&:id),
-        'workers'         => WorkerRecord.alive(:order => 'name desc')
+        'jobs'            => Job.incomplete, 
+        'workers'         => WorkerRecord.alive(:order => 'name desc'),
+        'work_unit_count' => WorkUnit.incomplete.count
       )
+    end
+    
+    # Get the JSON for a worker record's work unit, if one exists.
+    get '/worker/:name' do
+      record = WorkerRecord.find_by_name params[:name]
+      json((record && record.work_unit) || {})
     end
     
     # To monitor the central server with Monit, God, Nagios, or another 

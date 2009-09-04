@@ -73,9 +73,7 @@ module CloudCrowd
   INCOMPLETE  = [PROCESSING, SPLITTING, MERGING]
   
   # Mapping of statuses to their display strings.
-  DISPLAY_STATUS_MAP = {
-    1 => 'processing', 2 => 'succeeded', 3 => 'failed', 4 => 'splitting', 5 => 'merging'
-  }
+  DISPLAY_STATUS_MAP = ['unknown', 'processing', 'succeeded', 'failed', 'splitting', 'merging']
   
   class << self
     attr_reader :config

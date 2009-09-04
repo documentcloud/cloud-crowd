@@ -70,7 +70,7 @@ body {
       opacity: 0.5;
       overflow: hidden;
     }
-      #queue .completion.done_0 {
+      #queue .completion.zero {
         border: 0;
       }
     #queue .percent_complete {
@@ -117,6 +117,7 @@ body {
     position: absolute;
     top: 5px; left: 8px;
     color: #404040;
+    text-shadow: 0px 1px 1px #eee;
   }
     #sidebar_header.no_workers .no_workers,
     #sidebar_header .has_workers {
@@ -128,35 +129,72 @@ body {
     }
   #workers {
     position: absolute;
-    padding: 4px 0;
-    top: 21px; left: 8px; bottom: 21px;
-    width: 290px;
+    padding: 2px 0;
+    top: 21px; left: 0; bottom: 21px;
+    width: 298px;
     overflow-y: auto; overflow-x: hidden;
   }
     #workers .worker {
-      margin: 4px 0;
+      border: 1px solid transparent;
+      margin: 1px 7px;
       padding-left: 18px;
       font-size: 11px;
-      line-height: 18px;
+      line-height: 22px;
       background: url(/images/bullet_white.png) no-repeat left center;
+      cursor: pointer;
     }
       #workers .worker.processing,
       #workers .worker.splitting,
       #workers .worker.merging {
         background: url(/images/bullet_green.png) no-repeat left center;
       }
+      #workers .worker:hover {
+        border: 1px solid #aaa;
+        border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
+        background-color: #ccc;
+      }
+      
+#worker_info {
+  position: absolute;
+  width: 231px; height: 79px;
+  margin: -9px 0 0 -20px;
+  background: url(/images/worker_info.png);
+  overflow: hidden;
+  cursor: pointer;
+}
+  #worker_info_inner {
+    margin: 15px 15px 15px 32px;
+    line-height: 15px;
+    color: #333;
+    text-shadow: 0px 1px 1px #eee;
+  }
+    #worker_info.loading #worker_info_inner {
+      background: url(/images/worker_info_loading.gif) no-repeat right bottom;
+      width: 45px; height: 9px;
+    }
+    #worker_info.awake #worker_details, 
+    #worker_sleeping {
+      display: block;
+    }
+    #worker_details, #worker_info.loading #worker_details, 
+    #worker_info.loading #worker_sleeping, #worker_info.awake #worker_sleeping {
+      display: none;
+    }
       
 #graphs {
   position: absolute;
   top: 127px; left: 327px; right: 15px;
   overflow: hidden;
 }
-  .graph_title {
-    color: #333;
-    font-size: 16px;
-    text-shadow: 0px 1px 1px #eee;
-    margin-bottom: 10px;
+  .graph_container {
+    margin-bottom: 25px;
   }
-  .graph {
-    height: 200px;
-  }
+    .graph_title {
+      color: #333;
+      font-size: 16px;
+      text-shadow: 0px 1px 1px #eee;
+      margin-bottom: 10px;
+    }
+    .graph {
+      height: 150px;
+    }

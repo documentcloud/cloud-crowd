@@ -41,8 +41,29 @@
 		
 		<div id="graphs">
 			<div class="graph_container">
-				<div class="graph_title">Job Queue Statistics:</div>
-				<div id="main_graph" class="graph"></div>
+				<div class="graph_title">Work Units in Queue:</div>
+				<div id="work_units_graph" class="graph"></div>
+			</div>
+			<div class="graph_container">
+				<div class="graph_title">Jobs in Queue:</div>
+				<div id="jobs_graph" class="graph"></div>
+			</div>
+			<div class="graph_container">
+				<div class="graph_title">Active Worker Daemons:</div>
+				<div id="workers_graph" class="graph"></div>
+			</div>
+		</div>
+		
+		<div id="worker_info" style="display:none;">
+			<div id="worker_info_inner" class="small_caps">
+				<div id="worker_details">
+					<div id="worker_status">status: <span class="status"></span></div>
+					<div id="worker_action">action: <span class="action"></span></div>
+					<div id="worker_job_id">job #<span class="job_id"></span> / work unit #<span class="work_unit_id"></span></div>
+				</div>
+				<div id="worker_sleeping">
+					worker is sleeping&hellip;
+				</div>
 			</div>
 		</div>
 		

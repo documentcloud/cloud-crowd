@@ -83,6 +83,8 @@ public/images/logo.png
 public/images/queue_fill.png
 public/images/sidebar_bottom.png
 public/images/sidebar_top.png
+public/images/worker_info.png
+public/images/worker_info_loading.gif
 public/js/admin_console.js
 public/js/excanvas.pack.js
 public/js/jquery.flot.pack.js

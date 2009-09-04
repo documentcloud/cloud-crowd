@@ -14,17 +14,30 @@ window.Console = {
   // Default speed for all animations.
   ANIMATION_SPEED : 300,
   
+  // Keep this in sync with the map in cloud-crowd.rb
+  DISPLAY_STATUS_MAP : ['unknown', 'processing', 'succeeded', 'failed', 'splitting', 'merging'],    
+  
+  // All options for drawing the system graphs.
   GRAPH_OPTIONS : {
     xaxis :   {mode : 'time', timeformat : '%M:%S'},
-    legend :  {backgroundColor : '#bbb', backgroundOpacity : 0.85, margin : 6},
+    yaxis :   {tickDecimals : 0},
+    legend :  {show : false},
     grid :    {backgroundColor : '#7f7f7f', color : '#555', tickColor : '#666', borderWidth : 2}
   },
+  JOBS_COLOR        : '#db3a0f',
+  WORKERS_COLOR     : '#a1003d',
+  WORK_UNITS_COLOR  : '#ffba14',
   
   // Starting the console begins polling the server.
   initialize : function() {
-    this._dataPoints = [];
+    this._jobsHistory = [];
+    this._workersHistory = [];
+    this._workUnitsHistory = [];
+    this._histories = [this._jobsHistory, this._workersHistory, this._workUnitsHistory];
     this._queue = $('#jobs');
+    this._workerInfo = $('#worker_info');
     $(window).bind('resize', Console.renderGraphs);
+    $('#workers .worker').live('click', Console.getWorkerInfo);
     this.getStatus();
   },
   
@@ -32,9 +45,9 @@ window.Console = {
   // the DOM to reflect.
   getStatus : function() {
     $.get('/status', null, function(resp) {
-      Console._jobs       = resp.incomplete_jobs;
-      Console._completed  = resp.complete_jobs;
-      Console._workers    = resp.workers;
+      Console._jobs           = resp.jobs;
+      Console._workers        = resp.workers;
+      Console._workUnitCount  = resp.work_unit_count;
       Console.recordDataPoint();
       $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
       Console.renderJobs();
@@ -46,15 +59,15 @@ window.Console = {
   
   // Render an individual job afresh.
   renderJob : function(job) {
-    this._queue.append('<div class="job" id="job_' + job.id + '" style="width:' + job.width + '%; background: #' + job.color + ';"><div class="completion done_' + job.percent_complete + '" style="width:' + job.percent_complete + '%;"></div><div class="percent_complete">' + job.percent_complete + '%</div><div class="job_id">#' + job.id + '</div></div>');
+    this._queue.append('<div class="job" id="job_' + job.id + '" style="width:' + job.width + '%; background: #' + job.color + ';"><div class="completion ' + (job.percent_complete <= 0 ? 'zero' : '') + '" style="width:' + job.percent_complete + '%;"></div><div class="percent_complete">' + job.percent_complete + '%</div><div class="job_id">#' + job.id + '</div></div>');
   },
   
   // Animate the update to an existing job in the queue.
   updateJob : function(job, jobEl) {
     jobEl.animate({width : job.width + '%'}, this.ANIMATION_SPEED);
     var completion = $('.completion', jobEl);
+    if (job.percent_complete > 0) completion.removeClass('zero');
     completion.animate({width : job.percent_complete + '%'}, this.ANIMATION_SPEED);
-    completion[0].className = completion[0].className.replace(/\b\done_d+\b/, 'done_' + job.percent_complete);
     $('.percent_complete', jobEl).html(job.percent_complete + '%');
   },
   
@@ -88,37 +101,57 @@ window.Console = {
     $('.has_workers', header).html(this._workers.length + " Active Worker Daemons");
     header.toggleClass('no_workers', this._workers.length <= 0);
     $('#workers').html($.map(this._workers, function(w) { 
-      return '<div class="worker ' + w.status + '" title="status: ' + w.status + '">' + w.name + '</div>';
+      return '<div class="worker ' + w.status + '" rel="' + w.name + '">' + w.name + '</div>';
     }).join(''));
   },
   
   // Record the current state and re-render all graphs.
   recordDataPoint : function() {
-    var dataPoint = {
-      timestamp  : (new Date()).getTime(),
-      incomplete : Console._jobs.length,
-      complete   : Console._completed.length,
-      workers    : Console._workers.length
-    };
-    Console._dataPoints.push(dataPoint);
-    if (Console._dataPoints.length > Console.MAX_DATA_POINTS) Console._dataPoints.shift();
+    var timestamp = (new Date()).getTime();
+    this._jobsHistory.push([timestamp, this._jobs.length]);
+    this._workersHistory.push([timestamp, this._workers.length]);
+    this._workUnitsHistory.push([timestamp, this._workUnitCount]);
+    $.each(this._histories, function() { 
+      if (this.length > Console.MAX_DATA_POINTS) this.shift(); 
+    });
   },
   
   // Convert our recorded data points into a format Flot can understand.
   renderGraphs : function() {
-    var complete = [], incomplete = [], workers = [];
-    for (var i=0; i<Console._dataPoints.length; i++) {
-      var point = Console._dataPoints[i];
-      incomplete.push([point.timestamp, point.incomplete]);
-      complete.push([point.timestamp, point.complete]);
-      workers.push([point.timestamp, point.workers]);
-    }
-    var series = [
-      {label : 'Jobs in Queue', color : '#e93', data : incomplete},
-      // {label : 'Completed Jobs', data : complete},
-      {label : 'Active Workers', color : '#559', data : workers}
-    ];
-    $.plot($('#main_graph'), series, Console.GRAPH_OPTIONS);
+    $.plot($('#jobs_graph'), [{label : 'Jobs in Queue', color : Console.JOBS_COLOR, data : Console._jobsHistory}], Console.GRAPH_OPTIONS);
+    $.plot($('#workers_graph'), [{label : 'Active Workers', color : Console.WORKERS_COLOR, data : Console._workersHistory}], Console.GRAPH_OPTIONS);
+    $.plot($('#work_units_graph'), [{label : 'Work Units in Queue', color : Console.WORK_UNITS_COLOR, data : Console._workUnitsHistory}], Console.GRAPH_OPTIONS);
+  },
+  
+  // Request the Worker info from the central server.
+  getWorkerInfo : function(e) {
+    e.stopImmediatePropagation();
+    var info = Console._workerInfo;
+    var row = $(this);
+    info.addClass('loading');
+    $.get('/worker/' + row.attr('rel'), null, Console.renderWorkerInfo, 'json');
+    info.css({top : row.offset().top, left : 325});
+    info.fadeIn(Console.ANIMATION_SPEED);
+    $(document).bind('click', Console.hideWorkerInfo);
+    return false;
+  },
+  
+  // When we receieve worker info, update the bubble.
+  renderWorkerInfo : function(resp) {
+    var info = Console._workerInfo;
+    info.toggleClass('awake', !!resp.status);
+    info.removeClass('loading');
+    if (!resp.status) return;
+    $('.status', info).html(Console.DISPLAY_STATUS_MAP[resp.status]);
+    $('.action', info).html(resp.action);
+    $('.job_id', info).html(resp.job_id);
+    $('.work_unit_id', info).html(resp.id);
+  },
+  
+  // Hide worker info and unbind the global hide handler.
+  hideWorkerInfo : function() {
+    $(document).unbind('click', Console.hideWorkerInfo);
+    Console._workerInfo.fadeOut(Console.ANIMATION_SPEED); 
   }
   
 };
