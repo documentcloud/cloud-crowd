@@ -183,8 +183,10 @@ body {
       
 #graphs {
   position: absolute;
-  top: 127px; left: 327px; right: 15px;
+  padding: 17px 15px 15px 17px;
+  top: 110px; left: 310px; right: 0px; bottom: 0;
   overflow: hidden;
+  overflow-y: auto;
 }
   .graph_container {
     margin-bottom: 25px;
