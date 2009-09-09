@@ -161,7 +161,7 @@ OPTIONS:
         opts.on('-p', '--port PORT', 'central server port number') do |port_num|
           @options[:port] = port_num
         end
-        opts.on('-e', '--environment ENV', 'Sinatra environment (code reloading)') do |env|
+        opts.on('-e', '--environment ENV', 'server environment (sinatra)') do |env|
           @options[:environment] = env
         end
         opts.on_tail('-v', '--version', 'show version') do

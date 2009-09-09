@@ -41,9 +41,10 @@ module CloudCrowd
       raise NotImplementedError.new("CloudCrowd::Actions must override 'process' with their own processing code.")
     end
     
-    # Download a file to the specified path with *curl*.
+    # Download a file to the specified path.
     def download(url, path)
-      `curl -s "#{url}" > "#{path}"`
+      resp = RestClient::Request.execute(:url => url, :method => :get, :raw_response => true)
+      FileUtils.mv req.file.path, path
       path
     end
     
