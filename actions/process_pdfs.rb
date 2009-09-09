@@ -41,7 +41,7 @@ class ProcessPdfs < CloudCrowd::Action
   # the concatenated merge of the full-text into a single tar archive, ready to
   # for download.
   def merge
-    JSON.parse(input).each do |batch_url|
+    input.each do |batch_url|
       batch_path = File.basename(batch_url)
       download(batch_url, batch_path)
       `tar -xzf #{batch_path}`

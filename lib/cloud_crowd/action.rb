@@ -27,7 +27,9 @@ module CloudCrowd
       @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
       Dir.chdir @work_directory
-      unless status == MERGING
+      if status == MERGING
+        @input = JSON.parse(@input)
+      else
         @input_path = File.join(@work_directory, safe_filename(@input))
         @file_name = File.basename(@input_path, File.extname(@input_path))
         download(@input, @input_path)

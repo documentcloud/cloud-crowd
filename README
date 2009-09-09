@@ -35,21 +35,21 @@
 	
 		# Install the gem (documentcloud-cloud-crowd until the first official release).
 		
-		>> sudo gem install cloud-crowd
+			>> sudo gem install cloud-crowd
 		
 		# Install the CloudCrowd configuration files to a location of your choosing.
 		
-		>> crowd install ~/config/cloud-crowd
+			>> crowd install ~/config/cloud-crowd
 		
 		# Now, you can use the full complement of `crowd` commands from inside of
 		# this configuration directory. To see the available commands:
 		
-		>> crowd --help
+			>> crowd --help
 		
 		# Edit the configuration files to your satisfaction, and add AWS credentials.
 		
-		>> mate ~/config/cloud-crowd/config.yml
-		>> mate ~/config/cloud-crowd/database.yml
+			>> mate ~/config/cloud-crowd/config.yml
+			>> mate ~/config/cloud-crowd/database.yml
 		
 		# Write your actions, and install them into the 'actions' subdirectory.
 		# CloudCrowd comes with some default actions as an example.
@@ -57,17 +57,17 @@
 		# To spin up the central server (make sure that you include its location
 		# in config.yml), either:
 		
-		>> crowd server
+			>> crowd server
 		
 		# or:
 		
-		>> thin -R config.ru --servers 3 -e production start
+			>> thin -R config.ru --servers 3 -e production start
 		
 		# Any server that supports Rack should work with the rackup file.
 		
 		# Then, to spin up 10 workers:
 		
-		>> crowd workers start -n 10
+			>> crowd workers start -n 10
 		
 		# To spin up workers remotely, install the 'cloud-crowd' gem, and copy over
 		# your configuration directory.

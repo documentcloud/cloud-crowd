@@ -8,7 +8,7 @@ class WordCount < CloudCrowd::Action
   
   # Sum the total word count.
   def merge
-    JSON.parse(input).inject(0) {|sum, count| sum + count }
+    input.inject(0) {|sum, count| sum + count }
   end
   
 end
