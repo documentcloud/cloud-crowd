@@ -1,5 +1,10 @@
-# The URL where you're planning on running the server/queue/database.
+# The URL where you're planning on running the central server/queue/database.
 :central_server:          http://localhost:9173
+
+# The storage back-end that you'd like to use for intermediate and final results
+# of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
+# be used in development, or on single-machine installations.
+:storage:                 s3
 
 # Please provide your AWS credentials for S3 storage of job output.
 :aws_access_key:          [your AWS access key]

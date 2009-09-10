@@ -9,6 +9,11 @@ module CloudCrowd
   class ActionNotFound < Error #:nodoc:
   end
   
+  # StorageNotFound is raised when config.yml specifies a storage back end that
+  # doesn't exist.
+  class StorageNotFound < Error #:nodoc:
+  end
+  
   # StatusUnspecified is raised when a WorkUnit returns without a valid
   # status code.
   class StatusUnspecified < Error #:nodoc:

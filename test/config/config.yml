@@ -4,4 +4,4 @@
 :work_unit_retries:       3
 
 :central_server:          http://localhost:9173
-:use_local_storage:       yes
+:storage:                 filesystem
