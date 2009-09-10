@@ -3,8 +3,8 @@ Gem::Specification.new do |s|
   s.version   = '0.0.5'         # Keep version in sync with cloud-cloud.rb
   s.date      = '2009-09-01'
 
-  s.homepage    = "http://documentcloud.org" # wiki page on github?  
-  s.summary     = "Better living through Map --> Ruby --> Reduce"
+  s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
+  s.summary     = "MapReduce for the rest of us"
   s.description = <<-EOS
     The crowd, suddenly there where there was nothing before, is a mysterious and
     universal phenomenon. A few people may have been standing together -- five, ten
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
-  s.rdoc_options      << '--title'    << 'CloudCrowd | Better Living through Map --> Ruby --> Reduce' <<
+  s.rdoc_options      << '--title'    << 'CloudCrowd | MapReduce for the rest of us' <<
                          '--exclude'  << 'test' <<
                          '--main'     << 'README' <<
                          '--all'

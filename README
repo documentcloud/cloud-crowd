@@ -24,7 +24,7 @@
                                                                                
 	~ CloudCrowd ~
 
-		* A batch-processing system, map-reduce style
+		* MapReduce for the rest of us
 		* Write your scripts in Ruby
 		* Built for Amazon EC2 and S3
 		* split -> process -> merge
