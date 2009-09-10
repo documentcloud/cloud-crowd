@@ -3,7 +3,7 @@ class WordCount < CloudCrowd::Action
   
   # Count the words in a single book.
   def process
-    (`wc #{input_path}`).match(/\A\s*(\d+)/)[1].to_i
+    (`wc -w #{input_path}`).match(/\A\s*(\d+)/)[1].to_i
   end
   
   # Sum the total word count.

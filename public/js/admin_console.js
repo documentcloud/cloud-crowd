@@ -17,6 +17,9 @@ window.Console = {
   // Keep this in sync with the map in cloud-crowd.rb
   DISPLAY_STATUS_MAP : ['unknown', 'processing', 'succeeded', 'failed', 'splitting', 'merging'],    
   
+  // Images to preload
+  PRELOAD_IMAGES : ['/images/server_error.png'],
+  
   // All options for drawing the system graphs.
   GRAPH_OPTIONS : {
     xaxis :   {mode : 'time', timeformat : '%M:%S'},
@@ -40,6 +43,7 @@ window.Console = {
     $(window).bind('resize', Console.renderGraphs);
     $('#workers .worker').live('click', Console.getWorkerInfo);
     this.getStatus();
+    $.each(this.PRELOAD_IMAGES, function(){ var i = new Image(); i.src = this; });
   },
   
   // Request the lastest status of all jobs and workers, re-render or update

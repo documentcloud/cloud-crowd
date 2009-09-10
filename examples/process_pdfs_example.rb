@@ -8,8 +8,7 @@ require 'json'
 # (actions/process_pdfs.rb) shows an example of using all three steps,
 # split, process, and merge.
 
-RestClient.post(
-	'http://localhost:9173/jobs',
+RestClient.post('http://localhost:9173/jobs',
 	{:job => {
 	
 		'action' => 'process_pdfs',

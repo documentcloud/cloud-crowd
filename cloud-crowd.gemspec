@@ -94,6 +94,7 @@ public/js/jquery.flot.pack.js
 public/js/jquery-1.3.2.min.js
 README
 test/acceptance/test_failing_work_units.rb
+test/acceptance/test_word_count.rb
 test/blueprints.rb
 test/config/config.ru
 test/config/config.yml

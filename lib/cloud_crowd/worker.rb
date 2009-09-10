@@ -168,7 +168,7 @@ module CloudCrowd
     
     # Log a message to the daemon log. Includes PID for identification.
     def log(message)
-      puts "Worker ##{@id}: #{message}"
+      puts "Worker ##{@id}: #{message}" unless ENV['RACK_ENV'] == 'test'
     end
     
     # When we're done with a unit, clear out our instance variables to make way 

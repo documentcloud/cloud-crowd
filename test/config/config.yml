@@ -4,5 +4,4 @@
 :work_unit_retries:       3
 
 :central_server:          http://localhost:9173
-  
-# TODO: Add a somewhat oversized work unit timeout.
+:use_local_storage:       yes

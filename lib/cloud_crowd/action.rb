@@ -14,6 +14,8 @@ module CloudCrowd
   # and spend their duration inside of it, so relative paths work well.
   class Action
     
+    FILE_URL = /\Afile:\/\//
+    
     attr_reader :input, :input_path, :file_name, :options, :work_directory
     
     # Initializing an Action sets up all of the read-only variables that
@@ -43,8 +45,12 @@ module CloudCrowd
     
     # Download a file to the specified path.
     def download(url, path)
-      resp = RestClient::Request.execute(:url => url, :method => :get, :raw_response => true)
-      FileUtils.mv req.file.path, path
+      if url.match(FILE_URL)
+        FileUtils.cp(url.sub(FILE_URL, ''), path)
+      else
+        resp = RestClient::Request.execute(:url => url, :method => :get, :raw_response => true)
+        FileUtils.mv resp.file.path, path
+      end
       path
     end
     

@@ -1,3 +1,4 @@
+ENV['RACK_ENV'] = 'test'
 require 'rubygems'
 
 here = File.dirname(__FILE__)
