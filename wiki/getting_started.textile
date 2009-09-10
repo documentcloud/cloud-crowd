@@ -1,0 +1,58 @@
+These instructions will take you through installing and configuring CloudCrowd, creating the *central database*, launching the *central server* and a couple of *worker daemons*, running an example job to count all the words in Shakespeare, and watching and graphing the progress of all the above in an *Operations Center*. The first step is to install the Ruby Gem:
+
+<pre>
+sudo gem install cloud-crowd
+</pre>
+
+All of the CloudCrowd commands can be used through the @crowd@ executable, which is installed alongside the gem. Try typing @crowd --help@ to get a brief overview of the available options. For every machine that you'd like to make part of a CloudCrowd cluster, you'll need to install a CloudCrowd *configuration folder*, which includes YAML configuration files for your workers and central database, and all of your *custom actions*. To get started, use @crowd@ to unpack an example configuration folder:
+
+<pre>
+crowd install path/to/config
+</pre>
+
+Inside the configuration folder, you'll find @config.yml@, @config.ru@, @database.yml@, and the @actions@ folder. More information about all of these can be found in [[The Configuration Folder]] as well as by reading the files. At this point, you'll want to edit @config.yml@ and @database.yml@ to add your AWS credentials, turn authentication on or off, and set up the backing database. CloudCrowd uses ActiveRecord on the central server, so any ActiveRecord compatible database will do nicely. Once your database has been created on your central server (which in this case is your laptop, if you're just giving it a spin) and configured in @database.yml@, you can load in the schema:
+
+<pre>
+crowd load_schema
+</pre>
+
+With the database ready, let's start a single instance of the central server. In production, you can use the @config.ru@ rackup file to launch the desired number of server instances, and hide them behind a load balancer as you would any other Rack application.
+
+<pre>
+crowd server
+</pre>
+
+Visit the URL that you configured for the central server (@localhost:9173@ by default), and you should see the *Operations Center* showing an empty queue with no active jobs, and no running worker daemons. As you launch workers and start jobs, they'll show up on the screen. Here's what the Operations Center looks like in the middle of running a series of quick jobs:
+
+!http://jashkenas.s3.amazonaws.com/images/cloud_crowd/operations_center.jpg!
+
+Let's start 5 worker daemons. CloudCrowd uses the *Daemons* gem internally to manage the workers, and the @crowd@ executable responds to all the same commands as the Daemons gem (start, stop, run, status, restart).
+
+<pre>
+crowd workers start -n 5
+</pre>
+
+You should see the workers come online in the Operations Center. They're identified by their *process ID* and the *hostname* of the server they're running on, should you have the need to go investigate a particular worker. You can click on a worker to see the work unit that it's currently processing, and the stage of computation (splitting, processing, merging) that it's currently performing. Let's try an example job that uses the built-in *word_count* action, which simply shells out to the UNIX @wc@ utility. Here's "a link to a job":http://gist.github.com/184666 that uses @word_count@ to count all of the words in the most famous Shakespeare plays, in parallel. You can run the example as a vanilla Ruby script, but let's load it inside of a CloudCrowd console, to keep an eye on things.
+
+<pre>
+crowd console
+
+irb(main)> load '~/Downloads/shakespeare_word_count.rb'
+=> []
+
+# At this point, looking at the Operations Center, you'll see the number of 
+# work units in the queue spike. The next time they check in, the worker daemons
+# will pick them up, and they should be rapidly dispatched.
+
+irb(main)> CloudCrowd::Job.last.display_status
+=> "succeeded"
+
+irb(main)> CloudCrowd::Job.last.time_taken
+=> 5.7215
+
+irb(main)> JSON.parse CloudCrowd::Job.last.outputs
+=> [532047]
+
+# And that's the merged result for the total word count.
+</pre>
+

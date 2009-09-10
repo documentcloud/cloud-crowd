@@ -1,0 +1,24 @@
+<div style="float: right; margin-right: 25px;">
+!http://jashkenas.s3.amazonaws.com/images/cloud_crowd/logo.png!
+</div>
+
+<pre style="width: 320px;">
+# Install the gem:
+sudo gem install cloud-crowd
+</pre>
+
+<div style="font-size: 150%; padding: 0 0 20px 0;">
+
+[[Getting Started]]
+
+[[Writing an Action]]
+
+[[CloudCrowd Architecture]]
+
+[[The Configuration Folder]]
+
+[[MapReduce 101]]
+
+[[Gallery of Actions]]
+
+</div>
