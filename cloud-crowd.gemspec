@@ -13,15 +13,13 @@ Gem::Specification.new do |s|
     streets had only one direction.
   EOS
   
-  s.authors     = ['Jeremy Ashkenas']
-  s.email       = 'jeremy@documentcloud.org'
-  s.rubyforge_project    = 'cloud-crowd'
+  s.authors           = ['Jeremy Ashkenas']
+  s.email             = 'jeremy@documentcloud.org'
+  s.rubyforge_project = 'cloud-crowd'
   
-  s.require_paths = ['lib']
-  s.executables   = ['crowd']
-  
-  # s.post_install_message = "Run `crowd --help` for information on using CloudCrowd."
-  
+  s.require_paths     = ['lib']
+  s.executables       = ['crowd']
+    
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
   s.rdoc_options      << '--title'    << 'CloudCrowd | MapReduce for the rest of us' <<

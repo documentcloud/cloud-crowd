@@ -14,7 +14,7 @@ module CloudCrowd
     
     # Command-line banner for the usage message.
     BANNER = <<-EOS
-CloudCrowd is a MapReduce-inspired Batch Processing System for Ruby.
+CloudCrowd is a MapReduce-inspired Parallel Processing System for Ruby.
 
 Wiki: http://wiki.github.com/documentcloud/cloud-crowd
 

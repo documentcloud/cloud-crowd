@@ -1,4 +1,4 @@
-# A WordCount, the canonical MapReduce Demo. Depends on the 'wc' utility. 
+# A parallel WordCount. Depends on the 'wc' utility. 
 class WordCount < CloudCrowd::Action
   
   # Count the words in a single book.
