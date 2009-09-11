@@ -5,6 +5,7 @@ CloudCrowd::Job.blueprint do
   inputs  { ['http://www.google.com/intl/en_ALL/images/logo.gif'].to_json }
   action  { 'graphics_magick' }
   options { {}.to_json }
+  email   { 'noone@example.com' }
 end
 
 CloudCrowd::WorkUnit.blueprint do

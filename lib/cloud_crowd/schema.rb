@@ -9,7 +9,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.text     "outputs"
     t.float    "time"
     t.string   "callback_url"
-    t.string   "owner_email"
+    t.string   "email"
     t.integer  "lock_version", :default => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"

@@ -1,4 +1,5 @@
 TODO:
+	* Use the email field to send mail when the Job's gone bad.
 	* Job creation UI. Pick an action, add inputs, set options, go.
 	* Unit tests for lib.
 	* Look into Grand Central Dispatch for ideas about how to implement

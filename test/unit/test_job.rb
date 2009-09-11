@@ -35,7 +35,7 @@ class JobTest < Test::Unit::TestCase
       job = CloudCrowd::Job.create_from_request(JSON.parse(<<-EOS
       { "inputs"       : ["one", "two", "three"],
         "action"       : "graphics_magick",
-        "owner_email"  : "bob@example.com",
+        "email"        : "bob@example.com",
         "callback_url" : "http://example.com/callback" }
       EOS
       ))
@@ -45,10 +45,18 @@ class JobTest < Test::Unit::TestCase
       assert job.callback_url == "http://example.com/callback"
     end
     
+    should "be able to return a comprehensive JSON representation" do
+      json = JSON.parse(@job.to_json)
+      assert json['email'] == 'noone@example.com'
+      assert json['percent_complete'] == 0
+      assert json['work_units'] == 1
+      assert json['time_taken'] > 0
+    end
+    
     should "create jobs with a SPLITTING status for actions that have a split method defined" do
-      # job = CloudCrowd::Job.create_from_request({'inputs' => ['1'], 'action' => 'pdf_to_images'})
-      # assert job.splittable?
-      # assert job.splitting?
+      job = CloudCrowd::Job.create_from_request({'inputs' => ['1'], 'action' => 'process_pdfs'})
+      assert job.splittable?
+      assert job.splitting?
     end
     
     should "fire a callback when a job has finished, successfully or not" do

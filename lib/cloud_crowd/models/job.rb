@@ -22,7 +22,7 @@ module CloudCrowd
         :inputs       => h['inputs'].to_json,
         :action       => h['action'],
         :options      => (h['options'] || {}).to_json,
-        :owner_email  => h['owner_email'],
+        :email        => h['email'],
         :callback_url => h['callback_url']
       )
     end
@@ -120,14 +120,15 @@ module CloudCrowd
     # WorkUnits, as well as any completed outputs.
     def to_json(opts={})
       atts = {
-        'id'                => self.id,
-        'color'             => self.color,
-        'status'            => self.display_status, 
-        'percent_complete'  => self.percent_complete,
-        'work_units'        => self.work_units.count,
-        'time_taken'        => self.time_taken
+        'id'                => id,
+        'color'             => color,
+        'status'            => display_status, 
+        'percent_complete'  => percent_complete,
+        'work_units'        => work_units.count,
+        'time_taken'        => time_taken
       }
-      atts.merge!({'outputs' => JSON.parse(self.outputs)}) if self.outputs
+      atts['outputs'] = JSON.parse(outputs) if outputs
+      atts['email']   = email               if email
       atts.to_json
     end
     

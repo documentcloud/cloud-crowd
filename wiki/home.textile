@@ -13,6 +13,8 @@ sudo gem install cloud-crowd
 
 [[Writing an Action]]
 
+[[The Job API]]
+
 [[CloudCrowd Architecture]]
 
 [[The Configuration Folder]]
