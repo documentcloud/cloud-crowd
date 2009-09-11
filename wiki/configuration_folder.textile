@@ -1,9 +1,37 @@
+The *configuration folder* is all that you need to deploy to a given machine (apart from the *cloud-crowd* gem itself) to make it into a productive citizen of your CloudCrowd cluster. Its contents include... 
+
 h2. config.yml
 
-*config.yml* is the main CloudCrowd configuration file. It contains all the fiddly little setting that you'll want to tweak to get your installation running smoothly.
+*config.yml* is the main CloudCrowd configuration file. It contains all the fiddly little settings that you'll want to tweak to get your installation running smoothly. Here's the rundown of everything you can specify:
+
+|*central_server*|The URL to the *central server*. If you're developing, this is probably localhost. If you've got a full production deployment, then this is probably aiming at your *load balancer*. If you're running an internal CloudCrowd installation, this DNS probably only resolves on your local network.|
+|*storage*|'*s3*' or '*filesystem*'. The storage system used by the @AssetStore@ to store work unit results. 'filesystem' storage is only appropriate in development. In the future, it would be nice to have the ability for 'filesystem' storage to use shared NFS volumes.|
+|*aws_access_key*|Your Amazon Web Services *access key*, for S3 storage.|
+|*aws_secret_key*|Your Amazon Web Services *secret access key*, for S3 storage.|
+|*s3_bucket*|The S3 bucket you'd like to store your CloudCrowd results in.|
+|*use_s3_authentication*|If this option is turned on with S3 storage, all results will be saved as private files, and the URLs returned will be temporarily authenticated for 24 hours|
+|*use_http_authentication*|If this option is turned on, all communication with the central server, including web requests to view the Operations Center, API calls, and all communication with the worker daemons, will use HTTP basic authentication with the login and password specified.|
+|*login*|The common login for all central server requests via HTTP basic authentication, if enabled.|
+|*password*|The password for all central server requests via HTTP basic authentication, if enabled.|
+|*actions_path*|By default CloudCrowd looks in the 'actions' subdirectory of the configuration folder for all your installed actions. If you'd prefer to keep them somewhere else, you can specify the *actions_path*.|
+|*num_workers*|The number of workers that @crowd workers start@ spins up by default. You can override this number by passing @crowd workers start -n NUM@|
+|*min_worker_wait*|The minimum number of seconds a worker may wait between checking for work.|
+|*max_worker_wait*|The maximum number of seconds a worker may wait between checking for work. When there's no work to be done, workers back off slowly from the *min_worker_wait* up to this value.|
+|*work_unit_retries*|The number of separate attempts that will be made to process an individual work unit, each by different workers if possible, before marking it as having failed.|
+
 
 h2. database.yml
 
+CloudCrowd uses ActiveRecord to manage the central server's database, so you can use the standard configuration for any ActiveRecord compatible database. See the "ActiveRecord Documentation":http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002364 for more information.
+
 h2. actions
 
+Please install all of the Ruby files for your custom actions into the *actions* folder. Actions are dispatched by file and class name, so a @WebScraper@ action should be filed in @actions/web_scraper.rb@, and should be invoked by specifying @action : 'web_scraper'@ in your job creation request. The actions folder has an interesting property that you can take advantage of: worker daemons will only request work for the actions that are installed in their configuration folder. If you'd like to specialize some of the machines in your cluster to only perform specific, higher priority actions, then simply include only those actions that you wish to run.
+
 h2. config.ru
+
+*config.ru* is a standard Rackup file that can be used by Rack-compliant servers, such as Thin, Passenger, and Ebb, to launch instances of the central server. For example, to launch three instances using Thin:
+
+<pre>
+thin start -R config.ru -p 9173 --servers 3
+</pre>
