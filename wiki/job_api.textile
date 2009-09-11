@@ -1,0 +1,57 @@
+h2. Starting a Job
+
+To create a job on a CloudCrowd cluster, and start it processing, you post a JSON representation of the job to @/jobs@. The representation may include the following:
+
+|*action*|The name of the action you'd like to run (*word_count*, or *process_pdfs*, for example).|
+|*inputs*|An array of the inputs to the job, each of which will be processed in parallel. *Inputs* are often URLs, but can be any valid JSON.|
+|*options* (optional)|An arbitrary JSON object that will be passed through directly to the action. Used to configure specific actions.|
+|*callback_url* (optional)|A URL that will be pinged with the JSON representation of the job and all of its results, as soon as the job is finished. If you don't specify a *callback_url*, you'll need to poll the job's status to determine when it finishes.|
+
+Here's an example of a hypothetical job creation request:
+
+<pre>
+RestClient.post('http://localhost:9173/jobs', 
+  {:job => {
+
+    'action' => 'structural_analysis',
+
+    'inputs' => [
+      'http://www.gutenberg.org/a_midsummers_nights_dream.txt',
+      'http://www.gutenberg.org/romeo_and_juliet.txt',
+      'http://www.gutenberg.org/titus_andronicus.txt',
+     ],
+
+    'options' => {
+      'limit'    => 20,
+      'variance' => 0.75
+    }
+
+  }.to_json}
+)
+</pre>
+
+h2. Finishing a Job
+
+When you first create a job, ask the *central server* for the status of a job, or get pinged at the *callback_url* upon job completion, you'll receive a JSON representation of the job. Its attributes are:
+
+|*id*|The job's integer id. Use this when requesting the status of a job at @/jobs/:job_id@|
+|*status*|The job's current status. One of: *succeeded*, *failed*, *processing*, *splitting*, *merging*|
+|*outputs*|If the job is complete (either *succeeded* or *failed*), outputs will be an array of all the job's results. Often these are URLs to processed files.|
+|*percent_complete*|The percentage of its total work units that have already been completed. An integer between 0 and 100.|
+|*work_units*|The total number of work units that make up the job. This number may change over time.|
+|*time_taken*|The number of seconds that this job has been running for, or, if complete, the number of seconds it took to process from start to finish.|
+|*color*|A unique hexadecimal color code, which can be used directly in HTML to distinguish the job visually.|
+
+Here's an example of the final JSON representation of a completed job:
+
+<pre>
+{
+  "id" : 11,
+  "status" : "succeeded",
+  "time_taken" : 62.3368,
+  "percent_complete" : 100,
+  "work_units" : 0,
+  "color" : "2652dc",
+  "outputs" : ["http://s3.amazonaws.com/process_pdfs/job_11/unit_94/pdfs.tar"]
+}
+</pre>
