@@ -1,26 +1,25 @@
 TODO:
-	* Use the email field to send mail when the Job's gone bad.
-	* Job creation UI. Pick an action, add inputs, set options, go.
-	* Unit tests for lib.
-	* Look into Grand Central Dispatch for ideas about how to implement
-		Job ordering/piping.
+  * Bump to version 0.1 and release on RubyForge.
+  * Use the email field to send mail when the Job's gone bad.
+  * Job creation UI. Pick an action, add inputs, set options, go.
+  * Unit tests for lib.
+  * Look into Grand Central Dispatch for ideas about how to implement
+    Job ordering/piping.
 
 DONE:
-	* Right now actions just process. Think about map / process / reduce.
-	* Basic unit tests.
-	* Finish fleshing out the crowd command.
-	* Security. HTTP Basic Auth via config.yml,
-	* Security. S3 authenticated URLs.
-	* Benchmarking mode -- benchmark every single aspect of a job and report it.
-	* Pare down the code that the workers are loading to the absolute minimum.
-	* Documentation. (document inside of config.yml, too)
-	* Think about having the completion of a work unit respond with another one,
-	  instead of having to make a second request.
-	* Think about having a failed work unit shuffle off to the end of the queue,
-		instead of going again right away (and probably being handed back to the
-		very same daemon).
-	* Replace work_units_remaining with a percent_complete
-	* Monitor UI -- see queue of jobs / work units.
-	* Basic integration tests.
-	
-	
+  * Right now actions just process. Think about map / process / reduce.
+  * Basic unit tests.
+  * Finish fleshing out the crowd command.
+  * Security. HTTP Basic Auth via config.yml,
+  * Security. S3 authenticated URLs.
+  * Benchmarking mode -- benchmark every single aspect of a job and report it.
+  * Pare down the code that the workers are loading to the absolute minimum.
+  * Documentation. (document inside of config.yml, too)
+  * Think about having the completion of a work unit respond with another one,
+    instead of having to make a second request.
+  * Think about having a failed work unit shuffle off to the end of the queue,
+    instead of going again right away (and probably being handed back to the
+    very same daemon).
+  * Replace work_units_remaining with a percent_complete
+  * Monitor UI -- see queue of jobs / work units.
+  * Basic integration tests.
