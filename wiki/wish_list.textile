@@ -1,0 +1,6 @@
+A brief list of things it would be nice to see contributed to CloudCrowd:
+
+* A Job Creation UI for the *Operations Center* ... pick your action, add inputs and options, and you're off to the races.
+* More unit and acceptance tests.
+* Additional storage backends for the AssetStore, besides *s3* and *filesystem*. *Database* and *memcache* backends seem like they would be interesting options.
+* Some performance tests and benchmarks, to see what the expected throughput looks like at different levels.

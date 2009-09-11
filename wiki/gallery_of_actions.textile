@@ -1,0 +1,7 @@
+If you've written a @CloudCrowd::Action@ that you think might be generally useful or enlightening, please post a link to the source on this page.
+
+h3. Default Actions
+
+"word_count":http://gist.github.com/185007
+"graphics_magick":http://gist.github.com/185009
+"process_pdfs":http://gist.github.com/185010

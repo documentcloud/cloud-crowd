@@ -1,7 +1,5 @@
 TODO:
-	* Monitor UI -- see queue of jobs / work units.
 	* Job creation UI. Pick an action, add inputs, set options, go.
-	* Basic integration tests.
 	* Unit tests for lib.
 	* Look into Grand Central Dispatch for ideas about how to implement
 		Job ordering/piping.
@@ -21,3 +19,7 @@ DONE:
 		instead of going again right away (and probably being handed back to the
 		very same daemon).
 	* Replace work_units_remaining with a percent_complete
+	* Monitor UI -- see queue of jobs / work units.
+	* Basic integration tests.
+	
+	

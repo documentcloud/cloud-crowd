@@ -2,7 +2,7 @@ module CloudCrowd
   
   # As you write your custom actions, have them inherit from CloudCrowd::Action.
   # All actions must implement a +process+ method, which should return a 
-  # JSON-serializeable object that will be used as the output for the work unit.
+  # JSON-serializable object that will be used as the output for the work unit.
   # See the default actions for examples.
   #
   # Optionally, actions may define +split+ and +merge+ methods to do mapping
@@ -29,13 +29,7 @@ module CloudCrowd
       @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
       Dir.chdir @work_directory
-      if status == MERGING
-        @input = JSON.parse(@input)
-      else
-        @input_path = File.join(@work_directory, safe_filename(@input))
-        @file_name = File.basename(@input_path, File.extname(@input_path))
-        download(@input, @input_path)
-      end
+      status == MERGING ? parse_input : download_input
     end
     
     # Each Action subclass must implement a +process+ method, overriding this.
@@ -87,6 +81,20 @@ module CloudCrowd
       path_parts << "job_#{@job_id}"
       path_parts << "unit_#{@work_unit_id}" if @work_unit_id
       @storage_prefix ||= File.join(path_parts)
+    end
+    
+    # If we know that the input is JSON, replace it with the parsed form.
+    def parse_input
+      @input = JSON.parse(@input)
+    end
+    
+    # If the input is a URL, download the file before beginning processing.
+    def download_input
+      input_is_url = !!URI.parse(@input) rescue false
+      return unless input_is_url
+      @input_path = File.join(@work_directory, safe_filename(@input))
+      @file_name = File.basename(@input_path, File.extname(@input_path))
+      download(@input, @input_path)
     end
     
   end

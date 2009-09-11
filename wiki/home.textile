@@ -17,8 +17,10 @@ sudo gem install cloud-crowd
 
 [[The Configuration Folder]]
 
-[[MapReduce 101]]
-
 [[Gallery of Actions]]
+
+[[Wish List]]
+
+"Google Group":http://groups.google.com/group/cloud-crowd
 
 </div>
