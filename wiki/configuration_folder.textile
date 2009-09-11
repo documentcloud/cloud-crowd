@@ -1,0 +1,9 @@
+h2. config.yml
+
+*config.yml* is the main CloudCrowd configuration file. It contains all the fiddly little setting that you'll want to tweak to get your installation running smoothly.
+
+h2. database.yml
+
+h2. actions
+
+h2. config.ru

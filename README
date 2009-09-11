@@ -29,11 +29,16 @@
 		* Built for Amazon EC2 and S3
 		* split -> process -> merge
 		* As easy as `gem install cloud-crowd`
+		
+		
+	~ Wiki ~
+	
+		http://wiki.github.com/documentcloud/cloud-crowd
 	
 	
 	~ Getting started ~
 	
-		# Install the gem (documentcloud-cloud-crowd until the first official release).
+		# Install the gem.
 		
 			>> sudo gem install cloud-crowd
 		
@@ -46,10 +51,12 @@
 		
 			>> crowd --help
 		
-		# Edit the configuration files to your satisfaction, and add AWS credentials.
+		# Edit the configuration files to your satisfaction, add AWS credentials, 
+		# and then load the CloudCrowd schema into your configured database.
 		
 			>> mate ~/config/cloud-crowd/config.yml
 			>> mate ~/config/cloud-crowd/database.yml
+			>> crowd load_schema
 		
 		# Write your actions, and install them into the 'actions' subdirectory.
 		# CloudCrowd comes with some default actions as an example.

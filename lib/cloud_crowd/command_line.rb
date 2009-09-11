@@ -14,18 +14,20 @@ module CloudCrowd
     
     # Command-line banner for the usage message.
     BANNER = <<-EOS
-CloudCrowd is a Ruby & AWS batch processing system, MapReduce style.    
+CloudCrowd is a MapReduce-inspired Batch Processing System for Ruby.
+
+Wiki: http://wiki.github.com/documentcloud/cloud-crowd
 
 Usage: crowd COMMAND OPTIONS
 
-COMMANDS:
+Commands:
   install       Install the CloudCrowd configuration files to the specified directory
   server        Start up the central server (requires a database)
   workers       Control worker daemons, use: (start | stop | restart | status | run)
   console       Launch a CloudCrowd console, connected to the central database
   load_schema   Load the schema into the database specified by database.yml
 
-OPTIONS:
+Options:
     EOS
     
     # Creating a CloudCrowd::CommandLine runs from the contents of ARGV.
