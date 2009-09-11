@@ -45,7 +45,7 @@ module CloudCrowd
   ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')
   
   # Keep the version in sync with the gemspec.
-  VERSION     = '0.0.5'
+  VERSION     = '0.0.6'
     
   # A Job is processing if its WorkUnits in the queue to be handled by workers.
   PROCESSING  = 1
