@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date      = '2009-09-01'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
-  s.summary     = "MapReduce for the rest of us"
+  s.summary     = "Parallel Processing for the Rest of Us"
   s.description = <<-EOS
     The crowd, suddenly there where there was nothing before, is a mysterious and
     universal phenomenon. A few people may have been standing together -- five, ten
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
     
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
-  s.rdoc_options      << '--title'    << 'CloudCrowd | MapReduce for the rest of us' <<
+  s.rdoc_options      << '--title'    << 'CloudCrowd | Parallel Processing for the Rest of Us' <<
                          '--exclude'  << 'test' <<
                          '--main'     << 'README' <<
                          '--all'
