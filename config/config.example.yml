@@ -35,13 +35,13 @@
 # desired balance between latency and traffic.
   
 # The number of workers that `crowd workers start` spins up.
-:num_workers:             4
+:num_workers:             3
 
 # The minimum number of seconds a worker waits between checking the job queue.
 :min_worker_wait:         1
 
 # The maximum number of seconds a worker waits between checking the job queue.
-:max_worker_wait:         20
+:max_worker_wait:         5
 
 # The number of separate attempts that will be made to process an individual
 # work unit, before marking it as having failed.

@@ -75,7 +75,7 @@ module CloudCrowd
     # Cleans up a Job's saved S3 files. Delete a Job after you're done 
     # downloading the results.
     delete '/jobs/:job_id' do
-      current_job.cleanup
+      current_job.destroy
       json nil
     end
     
