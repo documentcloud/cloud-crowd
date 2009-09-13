@@ -29,6 +29,14 @@
     * Built for Amazon EC2 and S3
     * split -> process -> merge
     * As easy as `gem install cloud-crowd`
+
+		Well-suited for:
+		
+		* Generating or resizing images.
+		* Encoding video.
+		* Running text extraction or OCR on PDFs.
+		* Migrating a large file set or database.
+		* Web scraping.
     
     
   ~ Wiki ~

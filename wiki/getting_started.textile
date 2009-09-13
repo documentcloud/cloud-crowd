@@ -1,10 +1,18 @@
-These instructions will take you through installing and configuring CloudCrowd, creating the *central database*, launching the *central server* and a couple of *worker daemons*, running an example job to count all the words in Shakespeare, and watching and graphing the progress of all the above in an *Operations Center*. The first step is to install the Ruby Gem:
+CloudCrowd is intended to make distributed processing easy for Ruby programmers. Some jobs that would be appropriate for CloudCrowd are:
+
+* Generating or resizing images.
+* Running text extraction or OCR on PDFs.
+* Encoding video.
+* Migrating a large file set or database.
+* Web scraping.
+
+These instructions will walk you through installing and configuring CloudCrowd, creating the *central database*, launching the *central server* and a couple of *worker daemons*, running your first job, and watching and graphing the progress of all the above in an *Operations Center*. The first step is to install the Ruby Gem:
 
 <pre>
 sudo gem install cloud-crowd
 </pre>
 
-All of the CloudCrowd commands can be used through the @crowd@ executable, which is installed alongside the gem. Try typing @crowd --help@ to get a brief overview of the available options. For every machine that you'd like to make part of a CloudCrowd cluster, you'll need to install a CloudCrowd *configuration folder*, which includes YAML configuration files for your workers and central database, and all of your *custom actions*. To get started, use @crowd@ to unpack an example configuration folder:
+All of the CloudCrowd commands can be used through the @crowd@ executable, which is installed alongside the gem. Try typing @crowd --help@ to get a brief overview of the available options. For every machine that you'd like to make part of a CloudCrowd cluster, you'll need to install a CloudCrowd *configuration folder*, which includes YAML configuration files and all of your *custom actions*. To get started, use @crowd@ to unpack an example configuration folder:
 
 <pre>
 crowd install path/to/config
@@ -52,7 +60,7 @@ irb(main)> CloudCrowd::Job.last.time_taken
 
 irb(main)> JSON.parse CloudCrowd::Job.last.outputs
 => [532047]
-
-# And that's the merged result for the total word count.
 </pre>
+
+And that's the merged result for the total word count.
 
