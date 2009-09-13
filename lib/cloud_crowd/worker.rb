@@ -113,12 +113,15 @@ module CloudCrowd
     # Executes the current work unit, catching all exceptions as failures.
     def run_work_unit
       begin
+        result = nil
         @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, @store)
-        result = case @status
-        when PROCESSING then @action.process
-        when SPLITTING  then @action.split
-        when MERGING    then @action.merge
-        else raise StatusUnspecified, "work units must specify their status"
+        Dir.chdir(@action.work_directory) do
+          result = case @status
+          when PROCESSING then @action.process
+          when SPLITTING  then @action.split
+          when MERGING    then @action.merge
+          else raise StatusUnspecified, "work units must specify their status"
+          end
         end
         complete_work_unit({'output' => result}.to_json)
       rescue Exception => e

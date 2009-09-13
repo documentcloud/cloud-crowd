@@ -28,7 +28,6 @@ module CloudCrowd
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
       @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
-      Dir.chdir @work_directory
       status == MERGING ? parse_input : download_input
     end
     
@@ -59,7 +58,6 @@ module CloudCrowd
     # After the Action has finished, we remove the work directory and return
     # to the root directory (where daemons run by default).
     def cleanup_work_directory
-      Dir.chdir '/'
       FileUtils.rm_r(@work_directory) if File.exists?(@work_directory)
     end
     
@@ -68,8 +66,8 @@ module CloudCrowd
     
     # Convert an unsafe URL into a filesystem-friendly filename.
     def safe_filename(url)
-      ext = File.extname(url)
-      name = File.basename(url).gsub(/%\d+/, '-').gsub(/[^a-zA-Z0-9_\-.]/, '')
+      ext  = File.extname(url)
+      name = URI.unescape(File.basename(url)).gsub(/[^a-zA-Z0-9_\-.]/, '-').gsub(/-+/, '-')
       File.basename(name, ext).gsub('.', '-') + ext
     end
     
@@ -90,11 +88,13 @@ module CloudCrowd
     
     # If the input is a URL, download the file before beginning processing.
     def download_input
-      input_is_url = !!URI.parse(@input) rescue false
-      return unless input_is_url
-      @input_path = File.join(@work_directory, safe_filename(@input))
-      @file_name = File.basename(@input_path, File.extname(@input_path))
-      download(@input, @input_path)
+      Dir.chdir(@work_directory) do
+        input_is_url = !!URI.parse(@input) rescue false
+        return unless input_is_url
+        @input_path = File.join(@work_directory, safe_filename(@input))
+        @file_name = File.basename(@input_path, File.extname(@input_path))
+        download(@input, @input_path)
+      end
     end
     
   end
