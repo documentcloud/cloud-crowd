@@ -12,25 +12,6 @@ module CloudCrowd
     
     LOCAL_STORAGE_PATH = '/tmp/cloud_crowd_storage'
     
-    # Creating an AssetStore mixes in the specific storage implementation 
-    # specified by 'storage' in <tt>config.yml</tt>.
-    def initialize
-      @use_auth = CloudCrowd.config[:use_s3_authentication]
-      @storage  = CloudCrowd.config[:storage]
-      FileUtils.mkdir_p temp_storage_path unless File.exists? temp_storage_path
-      case @storage
-      when 's3'         then extend S3Store
-      when 'filesystem' then extend FilesystemStore
-      else raise StorageNotFound, "#{@storage} is not a valid storage back end"
-      end
-    end
-    
-    # Get the path to CloudCrowd's temporary local storage. All actions run
-    # in subdirectories of this.
-    def temp_storage_path
-      "#{Dir.tmpdir}/cloud_crowd_tmp"
-    end
-    
     
     # The S3Store is an implementation of an AssetStore that uses a bucket
     # on S3 for all resulting files.
@@ -94,6 +75,28 @@ module CloudCrowd
         path = "#{LOCAL_STORAGE_PATH}/#{job.action}/job_#{job.id}"
         FileUtils.rm_r(path) if File.exists?(path)
       end
+    end
+    
+    
+    # Configure the AssetStore with the specific storage implementation 
+    # specified by 'storage' in <tt>config.yml</tt>.
+    case CloudCrowd.config[:storage]
+    when 's3'         then include S3Store
+    when 'filesystem' then include FilesystemStore
+    else raise StorageNotFound, "#{CloudCrowd.config[:storage]} is not a valid storage back end"
+    end
+    
+    # Creating the AssetStore ensures that its scratch directory exists.
+    def initialize
+      @use_auth = CloudCrowd.config[:use_s3_authentication]
+      FileUtils.mkdir_p temp_storage_path unless File.exists? temp_storage_path
+      raise StorageNotWritable, "#{temp_storage_path} is not writable" unless File.writable?(temp_storage_path)
+    end
+    
+    # Get the path to CloudCrowd's temporary local storage. All actions run
+    # in subdirectories of this.
+    def temp_storage_path
+      "#{Dir.tmpdir}/cloud_crowd_tmp"
     end
   
   end

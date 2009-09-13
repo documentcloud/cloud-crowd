@@ -30,7 +30,7 @@ Please install all of the Ruby files for your custom actions into the *actions* 
 
 h2. config.ru
 
-*config.ru* is a standard Rackup file that can be used by Rack-compliant servers, such as Thin, Passenger, and Ebb, to launch instances of the central server. For example, to launch three instances using Thin:
+*config.ru* is a standard Rackup file that can be used by Rack-compliant servers, such as Thin, Passenger, or Unicorn, to launch instances of the central server. For example, to launch three instances using Thin:
 
 <pre>
 thin start -R config.ru -p 9173 --servers 3

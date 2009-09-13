@@ -14,6 +14,10 @@ module CloudCrowd
   class StorageNotFound < Error #:nodoc:
   end
   
+  # If the AssetStore can't write to its scratch directory.
+  class StorageNotWritable < Error #:nodoc:
+  end
+  
   # StatusUnspecified is raised when a WorkUnit returns without a valid
   # status code.
   class StatusUnspecified < Error #:nodoc:
