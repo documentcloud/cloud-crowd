@@ -89,9 +89,9 @@ public/images/sidebar_top.png
 public/images/worker_info.png
 public/images/worker_info_loading.gif
 public/js/admin_console.js
-public/js/excanvas.pack.js
-public/js/jquery.flot.pack.js
-public/js/jquery-1.3.2.min.js
+public/js/excanvas.js
+public/js/flot.js
+public/js/jquery.js
 README
 test/acceptance/test_app.rb
 test/acceptance/test_failing_work_units.rb
