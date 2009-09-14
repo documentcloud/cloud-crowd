@@ -3,6 +3,8 @@ TODO:
   * Job creation UI. Pick an action, add inputs, set options, go.
   * Look into Grand Central Dispatch for ideas about how to implement
     Job ordering/piping.
+	* Look into queue-per-worker and work-stealing, although this would mean that
+	  the workers would have to listen for HTTP requests.
 
 DONE:
   * Right now actions just process. Think about map / process / reduce.

@@ -4,3 +4,5 @@ A brief list of things it would be nice to see contributed to CloudCrowd:
 * More unit and acceptance tests.
 * Additional storage backends for the AssetStore, besides *s3* and *filesystem*. *Database* and *memcache* backends seem like they would be interesting options.
 * Some performance tests and benchmarks, to see what the expected throughput looks like at different levels.
+* It would be nice to take a look at *Grand Central Dispatch* for ideas on how to efficiently manage workers and job queues.
+* We should also at least consider a queue-per-worker / *work-stealing* setup.
