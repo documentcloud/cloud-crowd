@@ -57,6 +57,8 @@ examples/word_count_example.rb
 lib/cloud-crowd.rb
 lib/cloud_crowd/action.rb
 lib/cloud_crowd/app.rb
+lib/cloud_crowd/asset_store/filesystem_store.rb
+lib/cloud_crowd/asset_store/s3_store.rb
 lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
 lib/cloud_crowd/daemon.rb
@@ -91,6 +93,7 @@ public/js/excanvas.pack.js
 public/js/jquery.flot.pack.js
 public/js/jquery-1.3.2.min.js
 README
+test/acceptance/test_app.rb
 test/acceptance/test_failing_work_units.rb
 test/acceptance/test_word_count.rb
 test/blueprints.rb
@@ -99,6 +102,8 @@ test/config/config.yml
 test/config/database.yml
 test/config/actions/failure_testing.rb
 test/test_helper.rb
+test/unit/test_action.rb
+test/unit/test_configuration.rb
 test/unit/test_job.rb
 test/unit/test_work_unit.rb
 views/index.erb
