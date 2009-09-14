@@ -1,6 +1,9 @@
 TODO:
   * Use the email field to send mail when the Job's gone bad.
   * Job creation UI. Pick an action, add inputs, set options, go.
+	* Think about adding a CLEANUP state, with WorkUnits being dispatched to
+	  workers to clean up a Job's leftover files on S3, instead of the current
+	  in-request cleanup. (see Job#fire_callback)
   * Look into Grand Central Dispatch for ideas about how to implement
     Job ordering/piping.
 	* Look into queue-per-worker and work-stealing, although this would mean that
