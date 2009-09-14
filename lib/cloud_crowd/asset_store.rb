@@ -10,73 +10,10 @@ module CloudCrowd
   # and +save+ methods use it behind the scenes.
   class AssetStore
     
+    autoload :S3Store,         'cloud_crowd/asset_store/s3_store'
+    autoload :FilesystemStore, 'cloud_crowd/asset_store/filesystem_store'
+    
     LOCAL_STORAGE_PATH = '/tmp/cloud_crowd_storage'
-    
-    
-    # The S3Store is an implementation of an AssetStore that uses a bucket
-    # on S3 for all resulting files.
-    module S3Store
-      
-      # Save a finished file from local storage to S3. Save it publicly unless 
-      # we're configured to use S3 authentication.
-      def save(local_path, save_path)
-        ensure_s3_connection
-        permission = @use_auth ? 'private' : 'public-read'
-        @bucket.put(save_path, File.open(local_path), {}, permission)
-      end
-      
-      # Return the S3 public URL for a finshed file. Authenticated links expire
-      # after one day by default.
-      def url(save_path)
-        @use_auth ? @s3.interface.get_link(@bucket, save_path) :
-                    @bucket.key(save_path).public_link
-      end
-      
-      # Remove all of a Job's resulting files from S3, both intermediate and finished.
-      def cleanup_job(job)
-        ensure_s3_connection
-        @bucket.delete_folder("#{job.action}/job_#{job.id}")
-      end
-      
-      # Workers, through the course of many WorkUnits, keep around an AssetStore.
-      # Ensure we have a persistent S3 connection after first use.
-      def ensure_s3_connection
-        unless @s3 && @bucket
-          params = {:port => 80, :protocol => 'http'}
-          @s3 = RightAws::S3.new(CloudCrowd.config[:aws_access_key], CloudCrowd.config[:aws_secret_key], params)
-          @bucket = @s3.bucket(CloudCrowd.config[:s3_bucket], true)
-        end
-      end
-    end
-    
-    
-    # The FilesystemStore is an implementation of the AssetStore, good only for
-    # use in development, testing, or if you're only running a single-machine
-    # installation.
-    module FilesystemStore
-      
-      # Save a file to somewhere semi-persistent on the filesystem. Can be used
-      # in development, when offline, or if you happen to have a single-machine
-      # CloudCrowd installation. To use, configure :local_storage.
-      def save(local_path, save_path)
-        save_path = File.join(LOCAL_STORAGE_PATH, save_path)
-        save_dir = File.dirname(save_path)
-        FileUtils.mkdir_p save_dir unless File.exists? save_dir
-        FileUtils.cp(local_path, save_path)
-      end
-      
-      # Return the URL for a file saved to the local filesystem.
-      def url(save_path)
-        "file://#{File.expand_path(File.join(LOCAL_STORAGE_PATH, save_path))}"
-      end
-      
-      # Remove all of a Job's result files from the filesystem.
-      def cleanup_job(job)
-        path = "#{LOCAL_STORAGE_PATH}/#{job.action}/job_#{job.id}"
-        FileUtils.rm_r(path) if File.exists?(path)
-      end
-    end
-    
     
     # Configure the AssetStore with the specific storage implementation 
     # specified by 'storage' in <tt>config.yml</tt>.

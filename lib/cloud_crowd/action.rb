@@ -52,7 +52,6 @@ module CloudCrowd
     def save(file_path)
       save_path = File.join(storage_prefix, File.basename(file_path))
       @store.save(file_path, save_path)
-      return @store.url(save_path)
     end
     
     # After the Action has finished, we remove the work directory and return
