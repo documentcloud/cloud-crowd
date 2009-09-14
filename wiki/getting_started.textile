@@ -18,13 +18,13 @@ All of the CloudCrowd commands can be used through the @crowd@ executable, which
 crowd install path/to/config
 </pre>
 
-Inside the configuration folder, you'll find @config.yml@, @config.ru@, @database.yml@, and the @actions@ folder. More information about all of these can be found in [[The Configuration Folder]] as well as by reading the files. At this point, you'll want to edit @config.yml@ and @database.yml@ to add your AWS credentials, turn authentication on or off, and set up the backing database. CloudCrowd uses ActiveRecord on the central server, so any ActiveRecord compatible database will do nicely. Once your database has been created on your central server (which in this case is your laptop, if you're just giving it a spin) and configured in @database.yml@, you can load in the schema:
+Move into the configuration folder, and you'll find @config.yml@, @config.ru@, @database.yml@, and the @actions@ folder. More information about all of these can be found in [[The Configuration Folder]] as well as by reading the files. At this point, you'll want to edit @config.yml@ and @database.yml@ to add your AWS credentials, turn authentication on or off, and set up the backing database. CloudCrowd uses ActiveRecord on the central server, so any ActiveRecord compatible database will do nicely. Once your database has been created on your central server (which in this case is your laptop, if you're just giving it a spin) and configured in @database.yml@, you can load in the schema:
 
 <pre>
 crowd load_schema
 </pre>
 
-With the database ready, let's start a single instance of the central server. In production, you can use the @config.ru@ rackup file to launch the desired number of server instances, and hide them behind a load balancer as you would any other Rack application.
+With the database ready, let's start a single instance of the central server. In production, you can use the @config.ru@ rackup file to launch the desired number of server instances, and hide them behind a load balancer as you would any other Rack application. But for now we'll just use @crowd@ to launch one.
 
 <pre>
 crowd server

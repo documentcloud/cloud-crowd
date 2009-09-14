@@ -1,4 +1,4 @@
-                                                                               
+=                                                                               
            _  _                                                                
           ( `   )_                                                             
          (    )    `)                                                          
@@ -39,9 +39,10 @@
 		* Web scraping.
     
     
-  ~ Wiki ~
+  ~ Documentation ~
   
-    http://wiki.github.com/documentcloud/cloud-crowd
+    Wiki: http://wiki.github.com/documentcloud/cloud-crowd
+		Rdoc: http://rdoc.info/projects/documentcloud/cloud-crowd
   
   
   ~ Getting started ~

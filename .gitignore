@@ -1,4 +1,5 @@
 .autotest
+.yardoc
 log
 raws
 tmp

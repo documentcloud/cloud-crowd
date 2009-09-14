@@ -120,7 +120,7 @@ module CloudCrowd
           when PROCESSING then @action.process
           when SPLITTING  then @action.split
           when MERGING    then @action.merge
-          else raise StatusUnspecified, "work units must specify their status"
+          else raise Error::StatusUnspecified, "work units must specify their status"
           end
         end
         complete_work_unit({'output' => result}.to_json)

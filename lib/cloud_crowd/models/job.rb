@@ -94,7 +94,7 @@ module CloudCrowd
     def action_class
       klass = CloudCrowd.actions[self.action]
       return klass if klass
-      raise ActionNotFound, "no action named: '#{self.action}' could be found"
+      raise Error::ActionNotFound, "no action named: '#{self.action}' could be found"
     end
     
     # How complete is this Job?

@@ -17,6 +17,7 @@ module CloudCrowd
 CloudCrowd is a MapReduce-inspired Parallel Processing System for Ruby.
 
 Wiki: http://wiki.github.com/documentcloud/cloud-crowd
+Rdoc: http://rdoc.info/projects/documentcloud/cloud-crowd
 
 Usage: crowd COMMAND OPTIONS
 

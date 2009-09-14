@@ -1,8 +1,6 @@
 TODO:
-  * Bump to version 0.1 and release on RubyForge.
   * Use the email field to send mail when the Job's gone bad.
   * Job creation UI. Pick an action, add inputs, set options, go.
-  * Unit tests for lib.
   * Look into Grand Central Dispatch for ideas about how to implement
     Job ordering/piping.
 
@@ -23,3 +21,5 @@ DONE:
   * Replace work_units_remaining with a percent_complete
   * Monitor UI -- see queue of jobs / work units.
   * Basic integration tests.
+  * Unit tests for lib.
+  * Bump to version 0.1 and release on RubyForge.

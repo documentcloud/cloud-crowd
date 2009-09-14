@@ -13,7 +13,7 @@ namespace :gem do
   desc 'Build and install cloud-crowd gem'
   task :install do
     sh "gem build cloud-crowd.gemspec"
-    sh "sudo gem install #{Dir['*.gem'].join(' ')} --no-ri"
+    sh "sudo gem install #{Dir['*.gem'].join(' ')} --no-ri --no-rdoc"
   end
   
   desc 'Uninstall the cloud-crowd gem'
