@@ -14,7 +14,7 @@ module CloudCrowd
     
     after_save :check_for_job_completion
     
-    named_scope :taken, {:conditions => "worker_pid != null"}
+    named_scope :taken, {:conditions => ["worker_pid is not null"]}
     
     # Find the first available WorkUnit in the queue, and take it out.
     # +enabled_actions+ must be passed to whitelist the types of WorkUnits than

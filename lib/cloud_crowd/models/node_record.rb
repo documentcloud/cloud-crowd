@@ -75,7 +75,7 @@ module CloudCrowd
     
     def to_json(opts={})
       {
-        'name'    => host,
+        'host'    => host,
         'workers' => work_units.all(:select => 'worker_pid').map(&:worker_pid),
         'status'  => display_status,
       }.to_json

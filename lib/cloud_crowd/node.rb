@@ -34,6 +34,7 @@ module CloudCrowd
     end
     
     post '/work' do
+      # TODO: Check machine load.
       pid = fork { Worker.new(self, JSON.parse(params[:work_unit])) }
       Process.detach(pid)
       json :pid => pid

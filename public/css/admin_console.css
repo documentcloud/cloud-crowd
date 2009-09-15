@@ -134,6 +134,7 @@ body {
     }
   #sidebar_header {
     position: absolute;
+    width: 250px;
     top: 5px; left: 8px;
     color: #404040;
     text-shadow: 0px 1px 1px #eee;
@@ -146,28 +147,26 @@ body {
     #sidebar_header.no_nodes .has_nodes {
       display: none;
     }
-  #workers {
+  #nodes {
     position: absolute;
     padding: 2px 0;
     top: 21px; left: 0; bottom: 21px;
     width: 298px;
     overflow-y: auto; overflow-x: hidden;
   }
-    #workers .worker {
+    #nodes .node, #nodes .worker {
       border: 1px solid transparent;
       margin: 1px 7px;
-      padding-left: 18px;
       font-size: 11px;
+      padding-left: 3px;
       line-height: 22px;
-      background: url(/images/bullet_white.png) no-repeat left center;
       cursor: pointer;
     }
-      #workers .worker.processing,
-      #workers .worker.splitting,
-      #workers .worker.merging {
+      #nodes .worker {
+        padding-left: 18px;
         background: url(/images/bullet_green.png) no-repeat left center;
       }
-      #workers .worker:hover {
+      #nodes .worker:hover {
         border: 1px solid #aaa;
         border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
         background-color: #ccc;

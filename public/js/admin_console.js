@@ -58,7 +58,7 @@ window.Console = {
       if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
       $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
       Console.renderJobs();
-      Console.renderWorkers();
+      Console.renderNodes();
       Console.renderGraphs();
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
     }, error : function(request, status, errorThrown) {
@@ -106,12 +106,18 @@ window.Console = {
   },
   
   // Re-render all workers from scratch each time.
-  renderWorkers : function() {
+  renderNodes : function() {
     var header = $('#sidebar_header');
-    $('.has_nodes', header).html(this._nodes.length + " Nodes Online / " + this._workerCount + " Active Workers");
+    var nc = this._nodes.length, wc = this._workerCount;
+    $('.has_nodes', header).html(nc + " Node" + (nc != 1 ? 's' : '') + " / " + wc + " Worker" + (wc != 1 ? 's' : ''));
     header.toggleClass('no_nodes', this._nodes.length <= 0);
-    $('#workers').html($.map(this._nodes, function(w) { 
-      return '<div class="worker ' + w.status + '" rel="' + w.name + '">' + w.name + '</div>';
+    $('#nodes').html($.map(this._nodes, function(node) { 
+      var html = "";
+      html += '<div class="node ' + node.status + '" rel="' + node.host + '">' + node.host + '</div>';
+      html += $.map(node.workers, function(pid) {
+        return '<div class="worker">' + pid + '</div>';
+      }).join('');
+      return html;
     }).join(''));
   },
   
