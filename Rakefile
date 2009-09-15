@@ -22,3 +22,15 @@ namespace :gem do
   end
   
 end
+
+namespace :db do
+  
+  desc "Creates a MySQL 'cloud_crowd_test' database, and loads the schema"
+  task :create_test_database do
+    sh "mysqladmin -uroot create cloud_crowd_test"
+    sh "bin/crowd -c test/config load_schema"
+  end
+  
+end
+
+task :default => :test
