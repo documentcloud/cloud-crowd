@@ -63,8 +63,7 @@ module CloudCrowd
     
     # Start a new job. Accepts a JSON representation of the job-to-be.
     post '/jobs' do
-      Job.create_from_request(JSON.parse(params[:job]))
-      json job
+      json Job.create_from_request(JSON.parse(params[:job]))
     end
     
     # Check the status of a job, returning the output if finished, and the
@@ -82,7 +81,7 @@ module CloudCrowd
     
     # INTERNAL NODE API:
     
-    put '/node' do
+    put '/node/:host' do
       params[:terminated] ? NodeRecord.check_out(params) : NodeRecord.check_in(params, request)
       json nil
     end
@@ -95,10 +94,10 @@ module CloudCrowd
         case params[:status]
         when 'succeeded'
           current_work_unit.finish(params[:output], params[:time])
-          # json dequeue_work_unit
+          json nil
         when 'failed'
           current_work_unit.fail(params[:output], params[:time])
-          # json dequeue_work_unit(1)
+          json nil
         else             
           error(500, "Completing a work unit must specify status.")
         end

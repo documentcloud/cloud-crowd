@@ -16,10 +16,13 @@ ActiveRecord::Schema.define(:version => 1) do
   end
   
   create_table "node_records", :force => true do |t|
-    t.string   "host",        :null => false
-    t.string   "ip_address",  :null => false
-    t.integer  "port",        :null => false
-    t.integer  "status",      :null => false
+    t.string   "host",                            :null => false
+    t.string   "ip_address",                      :null => false
+    t.integer  "port",                            :null => false
+    t.integer  "status",          :default => 1,  :null => false
+    t.string   "enabled_actions", :default => '', :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "work_units", :force => true do |t|
@@ -39,6 +42,6 @@ ActiveRecord::Schema.define(:version => 1) do
 
   add_index "jobs", ["status"], :name => "index_jobs_on_status"
   add_index "work_units", ["job_id"], :name => "index_work_units_on_job_id"
-  add_index "work_units", ["status", "worker_record_id", "action"], :name => "index_work_units_on_status_and_worker_record_id_and_action"
+  add_index "work_units", ["status", "node_record_id", "action"], :name => "index_work_units_on_status_and_node_record_id_and_action"
 
 end

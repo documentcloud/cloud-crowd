@@ -38,10 +38,8 @@ module CloudCrowd
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
         data = completion_params.merge({:status => 'succeeded', :output => result})
-        unit_json = @node.server["/work/#{data[:id]}"].put(data)
+        @node.server["/work/#{data[:id]}"].put(data)
         log "finished #{display_work_unit} in #{data[:time]} seconds"
-        clear_work_unit
-        setup_work_unit(unit_json)
       end
     end
     
@@ -49,10 +47,8 @@ module CloudCrowd
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
         data = completion_params.merge({:status => 'failed', :output => {'output' => exception.message}.to_json})
-        unit_json = @node.server["/work/#{data[:id]}"].put(data)
+        @node.server["/work/#{data[:id]}"].put(data)
         log "failed #{display_work_unit} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
-        clear_work_unit
-        setup_work_unit(unit_json)
       end
     end
     
@@ -108,7 +104,7 @@ module CloudCrowd
     def run_work_unit
       begin
         result = nil
-        @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, node.asset_store)
+        @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, @node.asset_store)
         Dir.chdir(@action.work_directory) do
           result = case @status
           when PROCESSING then @action.process
@@ -151,7 +147,7 @@ module CloudCrowd
     
     # Extract our instance variables from a WorkUnit's JSON.
     def setup_work_unit(unit)
-      return false unless unit_json
+      return false unless unit
       @start_time = Time.now
       @action_name, @input, @options, @status = unit['action'], unit['input'], unit['options'], unit['status']
       @options['job_id'] = unit['job_id']
