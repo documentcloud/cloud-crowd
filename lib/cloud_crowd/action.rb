@@ -41,6 +41,7 @@ module CloudCrowd
       if url.match(FILE_URL)
         FileUtils.cp(url.sub(FILE_URL, ''), path)
       else
+        # An alternative would be shelling out: `curl -s "#{url}" > "#{path}"`
         resp = RestClient::Request.execute(:url => url, :method => :get, :raw_response => true)
         FileUtils.mv resp.file.path, path
       end
