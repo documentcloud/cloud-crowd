@@ -160,7 +160,7 @@ module CloudCrowd
     # away.
     def queue_for_workers(input=nil)
       input ||= JSON.parse(self.inputs)
-      [input].flatten.each do |wu_input|
+      units = [input].flatten.map do |wu_input|
         WorkUnit.create(
           :job    => self, 
           :action => self.action, 
@@ -168,6 +168,7 @@ module CloudCrowd
           :status => self.status
         )
       end
+      Thread.new { NodeRecord.send_to_nodes(units) }      
     end
     
     # A Job starts out either splitting or processing, depending on its action.

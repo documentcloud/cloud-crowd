@@ -8,7 +8,7 @@ module CloudCrowd
     include ModelStatus
     
     belongs_to :job
-    belongs_to :worker_record
+    belongs_to :node_record
     
     validates_presence_of :job_id, :status, :input, :action
     
@@ -18,14 +18,14 @@ module CloudCrowd
     # +enabled_actions+ must be passed to whitelist the types of WorkUnits than
     # can be retrieved for processing. Optionally, specify the +offset+ to peek
     # further on in line.
-    def self.dequeue(worker_name, enabled_actions=[], offset=0)
-      unit = self.first(
-        :conditions => {:status => INCOMPLETE, :worker_record_id => nil, :action => enabled_actions}, 
-        :order      => "created_at asc",
-        :offset     => offset
-      )
-      unit ? unit.assign_to(worker_name) : nil
-    end
+    # def self.dequeue(worker_name, enabled_actions=[], offset=0)
+    #   unit = self.first(
+    #     :conditions => {:status => INCOMPLETE, :worker_record_id => nil, :action => enabled_actions}, 
+    #     :order      => "created_at asc",
+    #     :offset     => offset
+    #   )
+    #   unit ? unit.assign_to(worker_name) : nil
+    # end
     
     # After saving a WorkUnit, its Job should check if it just became complete.
     def check_for_job_completion
@@ -36,7 +36,8 @@ module CloudCrowd
     def finish(output, time_taken)
       update_attributes({
         :status         => SUCCEEDED,
-        :worker_record  => nil,
+        :node_record    => nil,
+        :worker_pid     => nil,
         :attempts       => self.attempts + 1,
         :output         => output,
         :time           => time_taken
@@ -49,7 +50,8 @@ module CloudCrowd
       return try_again if tries < CloudCrowd.config[:work_unit_retries]
       update_attributes({
         :status         => FAILED,
-        :worker_record  => nil,
+        :node_record    => nil,
+        :worker_pid     => nil,
         :attempts       => tries,
         :output         => output,
         :time           => time_taken
@@ -59,16 +61,16 @@ module CloudCrowd
     # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.
     def try_again
       update_attributes({
-        :worker_record  => nil,
-        :attempts       => self.attempts + 1
+        :node_record  => nil,
+        :worker_pid   => nil,
+        :attempts     => self.attempts + 1
       })
     end
     
     # When a Worker checks out a WorkUnit, establish the connection between
-    # WorkUnit and WorkerRecord.
-    def assign_to(worker_name)
-      self.worker_record = WorkerRecord.find_by_name!(worker_name)
-      self.save ? self : nil
+    # WorkUnit and NodeRecord.
+    def assign_to(node_record, worker_pid)
+      update_attributes!(:node_record => node_record, :worker_pid => worker_pid)
     end
     
     # The JSON representation of a WorkUnit shares the Job's options with all

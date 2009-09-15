@@ -1,6 +1,6 @@
 module CloudCrowd
 
-  # A WorkerRecord is the record of a Node running remotely.
+  # A NodeRecord is the record of a Node running remotely.
   # Every time it checks in, we keep track of its status.
   class NodeRecord < ActiveRecord::Base
         
@@ -15,31 +15,44 @@ module CloudCrowd
     named_scope :alive, lambda { {:conditions => ['updated_at > ?', Time.now - EXPIRES_AFTER]} }
     named_scope :dead,  lambda { {:conditions => ['updated_at <= ?', Time.now - EXPIRES_AFTER]} }
     
-    # Save a Worker's current status to the database.
-    def self.check_in(params)
-      attrs = {:thread_status => params[:thread_status], :updated_at => Time.now}
-      self.find_or_create_by_name(params[:name]).update_attributes!(attrs)
+    # Attempt to send a list of work_units to nodes with available capacity.
+    def self.send_to_nodes(work_units)
+      until work_units.empty? do
+        node = NodeRecord.available.first
+        break unless node
+        sent = node.send_work_unit(work_units[0])
+        work_units.shift if sent
+      end
     end
     
-    # Remove a terminated Worker's record from the database.
+    # Save a Node's current status to the database.
+    def self.check_in(params, request)
+      attrs = {
+        :ip_address => request.ip,
+        :port => params[:port],
+        :status => params[:status],
+        :updated_at => Time.now
+      }
+      self.find_or_create_by_host(params[:host]).update_attributes!(attrs)
+    end
+    
+    # Remove a terminated Node's record from the database.
     def self.check_out(params)
-      self.find_by_name(params[:name]).destroy
-    end 
+      self.find_by_host(params[:host]).destroy
+    end
+    
+    def send_work_unit(unit)
+      result = node['/work'].post(:work_unit => unit.to_json)
+      self.worker_records.create(JSON.parse(result))
+    rescue RestClient::Exception
+      self.status = BUSY
+      self.save
+    end
     
     # We consider the worker to be alive if it's checked in more recently
     # than twice the expected interval ago.
     def alive?
       updated_at > Time.now - EXPIRES_AFTER
-    end
-    
-    # Derive the Worker's PID on the remote machine from the name.
-    def pid
-      @pid ||= self.name.split('@').first
-    end
-    
-    # Derive the hostname from the Worker's name.
-    def hostname
-      @hostname ||= self.name.split('@').last
     end
     
     def to_json(opts={})

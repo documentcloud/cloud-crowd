@@ -4,7 +4,7 @@ module CloudCrowd
   class CommandLine
     
     # Configuration files required for the `crowd` command to function.
-    CONFIG_FILES = ['config.yml', 'server.ru', 'node.ru', 'database.yml']
+    CONFIG_FILES = ['config.yml', 'server.ru', 'database.yml']
     
     # Reference the absolute path to the root.
     CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
@@ -38,6 +38,7 @@ Options:
       case command
       when 'console'      then run_console
       when 'server'       then run_server
+      when 'node'         then run_node
       when 'workers'      then run_workers_command
       when 'load_schema'  then run_load_schema
       when 'install'      then run_install
@@ -72,6 +73,11 @@ Options:
       end
     end
     
+    def run_node
+      load_code
+      Node.new
+    end
+    
     # Load in the database schema to the database specified in 'database.yml'.
     def run_load_schema
       load_code
@@ -88,7 +94,6 @@ Options:
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
       install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
       install_file "#{CC_ROOT}/config/server.example.ru", "#{install_path}/server.ru"
-      install_file "#{CC_ROOT}/config/node.example.ru", "#{install_path}/node.ru"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     

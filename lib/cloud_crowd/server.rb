@@ -42,16 +42,16 @@ module CloudCrowd
     get '/status' do
       json(
         'jobs'            => Job.incomplete, 
-        'workers'         => WorkerRecord.alive(:order => 'name desc'),
+        # 'workers'         => WorkerRecord.alive(:order => 'name desc'),
         'work_unit_count' => WorkUnit.incomplete.count
       )
     end
     
     # Get the JSON for a worker record's work unit, if one exists.
-    get '/worker/:name' do
-      record = WorkerRecord.find_by_name params[:name]
-      json((record && record.work_unit) || {})
-    end
+    # get '/worker/:name' do
+    #   record = WorkerRecord.find_by_name params[:name]
+    #   json((record && record.work_unit) || {})
+    # end
     
     # To monitor the central server with Monit, God, Nagios, or another 
     # monitoring tool, you can hit /heartbeat to make sure.
@@ -63,7 +63,8 @@ module CloudCrowd
     
     # Start a new job. Accepts a JSON representation of the job-to-be.
     post '/jobs' do
-      json Job.create_from_request(JSON.parse(params[:job]))
+      Job.create_from_request(JSON.parse(params[:job]))
+      json job
     end
     
     # Check the status of a job, returning the output if finished, and the
@@ -79,12 +80,11 @@ module CloudCrowd
       json nil
     end
     
-    # INTERNAL WORKER DAEMON API:
+    # INTERNAL NODE API:
     
-    # Internal method for worker daemons to fetch the work unit at the front
-    # of the queue. Work unit is marked as taken and handed off to the worker.
-    post '/work' do
-      json dequeue_work_unit
+    put '/node' do
+      params[:terminated] ? NodeRecord.check_out(params) : NodeRecord.check_in(params, request)
+      json nil
     end
     
     # When workers are done with their unit, either successfully on in failure,
@@ -95,21 +95,14 @@ module CloudCrowd
         case params[:status]
         when 'succeeded'
           current_work_unit.finish(params[:output], params[:time])
-          json dequeue_work_unit
+          # json dequeue_work_unit
         when 'failed'
           current_work_unit.fail(params[:output], params[:time])
-          json dequeue_work_unit(1)
+          # json dequeue_work_unit(1)
         else             
           error(500, "Completing a work unit must specify status.")
         end
       end
-    end
-    
-    # Every so often workers check in to let the central server know that
-    # they're still alive. Keep up-to-date records
-    put '/worker' do
-      params[:terminated] ? WorkerRecord.check_out(params) : WorkerRecord.check_in(params)
-      json nil
     end
     
   end

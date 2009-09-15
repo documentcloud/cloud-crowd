@@ -10,6 +10,7 @@ gem 'json'
 gem 'rest-client'
 gem 'right_aws'
 gem 'sinatra'
+gem 'thin'
 
 # Autoloading for all the pieces which may or may not be needed:
 autoload :ActiveRecord, 'activerecord'
@@ -23,6 +24,7 @@ autoload :RestClient,   'restclient'
 autoload :RightAws,     'right_aws'
 autoload :Sinatra,      'sinatra'
 autoload :Socket,       'socket'
+autoload :Thin,         'thin'
 autoload :YAML,         'yaml'
 
 # Common code which should really be required in every circumstance.
@@ -41,7 +43,6 @@ module CloudCrowd
   autoload :Server,       'cloud_crowd/server'
   autoload :Worker,       'cloud_crowd/worker'
   autoload :WorkUnit,     'cloud_crowd/models'
-  autoload :WorkerRecord, 'cloud_crowd/models'
   
   # Root directory of the CloudCrowd gem.
   ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')

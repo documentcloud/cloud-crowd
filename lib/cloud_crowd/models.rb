@@ -38,4 +38,3 @@ end
 require 'cloud_crowd/models/job'
 require 'cloud_crowd/models/node_record'
 require 'cloud_crowd/models/work_unit'
-require 'cloud_crowd/models/worker_record'
