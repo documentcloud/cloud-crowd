@@ -1,14 +1,14 @@
 require 'test_helper'
 
-class AppTest < Test::Unit::TestCase
+class ServerTest < Test::Unit::TestCase
   
   include Rack::Test::Methods
   
   def app
-    CloudCrowd::App
+    CloudCrowd::Server
   end
   
-  context "The CloudCrowd::App (Sinatra)" do
+  context "The CloudCrowd::Server (Sinatra)" do
         
     setup do
       CloudCrowd::Job.destroy_all

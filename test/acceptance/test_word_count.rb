@@ -6,7 +6,7 @@ class WordCountTest < Test::Unit::TestCase
     
     setup do
       @asset_store = AssetStore.new
-      @browser = Rack::Test::Session.new(Rack::MockSession.new(CloudCrowd::App))
+      @browser = Rack::Test::Session.new(Rack::MockSession.new(CloudCrowd::Server))
       @browser.put('/worker', :name => 'test_worker', :thread_status => 'sleeping')
       post_job_to_count_words_in_this_file
       @job_id = JSON.parse(@browser.last_response.body)['id']

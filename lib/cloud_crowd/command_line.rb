@@ -4,7 +4,7 @@ module CloudCrowd
   class CommandLine
     
     # Configuration files required for the `crowd` command to function.
-    CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
+    CONFIG_FILES = ['config.yml', 'server.ru', 'node.ru', 'database.yml']
     
     # Reference the absolute path to the root.
     CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
@@ -58,13 +58,13 @@ Options:
     
     # Convenience command for quickly spinning up the central server. More 
     # sophisticated deployments, load-balancing across multiple app servers, 
-    # should use the config.ru rackup file directly. This method will start
+    # should use the server.ru rackup file directly. This method will start
     # a single Thin server, if Thin is installed, otherwise the rackup defaults 
     # (Mongrel, falling back to WEBrick). The equivalent of Rails' script/server.
     def run_server
       ensure_config
       require 'rubygems'
-      rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
+      rackup_path = File.expand_path("#{@options[:config_path]}/server.ru")
       if Gem.available? 'thin'
         exec "thin -e #{@options[:environment]} -p #{@options[:port]} -R #{rackup_path} start"
       else
@@ -86,8 +86,9 @@ Options:
       install_path = ARGV.shift || '.'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
-      install_file "#{CC_ROOT}/config/config.example.ru", "#{install_path}/config.ru"
       install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
+      install_file "#{CC_ROOT}/config/server.example.ru", "#{install_path}/server.ru"
+      install_file "#{CC_ROOT}/config/node.example.ru", "#{install_path}/node.ru"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     

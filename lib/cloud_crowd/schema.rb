@@ -14,6 +14,13 @@ ActiveRecord::Schema.define(:version => 1) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+  
+  create_table "node_records", :force => true do |t|
+    t.string   "host",        :null => false
+    t.string   "ip_address",  :null => false
+    t.integer  "port",        :null => false
+    t.integer  "status",      :null => false
+  end
 
   create_table "work_units", :force => true do |t|
     t.integer  "status",                          :null => false
@@ -30,8 +37,9 @@ ActiveRecord::Schema.define(:version => 1) do
   end
   
   create_table "worker_records", :force => true do |t|
-    t.string   "name",          :null => false
-    t.string   "thread_status", :null => false
+    t.string   "name",            :null => false
+    t.string   "thread_status",   :null => false
+    t.integer  "node_record_id",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

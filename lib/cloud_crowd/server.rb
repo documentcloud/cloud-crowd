@@ -16,7 +16,7 @@ module CloudCrowd
   # [post /work] Dequeue the next WorkUnit, and hand it off to the worker.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
   # [put /worker] Keep a record of an actively running worker.
-  class App < Sinatra::Default
+  class Server < Sinatra::Default
     
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"

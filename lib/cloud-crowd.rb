@@ -31,12 +31,14 @@ require 'cloud_crowd/exceptions'
 module CloudCrowd
   
   # Autoload all the CloudCrowd classes which may not be required.
-  autoload :App,          'cloud_crowd/app'
   autoload :Action,       'cloud_crowd/action'
   autoload :AssetStore,   'cloud_crowd/asset_store'
   autoload :Helpers,      'cloud_crowd/helpers'
   autoload :Inflector,    'cloud_crowd/inflector'
   autoload :Job,          'cloud_crowd/models'
+  autoload :Node,         'cloud_crowd/node'
+  autoload :NodeRecord,   'cloud_crowd/models'
+  autoload :Server,       'cloud_crowd/server'
   autoload :Worker,       'cloud_crowd/worker'
   autoload :WorkUnit,     'cloud_crowd/models'
   autoload :WorkerRecord, 'cloud_crowd/models'
