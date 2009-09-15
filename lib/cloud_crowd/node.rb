@@ -39,6 +39,20 @@ module CloudCrowd
       json :pid => pid
     end
     
+    def initialize
+      require 'json'
+      Signal.trap('INT')  { kill_workers_and_check_out }
+      Signal.trap('KILL') { kill_workers_and_check_out }
+      Signal.trap('TERM') { kill_workers_and_check_out }
+      @server           = CloudCrowd.central_server
+      @host             = Socket.gethostname
+      @port             = CloudCrowd.config[:node_port]
+      @enabled_actions  = CloudCrowd.actions.keys
+      @asset_store      = AssetStore.new
+      Thread.new { check_in }
+      Thin::Server.start('0.0.0.0', @port, self, :signals => false)
+    end
+    
     def check_in
       @server["/node/#{@host}"].put(
         :port             => @port, 
@@ -47,15 +61,17 @@ module CloudCrowd
       )
     end
     
-    def initialize
-      require 'json'
-      @server           = CloudCrowd.central_server
-      @host             = Socket.gethostname
-      @port             = CloudCrowd.config[:node_port]
-      @enabled_actions  = CloudCrowd.actions.keys
-      @asset_store      = AssetStore.new
-      Thread.new { check_in }
-      Thin::Server.start('0.0.0.0', @port, self)
+    def check_out
+      @server["/node/#{@host}"].delete
+    end
+    
+    
+    private
+    
+    def kill_workers_and_check_out
+      # TODO: Kill workers.
+      check_out
+      Process.exit
     end
     
   end

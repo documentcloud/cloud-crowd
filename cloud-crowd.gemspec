@@ -32,7 +32,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'json',          ['>= 1.1.7']
   s.add_dependency 'rest-client',   ['>= 1.0.3']
   s.add_dependency 'right_aws',     ['>= 1.10.0']
-  s.add_dependency 'daemons',       ['>= 1.0.10']
+  s.add_dependency 'thin',          ['>= 1.2.4']
+  # s.add_dependency 'daemons',       ['>= 1.0.10']
 
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'faker',               ['>= 0.3.1']

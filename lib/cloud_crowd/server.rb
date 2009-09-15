@@ -42,8 +42,9 @@ module CloudCrowd
     get '/status' do
       json(
         'jobs'            => Job.incomplete, 
-        # 'workers'         => WorkerRecord.alive(:order => 'name desc'),
-        'work_unit_count' => WorkUnit.incomplete.count
+        'nodes'           => NodeRecord.all(:order => 'host desc'),
+        'work_unit_count' => WorkUnit.incomplete.count,
+        'worker_count'    => WorkUnit.taken.count
       )
     end
     
@@ -82,7 +83,12 @@ module CloudCrowd
     # INTERNAL NODE API:
     
     put '/node/:host' do
-      params[:terminated] ? NodeRecord.check_out(params) : NodeRecord.check_in(params, request)
+      NodeRecord.check_in(params, request)
+      json nil
+    end
+    
+    delete '/node/:host' do
+      NodeRecord.find_by_host(params[:host]).destroy
       json nil
     end
     

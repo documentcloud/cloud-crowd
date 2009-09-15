@@ -51,8 +51,9 @@ window.Console = {
   getStatus : function() {
     $.ajax({url : '/status', dataType : 'json', success : function(resp) {
       Console._jobs           = resp.jobs;
-      Console._workers        = resp.workers;
+      Console._nodes          = resp.nodes;
       Console._workUnitCount  = resp.work_unit_count;
+      Console._workerCount    = resp.worker_count;
       Console.recordDataPoint();
       if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
       $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
@@ -107,9 +108,9 @@ window.Console = {
   // Re-render all workers from scratch each time.
   renderWorkers : function() {
     var header = $('#sidebar_header');
-    $('.has_workers', header).html(this._workers.length + " Active Worker Daemons");
-    header.toggleClass('no_workers', this._workers.length <= 0);
-    $('#workers').html($.map(this._workers, function(w) { 
+    $('.has_nodes', header).html(this._nodes.length + " Nodes Online / " + this._workerCount + " Active Workers");
+    header.toggleClass('no_nodes', this._nodes.length <= 0);
+    $('#workers').html($.map(this._nodes, function(w) { 
       return '<div class="worker ' + w.status + '" rel="' + w.name + '">' + w.name + '</div>';
     }).join(''));
   },
@@ -118,7 +119,7 @@ window.Console = {
   recordDataPoint : function() {
     var timestamp = (new Date()).getTime();
     this._jobsHistory.push([timestamp, this._jobs.length]);
-    this._workersHistory.push([timestamp, this._workers.length]);
+    this._workersHistory.push([timestamp, this._workerCount]);
     this._workUnitsHistory.push([timestamp, this._workUnitCount]);
     $.each(this._histories, function() { 
       if (this.length > Console.MAX_DATA_POINTS) this.shift(); 

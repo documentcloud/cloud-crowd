@@ -43,11 +43,6 @@ module CloudCrowd
       self.find_or_create_by_host(params[:host]).update_attributes!(attrs)
     end
     
-    # Remove a terminated Node's record from the database.
-    def self.check_out(params)
-      self.find_by_host(params[:host]).destroy
-    end
-    
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])
@@ -68,6 +63,10 @@ module CloudCrowd
       @node = RestClient::Resource.new(*params)
     end
     
+    def display_status
+      ['unknown', 'available', 'busy'][status]
+    end
+    
     # We consider the worker to be alive if it's checked in more recently
     # than twice the expected interval ago.
     # def alive?
@@ -76,8 +75,9 @@ module CloudCrowd
     
     def to_json(opts={})
       {
-        'name'    => name, 
-        'status'  => work_unit && work_unit.display_status,
+        'name'    => host,
+        'workers' => work_units.all(:select => 'worker_pid').map(&:worker_pid),
+        'status'  => display_status,
       }.to_json
     end
     

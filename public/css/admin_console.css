@@ -138,12 +138,12 @@ body {
     color: #404040;
     text-shadow: 0px 1px 1px #eee;
   }
-    #sidebar_header.no_workers .no_workers,
-    #sidebar_header .has_workers {
+    #sidebar_header.no_nodes .no_nodes,
+    #sidebar_header .has_nodes {
       display: block;
     }
-    #sidebar_header .no_workers,
-    #sidebar_header.no_workers .has_workers {
+    #sidebar_header .no_nodes,
+    #sidebar_header.no_nodes .has_nodes {
       display: none;
     }
   #workers {

@@ -3,7 +3,7 @@
 require 'restclient'
 require 'json'
 
-# Let's count all the words in this file.
+# Let's count all the words in this file (There are 31).
 
 RestClient.post('http://localhost:9173/jobs', 
   {:job => {
