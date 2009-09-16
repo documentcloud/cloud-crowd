@@ -38,8 +38,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.datetime "updated_at"
   end
 
-  # These are the indexes we were considering, but it seems to be faster not
-  # to have them at all.
+  # Here be indices. After looking, it seems faster not to have them at all.
   # 
   # add_index "jobs", ["status"], :name => "index_jobs_on_status"
   # add_index "work_units", ["job_id"], :name => "index_work_units_on_job_id"

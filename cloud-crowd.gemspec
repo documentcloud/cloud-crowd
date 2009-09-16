@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.1.0'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2009-09-14'
+  s.version   = '0.1.1'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2009-09-15'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -56,12 +56,10 @@ examples/process_pdfs_example.rb
 examples/word_count_example.rb
 lib/cloud-crowd.rb
 lib/cloud_crowd/action.rb
-lib/cloud_crowd/app.rb
 lib/cloud_crowd/asset_store/filesystem_store.rb
 lib/cloud_crowd/asset_store/s3_store.rb
 lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
-lib/cloud_crowd/daemon.rb
 lib/cloud_crowd/exceptions.rb
 lib/cloud_crowd/helpers/authorization.rb
 lib/cloud_crowd/helpers/resources.rb
@@ -71,8 +69,9 @@ lib/cloud_crowd/models/job.rb
 lib/cloud_crowd/models/node_record.rb
 lib/cloud_crowd/models/work_unit.rb
 lib/cloud_crowd/models.rb
-lib/cloud_crowd/runner.rb
+lib/cloud_crowd/node.rb
 lib/cloud_crowd/schema.rb
+lib/cloud_crowd/server.rb
 lib/cloud_crowd/worker.rb
 LICENSE
 public/css/admin_console.css
@@ -83,6 +82,7 @@ public/images/cloud_hand.png
 public/images/header_back.png
 public/images/logo.png
 public/images/queue_fill.png
+public/images/server.png
 public/images/server_error.png
 public/images/sidebar_bottom.png
 public/images/sidebar_top.png
@@ -93,7 +93,7 @@ public/js/excanvas.js
 public/js/flot.js
 public/js/jquery.js
 README
-test/acceptance/test_app.rb
+test/acceptance/test_server.rb
 test/acceptance/test_failing_work_units.rb
 test/acceptance/test_word_count.rb
 test/blueprints.rb

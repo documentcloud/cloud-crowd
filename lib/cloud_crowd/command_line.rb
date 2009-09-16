@@ -93,7 +93,7 @@ Options:
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
       install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
-      install_file "#{CC_ROOT}/config/server.example.ru", "#{install_path}/config.ru"
+      install_file "#{CC_ROOT}/config/config.example.ru", "#{install_path}/config.ru"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     
@@ -130,7 +130,7 @@ Options:
           @options[:environment] = env
         end
         opts.on_tail('-v', '--version', 'show version') do
-          load_code
+          require "#{CC_ROOT}/lib/cloud-crowd"
           puts "CloudCrowd version #{VERSION}"
           exit
         end
@@ -143,7 +143,6 @@ Options:
     # Not all commands require this.
     def load_code
       ensure_config
-      require 'rubygems'
       require "#{CC_ROOT}/lib/cloud-crowd"
       CloudCrowd.configure("#{@options[:config_path]}/config.yml")
     end

@@ -7,9 +7,7 @@ module CloudCrowd
     DEFAULT_PORT = 9063
     
     attr_reader :server, :asset_store
-        
-    # LOAD_MONITOR_INTERVAL = 10
-    
+            
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
     
@@ -30,7 +28,6 @@ module CloudCrowd
     end
     
     post '/work' do
-      # TODO: Check machine load.
       pid = fork { Worker.new(self, JSON.parse(params[:work_unit])) }
       Process.detach(pid)
       json :pid => pid
@@ -75,15 +72,13 @@ module CloudCrowd
     private
     
     def trap_signals
-      Signal.trap('INT')  { kill_workers_and_check_out }
-      Signal.trap('KILL') { kill_workers_and_check_out }
-      Signal.trap('TERM') { kill_workers_and_check_out }
+      Signal.trap('INT')  { shut_down }
+      Signal.trap('KILL') { shut_down }
+      Signal.trap('TERM') { shut_down }
     end
     
-    def kill_workers_and_check_out
-      # TODO: Kill workers.
+    def shut_down
       check_out
-      # @monitor_thread.kill
       Process.exit
     end
     

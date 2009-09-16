@@ -6,8 +6,7 @@ tmp
 doc
 db/*.sqlite3
 raw
-config/server.ru
-config/node.ru
+config/config.ru
 config/config.yml
 config/database.yml
 lib/dc

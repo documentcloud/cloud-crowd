@@ -47,7 +47,7 @@ module CloudCrowd
       )
     end
     
-    # Get the JSON for a worker record's work unit, if one exists.
+    # Get the JSON for what a worker is up to.
     get '/worker/:name' do
       json WorkUnit.find_by_worker_name(params[:name]) || {}
     end
