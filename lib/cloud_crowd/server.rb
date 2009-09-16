@@ -5,6 +5,7 @@ module CloudCrowd
   # == Admin
   # [get /] Render the admin console, with a progress meter for running jobs.
   # [get /status] Get the combined JSON of every active job and worker.
+  # [get /worker/:name] Look up the details of a WorkUnit that a Worker is busy processing.
   # [get /heartbeat] Returns 200 OK to let monitoring tools know the server's up.
   # 
   # == Public API
@@ -13,9 +14,9 @@ module CloudCrowd
   # [delete /jobs/:job_id] Clean up a Job when you're done downloading the results. Removes all intermediate files.
   #
   # == Internal Workers API
-  # [post /work] Dequeue the next WorkUnit, and hand it off to the worker.
+  # [puts /node/:host] Registers a new Node, making it available for processing.
+  # [delete /node/:host] Removes a Node from the registry, freeing up any WorkUnits that it had checked out.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
-  # [put /worker] Keep a record of an actively running worker.
   class Server < Sinatra::Default
     
     set :root, ROOT
@@ -83,12 +84,16 @@ module CloudCrowd
     
     # INTERNAL NODE API:
     
+    # A new Node will this this action to register its location and 
+    # configuration with the central server. Triggers distribution of WorkUnits. 
     put '/node/:host' do
       NodeRecord.check_in(params, request)
       WorkUnit.distribute_to_nodes
       json nil
     end
     
+    # Deregisters a Node from the central server. Releases and redistributes any 
+    # WorkUnits it may have had checked out.
     delete '/node/:host' do
       NodeRecord.destroy_all(:host => params[:host])
       json nil

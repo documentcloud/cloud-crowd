@@ -61,6 +61,8 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "fire a callback when a job has finished, successfully or not" do
+      @job.update_attribute(:callback_url, 'http://example.com/callback')
+      CloudCrowd::Job.any_instance.stubs(:fire_callback).returns(true)
       CloudCrowd::Job.any_instance.expects(:fire_callback)
       @job.work_units.first.finish('{"output":"output"}', 10)
       assert @job.all_work_units_complete?

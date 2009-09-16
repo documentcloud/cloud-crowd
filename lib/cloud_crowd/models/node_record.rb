@@ -70,10 +70,12 @@ module CloudCrowd
       busy? ? 'busy' : 'available'
     end
     
+    # A list of the process ids of the workers currently being run by the Node.
     def worker_pids
       work_units.all(:select => 'worker_pid').map(&:worker_pid)
     end
     
+    # The JSON representation of a NodeRecord includes its worker_pids.
     def to_json(opts={})
       { 'host'    => host,
         'workers' => worker_pids,
@@ -84,8 +86,12 @@ module CloudCrowd
     
     private
     
+    # When a Node shuts down, we free up all of the WorkUnits that it had
+    # reserved, and they become available for others to pick up. Redistribute
+    # the WorkUnits in a separate thread to avoid delaying Node shutdown.
     def clear_work_units
       WorkUnit.update_all('node_record_id = null, worker_pid = null', "node_record_id = #{id}")
+      Thread.new { WorkUnit.distribute_to_nodes }
     end
     
   end

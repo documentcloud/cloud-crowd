@@ -11,14 +11,16 @@ module CloudCrowd
     belongs_to :node_record
     
     validates_presence_of :job_id, :status, :input, :action
-        
+    
+    # Available WorkUnits are waiting to be distributed to Nodes for processing.
     named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
-    named_scope :reserved,  {:conditions => {:reservation => $$}}
+    # Reserved WorkUnits have been marked for distribution by a central server process.
+    named_scope :reserved,  {:conditions => {:reservation => $$}, :order => 'updated_at asc'}
     
     # Attempt to send a list of work_units to nodes with available capacity.
-    # Do this in a separate thread so that the request can return, satisfied.
-    # A single application server process stops the same WorkUnit from being
-    # distributed to multiple nodes by reserving all the available ones.
+    # A single central server process stops the same WorkUnit from being
+    # distributed to multiple nodes by reserving it first. The algorithm used
+    # should be lock-free.
     def self.distribute_to_nodes
       return unless WorkUnit.reserve_available
       work_units = WorkUnit.reserved
@@ -34,25 +36,30 @@ module CloudCrowd
           available_nodes.push(node) unless node.busy?
         end
       end
+    ensure
       WorkUnit.cancel_reservations
     end
     
-    # Reserves all available WorkUnits. Returns false if there were none 
-    # available.
+    # Reserves all available WorkUnits for this process. Returns false if there 
+    # were none available.
     def self.reserve_available
       WorkUnit.available.update_all("reservation = #{$$}") > 0
     end
     
+    # Cancels all outstanding WorkUnit reservations for this process.
     def self.cancel_reservations
       WorkUnit.reserved.update_all('reservation = null')
     end
     
+    # Look up a WorkUnit by the worker that's currently processing it. Specified
+    # by <tt>pid@host</tt>.
     def self.find_by_worker_name(name)
       pid, host = name.split('@')
       node = NodeRecord.find_by_host(host)
       node && node.work_units.find_by_worker_pid(pid)
     end
     
+    # Convenience method for starting a new WorkUnit.
     def self.start(job, action, input, status)
       self.create(:job => job, :action => action, :input => input, :status => status)
     end
@@ -60,7 +67,7 @@ module CloudCrowd
     # Mark this unit as having finished successfully.
     # Splitting work units are handled differently (an optimization) -- they 
     # immediately fire off all of their resulting WorkUnits for processing, 
-    # without waiting for their splitting cousins to complete.
+    # without waiting for the rest of their splitting cousins to complete.
     def finish(output, time_taken)
       if splitting?
         [JSON.parse(parsed_output)].flatten.each do |new_input|
@@ -105,20 +112,21 @@ module CloudCrowd
       })
     end
     
-    # When a Worker checks out a WorkUnit, establish the connection between
-    # WorkUnit and NodeRecord.
+    # When a Node checks out a WorkUnit, establish the connection between
+    # WorkUnit and NodeRecord and record the worker_pid.
     def assign_to(node_record, worker_pid)
       update_attributes!(:node_record => node_record, :worker_pid => worker_pid)
     end
     
-    # All output needs to be wrapped in a JSON object for consistency. Provides
-    # the parsed version.
+    # All output needs to be wrapped in a JSON object for consistency 
+    # (unfortunately, JSON.parse needs the top-level to be an object or array). 
+    # Convenience method to provide the parsed version.
     def parsed_output
       JSON.parse(output)['output']
     end
     
     # The JSON representation of a WorkUnit shares the Job's options with all
-    # its sister WorkUnits.
+    # its cousin WorkUnits.
     def to_json
       {
         'id'        => self.id,
