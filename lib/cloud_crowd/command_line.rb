@@ -156,7 +156,7 @@ Options:
     
     # Exit with an explanation if the configuration files couldn't be found.
     def config_not_found
-      puts "`crowd` can't find the CloudCrowd configuration directory. Please either run `crowd` from inside of the configuration directory, or use `crowd -c path/to/config`"
+      puts "`crowd` can't find the CloudCrowd configuration directory. Please use `crowd -c path/to/config`, or run `crowd` from inside of the configuration directory itself."
       exit(1)
     end
     

@@ -26,7 +26,7 @@
 
     * Parallel processing for the rest of us
     * Write your scripts in Ruby
-    * Built for Amazon EC2 and S3
+    * Works with Amazon EC2 and S3
     * split -> process -> merge
     * As easy as `gem install cloud-crowd`
 
@@ -63,31 +63,31 @@
     # Edit the configuration files to your satisfaction, add AWS credentials, 
     # and then load the CloudCrowd schema into your configured database.
     
-      >> mate ~/config/cloud-crowd/config.yml
-      >> mate ~/config/cloud-crowd/database.yml
+			>> cd ~/config/cloud-crowd
+      >> mate config.yml
+      >> mate database.yml
+			>> [create the database you just configured...]
       >> crowd load_schema
     
     # Write your actions, and install them into the 'actions' subdirectory.
-    # CloudCrowd comes with some default actions as an example.
+    # CloudCrowd comes with a few default actions as an example.
     
     # To launch the central server (make sure that you include its location
-    # in config.yml), either:
+    # in config.yml):
     
       >> crowd server
     
-    # or:
+    # The configuration folder also includes 'config.ru', which can be used by
+ 		# any Rack-compliant webserver to run your central server.
     
-      >> thin -R config.ru --servers 3 -e production start
+    # Then, to launch a node of workers:
     
-    # Any server that supports Rack should work with the rackup file.
+      >> crowd node
     
-    # Then, to spin up 10 workers:
+    # To spin up remote nodes, install the 'cloud-crowd' gem and copy over
+    # your configuration directory. Run `crowd node`, and the remote machines
+		# will register with the central server, becoming available for processing.
     
-      >> crowd workers start -n 10
-    
-    # To spin up workers remotely, install the 'cloud-crowd' gem, and copy over
-    # your configuration directory.
-    
-    # At this point you can visit your server console at localhost:9173 to 
-    # view all of your workers, ready for action.
+    # At this point you can visit your Operations Center at localhost:9173 to 
+    # view all of your nodes, ready for action.
   
