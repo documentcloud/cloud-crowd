@@ -4,7 +4,13 @@
 # using any Rack-compliant server handler. For example, start up three servers 
 # with a specified port number, using Thin:
 #
-# thin start -R config.ru -p 9173 --servers 3
+# thin start -R config.ru --servers 3
+#
+# Or a single server with Unicorn:
+#
+# unicorn config.ru
+#
+
 
 require 'rubygems'
 require 'cloud-crowd'

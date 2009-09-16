@@ -17,7 +17,7 @@ RestClient.post('http://localhost:9173/jobs',
       'http://tigger.uic.edu/~victor/personal/futurism.pdf',
       'http://www.jonasmekas.com/Catalog_excerpt/The%20Avant-Garde%20From%20Futurism%20to%20Fluxus.pdf',
       'http://www.dzignism.com/articles/Futurist.Manifesto.pdf',
-      'http://benfry.com/phd/dissertation-050312b-acrobat.pdf'
+      'http://www.pitt.edu/~slavic/sisc/SISC4/dadswell.pdf'
     ],
     
     'options' => {

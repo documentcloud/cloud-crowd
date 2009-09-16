@@ -39,3 +39,4 @@ RestClient.post('http://localhost:9173/jobs',
 )
 
 # With 23 Workers running, and over Wifi, it counted all the words in 5.5 secs.
+# On a fast internet connection, you may not even see this job show up.
