@@ -35,9 +35,9 @@ module CloudCrowd
     end
     
     # Mark the WorkUnit failed, returning the exception to central.
-    def fail_work_unit(result)
+    def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
-        data = base_params.merge({:status => 'failed', :output => result})
+        data = base_params.merge({:status => 'failed', :output => {'output' => exception.message}.to_json})
         @node.server["/work/#{data[:id]}"].put(data)
         log "failed #{display_work_unit} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
@@ -81,7 +81,7 @@ module CloudCrowd
           end
           complete_work_unit({'output' => result}.to_json)
         rescue Exception => e
-          fail_work_unit({'output' => e.message}.to_json)
+          fail_work_unit(e)
         ensure
           @action.cleanup_work_directory
         end
