@@ -19,9 +19,9 @@ module CloudCrowd
     # connection to S3. This AssetStore gets passed into each action, for use
     # as it is run.
     def initialize(node, work_unit)
-      Signal.trap('INT') { kill_worker_thread_and_exit }
-      Signal.trap('KILL') { kill_worker_thread_and_exit }
-      Signal.trap('TERM') { kill_worker_thread_and_exit }
+      Signal.trap('INT') { shut_down }
+      Signal.trap('KILL') { shut_down }
+      Signal.trap('TERM') { shut_down }
       @pid  = $$
       @node = node
       setup_work_unit(work_unit)
@@ -149,8 +149,11 @@ module CloudCrowd
     # Force the worker to quit, even if it's in the middle of processing.
     # If it had checked out a work unit, the node should have released it on
     # the central server already.
-    def kill_worker_thread_and_exit
-      @worker_thread.kill if @worker_thread
+    def shut_down
+      if @worker_thread
+        @worker_thread.kill
+        @worker_thread.kill! if @worker_thread.alive?
+      end
       Process.exit
     end
     
