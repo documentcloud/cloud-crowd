@@ -68,9 +68,9 @@ module CloudCrowd
     # Splitting work units are handled differently (an optimization) -- they 
     # immediately fire off all of their resulting WorkUnits for processing, 
     # without waiting for the rest of their splitting cousins to complete.
-    def finish(output, time_taken)
+    def finish(result, time_taken)
       if splitting?
-        [JSON.parse(parsed_output)].flatten.each do |new_input|
+        [JSON.parse(parsed_output(result))].flatten.each do |new_input|
           WorkUnit.start(job, action, new_input, PROCESSING)
         end
         self.destroy
@@ -81,7 +81,7 @@ module CloudCrowd
           :node_record    => nil,
           :worker_pid     => nil,
           :attempts       => attempts + 1,
-          :output         => output,
+          :output         => result,
           :time           => time_taken
         })
         job.check_for_completion
@@ -121,8 +121,8 @@ module CloudCrowd
     # All output needs to be wrapped in a JSON object for consistency 
     # (unfortunately, JSON.parse needs the top-level to be an object or array). 
     # Convenience method to provide the parsed version.
-    def parsed_output
-      JSON.parse(output)['output']
+    def parsed_output(out = self.output)
+      JSON.parse(out)['output']
     end
     
     # The JSON representation of a WorkUnit shares the Job's options with all

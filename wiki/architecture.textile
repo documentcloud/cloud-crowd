@@ -1,9 +1,9 @@
 h3. What runs where?
 
-The *central server* keeps track of the status of all the active jobs and work units, but does not perform any action processing itself. Every @split@, @process@, and @merge@ is performed on a *worker daemon*. Worker daemons process a single work unit at a time, and clean up their temporary files when finished. 
+The *central server* keeps track of the status of all the active jobs and work units, but does not perform any action processing itself. Every @split@, @process@, and @merge@ is distributed to a *node* and run by a *worker* process. Workers run a single work unit, return their results, clean up their temporary files, and then promptly expire. In this way, when the work queue is empty all the nodes are empty and quiet, and your actions are unable to leak memory over time.
 
-A common bottleneck for distributed processing systems is the file storage, which is used to store all intermediate results, as well as inputs and outputs. Google's original MapReduce uses an in-house distributed filesystem; Hadoop uses the custom HDFS Hadoop filesystem. CloudCrowd uses S3, which makes it a particularly good idea to deploy your CloudCrowd cluster on EC2. Alternative storage support can be plugged into the @AssetStore@ class and selected in *config.yml*.
+A common bottleneck for distributed processing systems is file storage, which is used to house all intermediate results, as well as inputs and outputs. Google's original MapReduce uses an in-house distributed filesystem; Hadoop uses the custom HDFS Hadoop filesystem. CloudCrowd uses *S3*, which makes it a particularly good idea to deploy your CloudCrowd cluster on *EC2*. Alternative storage support can be plugged into the @AssetStore@ class and selected in *config.yml*.
 
-These constraints make CloudCrowd appropriate for moderate volumes of highly expensive (for either CPU, memory, or bandwidth) work. The overhead of a running worker daemon is around 10 megabytes; running a large number of them should allow you to max out CPU without running into memory woes -- so often the limiting factor with server-side Ruby. You'll be in especially good shape if you prefer shelling out over reading files into memory.
+These constraints make CloudCrowd appropriate for moderate volumes of highly expensive (for either CPU, memory, or bandwidth) work. The @split@ method allows you to turn a single large file into a highly parallel list of work units, and your nodes will automatically spin up more workers (up to @max_workers@ per node) to handle the job.
 
-!http://jashkenas.s3.amazonaws.com/images/cloud_crowd/anatomy.png!
+!http://jashkenas.s3.amazonaws.com/images/cloud_crowd/node_anatomy.png!

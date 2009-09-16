@@ -36,9 +36,9 @@ When you first create a job, ask the *central server* for the status of a job, o
 
 |*id*|The job's integer id. Use this when requesting the status of a job at @/jobs/:job_id@|
 |*status*|The job's current status. One of: *succeeded*, *failed*, *processing*, *splitting*, *merging*|
-|*outputs*|If the job is complete (either *succeeded* or *failed*), outputs will be an array of all the job's results. Often these are URLs to processed files.|
-|*percent_complete*|The percentage of its total work units that have already been completed. An integer between 0 and 100.|
-|*work_units*|The total number of work units that make up the job. This number may change over time.|
+|*outputs*|If the job is complete (either *succeeded* or *failed*), outputs will be an array of all the job's results. Often these are URLs where the finished output can be downloaded, for import back into your application.|
+|*percent_complete*|The percentage of the job's work units that have already been completed. An integer between 0 and 100. _This number may occasionally move backwards if your action uses @split@, increasing the number of remaining work units._|
+|*work_units*|The total number of work units that make up the job. This number may change over time, due to @split@ or @merge@. Useful for comparing the relative size of different jobs.|
 |*time_taken*|The number of seconds that this job has been running for, or, if complete, the number of seconds it took to process from start to finish.|
 |*color*|A unique hexadecimal color code, which can be used directly in HTML to distinguish the job visually.|
 
