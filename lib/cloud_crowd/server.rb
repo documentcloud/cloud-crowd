@@ -104,6 +104,8 @@ module CloudCrowd
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
       else             error(500, "Completing a work unit must specify status.")
       end
+      # TODO: Optimize this case -- we know there's probably going to be only
+      # a single slot available. Just try to distribute a single WorkUnit.
       WorkUnit.distribute_to_nodes
       json nil
     end

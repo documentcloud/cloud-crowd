@@ -95,8 +95,8 @@ module CloudCrowd
     # How complete is this Job?
     def percent_complete
       return 0   if splitting?
-      return 100 if complete?
       return 99  if merging?
+      return 100 if complete?
       (work_units.complete.count / work_units.count.to_f * 100).round
     end
     
