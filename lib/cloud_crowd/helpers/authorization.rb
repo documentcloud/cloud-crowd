@@ -23,7 +23,7 @@ module CloudCrowd
       # A request is authorized if its login and password match those stored
       # in config.yml, or if authentication is disabled. If authentication is
       # turned on, then every request is authenticated, including between 
-      # the worker daemons and the central server.
+      # the nodes and the central server.
       def authorize(login, password)
         return true unless CloudCrowd.config[:use_http_authentication]
         return CloudCrowd.config[:login] == login &&

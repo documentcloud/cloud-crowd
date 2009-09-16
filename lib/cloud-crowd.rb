@@ -5,7 +5,6 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 # Common Gems:
 require 'rubygems'
 gem 'activerecord'
-gem 'daemons'
 gem 'json'
 gem 'rest-client'
 gem 'right_aws'
@@ -15,7 +14,6 @@ gem 'thin'
 # Autoloading for all the pieces which may or may not be needed:
 autoload :ActiveRecord, 'activerecord'
 autoload :Benchmark,    'benchmark'
-autoload :Daemons,      'daemons'
 autoload :Digest,       'digest'
 autoload :ERB,          'erb'
 autoload :FileUtils,    'fileutils'

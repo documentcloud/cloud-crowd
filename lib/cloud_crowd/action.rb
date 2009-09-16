@@ -59,7 +59,7 @@ module CloudCrowd
     end
     
     # After the Action has finished, we remove the work directory and return
-    # to the root directory (where daemons run by default).
+    # to the root directory (where workers run by default).
     def cleanup_work_directory
       FileUtils.rm_r(@work_directory) if File.exists?(@work_directory)
     end
