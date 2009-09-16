@@ -25,7 +25,7 @@ module CloudCrowd
       # turned on, then every request is authenticated, including between 
       # the nodes and the central server.
       def authorize(login, password)
-        return true unless CloudCrowd.config[:use_http_authentication]
+        return true unless CloudCrowd.config[:http_authentication]
         return CloudCrowd.config[:login] == login &&
                CloudCrowd.config[:password] == password
       end

@@ -7,8 +7,14 @@ module CloudCrowd
       
       # Configure authentication and establish a connection to S3, first thing.
       def setup
-        @use_auth = CloudCrowd.config[:use_s3_authentication]
-        establish_s3_connection
+        @use_auth   = CloudCrowd.config[:s3_authentication]
+        bucket_name = CloudCrowd.config[:s3_bucket]
+        key, secret = CloudCrowd.config[:aws_access_key], CloudCrowd.config[:aws_secret_key]
+        protocol    = @use_auth ? 'https' : 'http'
+        port        = @use_auth ? 443 : 80
+        @s3         = RightAws::S3.new(key, secret, :protocol => protocol, :port => port)
+        @bucket     = @s3.bucket(bucket_name)
+        @bucket     = @s3.bucket(bucket_name, true) unless @bucket
       end
       
       # Save a finished file from local storage to S3. Save it publicly unless 
@@ -29,15 +35,6 @@ module CloudCrowd
         @bucket.delete_folder("#{job.action}/job_#{job.id}")
       end
       
-      # Workers, through the course of many WorkUnits, keep around an AssetStore.
-      # Ensure we have a persistent S3 connection after first use.
-      def establish_s3_connection
-        unless @s3 && @bucket
-          params = {:port => 80, :protocol => 'http'}
-          @s3 = RightAws::S3.new(CloudCrowd.config[:aws_access_key], CloudCrowd.config[:aws_secret_key], params)
-          @bucket = @s3.bucket(CloudCrowd.config[:s3_bucket], true)
-        end
-      end
     end
     
   end

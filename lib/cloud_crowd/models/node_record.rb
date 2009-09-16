@@ -51,7 +51,7 @@ module CloudCrowd
     def node
       return @node if @node
       params = [url]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
+      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:http_authentication]
       @node = RestClient::Resource.new(*params)
     end
     

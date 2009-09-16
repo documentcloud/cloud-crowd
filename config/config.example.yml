@@ -1,33 +1,33 @@
 # The URL where you're planning on running the central server/queue/database.
-:central_server:          http://localhost:9173
+:central_server:      http://localhost:9173
 
 # Set the maximum number of workers allowed per-node. Workers only run while 
 # there's work to be done. It's best to set 'max_workers' below the point where 
 # you'd start to swap or peg your CPU (as determined by experiment).
-:max_workers:             5
+:max_workers:         5
 
 # The storage back-end that you'd like to use for intermediate and final results
 # of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
 # be used in development, or on single-machine installations.
-:storage:                 s3
+:storage:             s3
 
 # Please provide your AWS credentials for S3 storage of job output.
-:aws_access_key:          [your AWS access key]
-:aws_secret_key:          [your AWS secret access key]
+:aws_access_key:      [your AWS access key]
+:aws_secret_key:      [your AWS secret access key]
 
 # Choose an S3 bucket to store all CloudCrowd output, and decide if you'd like
 # to keep all resulting files on S3 private. If so, you'll receive authenticated
 # S3 URLs as job output, good for 24 hours. If left public, you'll get the
 # straight URLs to the files on S3.
-:s3_bucket:               [your CloudCrowd bucket]
-:use_s3_authentication:   no
+:s3_bucket:           [your CloudCrowd bucket]
+:s3_authentication:   no
 
 # Use HTTP Basic Auth for all requests? (Includes all internal worker requests 
 # to the central server). If yes, specify the login and password that all 
 # requests must provide for authentication.
-:use_http_authentication: no
-:login:                   [your login name]
-:password:                [your password]
+:http_authentication: no
+:login:               [your login name]
+:password:            [your password]
 
 # By default, CloudCrowd looks for installed actions inside the 'actions'
 # subdirectory of this configuration folder. 'actions_path' allows you to load
@@ -36,4 +36,4 @@
 
 # The number of separate attempts that will be made to process an individual
 # work unit, before marking it as having failed.
-:work_unit_retries:       3
+:work_unit_retries:   3

@@ -117,6 +117,7 @@ window.Console = {
   },
   
   // Re-render all workers from scratch each time.
+  // This method is desperately in need of Javascript templates...
   renderNodes : function() {
     var header = $('#sidebar_header');
     var nc = this._nodes.length, wc = this._workerCount;

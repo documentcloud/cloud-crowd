@@ -28,7 +28,7 @@ module CloudCrowd
     
     # Enabling HTTP Authentication turns it on for all requests.
     before do
-      login_required if CloudCrowd.config[:use_http_authentication]
+      login_required if CloudCrowd.config[:http_authentication]
     end
     
     # Render the admin console.

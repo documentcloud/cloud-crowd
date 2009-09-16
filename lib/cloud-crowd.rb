@@ -30,7 +30,7 @@ require 'cloud_crowd/exceptions'
 
 module CloudCrowd
   
-  # Autoload all the CloudCrowd classes which may not be required.
+  # Autoload all the CloudCrowd internals.
   autoload :Action,       'cloud_crowd/action'
   autoload :AssetStore,   'cloud_crowd/asset_store'
   autoload :Helpers,      'cloud_crowd/helpers'
@@ -45,10 +45,10 @@ module CloudCrowd
   # Root directory of the CloudCrowd gem.
   ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')
   
-  # Keep the version in sync with the gemspec.
+  # Keep this version in sync with the gemspec.
   VERSION     = '0.1.1'
     
-  # A Job is processing if its WorkUnits in the queue to be handled by workers.
+  # A Job is processing if its WorkUnits are in the queue to be handled by nodes.
   PROCESSING  = 1
   
   # A Job has succeeded if all of its WorkUnits have finished successfully.
@@ -66,11 +66,10 @@ module CloudCrowd
   # back together into the final result.
   MERGING     = 5
   
-  # A work unit is considered to be complete if it succeeded or if it failed.
+  # A Job is considered to be complete if it succeeded or if it failed.
   COMPLETE    = [SUCCEEDED, FAILED]
   
-  # A work unit is considered incomplete if it's being processed, split up or 
-  # merged together.
+  # A Job is considered incomplete if it's being processed, split up or merged.
   INCOMPLETE  = [PROCESSING, SPLITTING, MERGING]
   
   # Mapping of statuses to their display strings.
@@ -93,12 +92,12 @@ module CloudCrowd
       ActiveRecord::Base.establish_connection(configuration)
     end
     
-    # Get a reference to the central server, including authentication, 
-    # if configured.
+    # Get a reference to the central server, including authentication if 
+    # configured.
     def central_server
       return @central_server if @central_server
       params = [CloudCrowd.config[:central_server]]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
+      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:http_authentication]
       @central_server = RestClient::Resource.new(*params)
     end
 
@@ -111,7 +110,7 @@ module CloudCrowd
     # CloudCrowd::Actions are requested dynamically by name. Access them through
     # this actions property, which behaves like a hash. At load time, we
     # load all installed Actions and CloudCrowd's default Actions into it.
-    # If you wish to have certain workers be specialized to only handle certain 
+    # If you wish to have certain nodes be specialized to only handle certain 
     # Actions, then install only those into the actions directory.
     def actions
       return @actions if @actions
