@@ -26,6 +26,7 @@ class JobTest < Test::Unit::TestCase
     should "know its completion status" do
       assert !@job.all_work_units_complete?
       @unit.update_attributes(:status => CloudCrowd::SUCCEEDED, :output => '{"output":"hello"}')
+      @job.check_for_completion
       assert @job.reload.all_work_units_complete?
       assert @job.percent_complete == 100
       assert @job.outputs == "[\"hello\"]"

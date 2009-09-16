@@ -21,8 +21,6 @@ class WorkUnitTest < Test::Unit::TestCase
       assert @unit.complete?
       @unit.status = CloudCrowd::FAILED
       assert @unit.complete?
-      @unit.expects :check_for_job_completion
-      @unit.save
     end
     
     should "have JSON that includes job attributes" do
@@ -34,10 +32,10 @@ class WorkUnitTest < Test::Unit::TestCase
     end
     
     should "be able to retry, on failure" do
-      @unit.update_attribute :worker_record_id, 10
+      @unit.update_attribute :worker_pid, 7337
       assert @unit.attempts == 0
       @unit.fail('oops', 10)
-      assert @unit.worker_record == nil
+      assert @unit.worker_pid == nil
       assert @unit.attempts == 1
       assert @unit.processing?
       @unit.fail('oops again', 10)

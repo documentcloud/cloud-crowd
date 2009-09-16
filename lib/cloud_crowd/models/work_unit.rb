@@ -26,8 +26,10 @@ module CloudCrowd
       available_nodes = NodeRecord.available
       until work_units.empty? do
         node = available_nodes.shift
+        unit = work_units.first
         break unless node
-        sent = node.send_work_unit(work_units[0])
+        next unless node.actions.include? unit.action
+        sent = node.send_work_unit(unit)
         if sent
           work_units.shift
           available_nodes.push(node) unless node.busy?
@@ -51,19 +53,6 @@ module CloudCrowd
       node = NodeRecord.find_by_host(host)
       node && node.work_units.find_by_worker_pid(pid)
     end
-    
-    # Find the first available WorkUnit in the queue, and take it out.
-    # +enabled_actions+ must be passed to whitelist the types of WorkUnits than
-    # can be retrieved for processing. Optionally, specify the +offset+ to peek
-    # further on in line.
-    # def self.dequeue(worker_name, enabled_actions=[], offset=0)
-    #   unit = self.first(
-    #     :conditions => {:status => INCOMPLETE, :worker_record_id => nil, :action => enabled_actions}, 
-    #     :order      => "created_at asc",
-    #     :offset     => offset
-    #   )
-    #   unit ? unit.assign_to(worker_name) : nil
-    # end
     
     # Mark this unit as having finished successfully.
     # TODO: Refactor alongside check_for_completion ... look into doubleparse.

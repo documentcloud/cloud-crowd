@@ -36,6 +36,10 @@ module CloudCrowd
       self.destroy # Couldn't post to node, assume it's gone away.
     end
     
+    def actions
+      enabled_actions.split(',')
+    end
+    
     def busy?
       max_workers && work_units.count >= max_workers
     end

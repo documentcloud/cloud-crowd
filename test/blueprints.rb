@@ -11,7 +11,6 @@ end
 CloudCrowd::WorkUnit.blueprint do
   job               { CloudCrowd::Job.make }
   status            { CloudCrowd::PROCESSING }
-  worker_record_id  { nil }
   input             { Sham.url }
   action            { 'graphics_magick' }
 end

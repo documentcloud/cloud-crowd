@@ -24,15 +24,9 @@ class WordCountTest < Test::Unit::TestCase
     end
     
     should "be able to perform the processing stage of a word_count" do
-      @browser.post('/work', :worker_name => 'test_worker', :worker_actions => 'word_count')
-      assert @browser.last_response.ok?
-      info = JSON.parse(@browser.last_response.body)
-      assert info['status'] == 1
-      assert info['action'] == 'word_count'
-      assert info['input'] == "file://#{File.expand_path(__FILE__)}"
-      action = CloudCrowd.actions['word_count'].new(info['status'], info['input'], info['options'], @asset_store)
+      action = CloudCrowd.actions['word_count'].new(1, "file://#{File.expand_path(__FILE__)}", {}, @asset_store)
       count = action.process
-      assert count == 128
+      assert count == 104
     end
     
   end

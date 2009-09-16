@@ -53,7 +53,7 @@ module CloudCrowd
     def check_in
       @server["/node/#{@host}"].put(
         :port             => @port,
-        :max_workers      => CloudCrowd.config[:node_max_workers],
+        :max_workers      => CloudCrowd.config[:max_workers],
         :enabled_actions  => @enabled_actions.join(',')
       )
     rescue Errno::ECONNREFUSED
