@@ -31,18 +31,13 @@ module CloudCrowd
     # finished, if so, continue on to the next phase of the job. 
     def check_for_completion
       return unless all_work_units_complete?
-      transition_to_next_phase               
-      output_list = gather_outputs_from_work_units
-      
-      if complete?
-        self.outputs = output_list.to_json
-        self.time = Time.now - self.created_at
-      end
-      self.save
+      transition_to_next_phase    
+      outs = gather_outputs_from_work_units
+      update_attributes(:outputs => outs.to_json, :time => time_taken) if complete?
       
       case self.status
-      when PROCESSING then queue_for_workers(output_list.map {|o| JSON.parse(o) }.flatten)
-      when MERGING    then queue_for_workers(output_list.to_json)
+      when PROCESSING then queue_for_workers(outs.map {|o| JSON.parse(o) }.flatten)
+      when MERGING    then queue_for_workers(outs.to_json)
       else                 fire_callback
       end
       self
@@ -65,15 +60,12 @@ module CloudCrowd
     
     # Cleaning up after a job will remove all of its files from S3. Destroying
     # a Job calls cleanup_assets first.
+    # TODO: Convert this into a 'cleanup' work unit that gets run by a worker.
     def cleanup_assets
       AssetStore.new.cleanup(self)
     end
     
     # Have all of the WorkUnits finished? 
-    #--
-    # We could trade reads for writes here
-    # by keeping a completed_count on the Job itself.
-    #++
     def all_work_units_complete?
       self.work_units.incomplete.count <= 0
     end
@@ -149,10 +141,12 @@ module CloudCrowd
     
     # Transition this Job's status to the appropriate next status.
     def transition_to_next_phase
-      self.status = any_work_units_failed? ? FAILED     :
-                    self.splitting?        ? PROCESSING :
-                    self.mergeable?        ? MERGING    :
-                                             SUCCEEDED
+      update_attribute(:status,
+        any_work_units_failed? ? FAILED     :
+        self.splitting?        ? PROCESSING :
+        self.mergeable?        ? MERGING    :
+                                 SUCCEEDED
+      )
     end
         
     # When starting a new job, or moving to a new stage, split up the inputs 
@@ -160,7 +154,7 @@ module CloudCrowd
     # away.
     def queue_for_workers(input=nil)
       input ||= JSON.parse(self.inputs)
-      units = [input].flatten.map do |wu_input|
+      [input].flatten.map do |wu_input|
         WorkUnit.create(
           :job    => self, 
           :action => self.action, 
@@ -168,7 +162,6 @@ module CloudCrowd
           :status => self.status
         )
       end
-      Thread.new { NodeRecord.send_to_nodes(units) }      
     end
     
     # A Job starts out either splitting or processing, depending on its action.

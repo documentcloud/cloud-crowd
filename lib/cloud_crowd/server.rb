@@ -43,8 +43,7 @@ module CloudCrowd
       json(
         'jobs'            => Job.incomplete, 
         'nodes'           => NodeRecord.all(:order => 'host desc'),
-        'work_unit_count' => WorkUnit.incomplete.count,
-        'worker_count'    => WorkUnit.taken.count
+        'work_unit_count' => WorkUnit.incomplete.count
       )
     end
     
@@ -63,8 +62,11 @@ module CloudCrowd
     # PUBLIC API:
     
     # Start a new job. Accepts a JSON representation of the job-to-be.
+    # Distributes all work units to available nodes.
     post '/jobs' do
-      json Job.create_from_request(JSON.parse(params[:job]))
+      job = Job.create_from_request(JSON.parse(params[:job]))
+      WorkUnit.distribute_to_nodes
+      json job
     end
     
     # Check the status of a job, returning the output if finished, and the
@@ -84,30 +86,26 @@ module CloudCrowd
     
     put '/node/:host' do
       NodeRecord.check_in(params, request)
+      WorkUnit.distribute_to_nodes
       json nil
     end
     
     delete '/node/:host' do
-      NodeRecord.find_by_host(params[:host]).destroy
+      NodeRecord.destroy_all(:host => params[:host])
       json nil
     end
     
     # When workers are done with their unit, either successfully on in failure,
-    # they mark it back on the central server and retrieve another. Failures
-    # pull from one down in the queue, so as to not repeat the same unit.
+    # they mark it back on the central server and exit. Triggers distribution
+    # of pending work units.
     put '/work/:work_unit_id' do
-      handle_conflicts(409) do
-        case params[:status]
-        when 'succeeded'
-          current_work_unit.finish(params[:output], params[:time])
-          json nil
-        when 'failed'
-          current_work_unit.fail(params[:output], params[:time])
-          json nil
-        else             
-          error(500, "Completing a work unit must specify status.")
-        end
+      case params[:status]
+      when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
+      when 'failed'    then current_work_unit.fail(params[:output], params[:time])
+      else             error(500, "Completing a work unit must specify status.")
       end
+      WorkUnit.distribute_to_nodes
+      json nil
     end
     
   end

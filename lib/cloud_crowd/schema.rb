@@ -10,7 +10,6 @@ ActiveRecord::Schema.define(:version => 1) do
     t.float    "time"
     t.string   "callback_url"
     t.string   "email"
-    t.integer  "lock_version", :default => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -19,8 +18,8 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string   "host",                            :null => false
     t.string   "ip_address",                      :null => false
     t.integer  "port",                            :null => false
-    t.integer  "status",          :default => 1,  :null => false
     t.string   "enabled_actions", :default => '', :null => false
+    t.integer  "max_workers"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -31,7 +30,6 @@ ActiveRecord::Schema.define(:version => 1) do
     t.text     "input",                           :null => false
     t.string   "action",                          :null => false
     t.integer  "attempts",     :default => 0,     :null => false
-    t.integer  "lock_version", :default => 0,     :null => false
     t.integer  "node_record_id"
     t.integer  "worker_pid"
     t.float    "time"

@@ -11,10 +11,40 @@ module CloudCrowd
     belongs_to :node_record
     
     validates_presence_of :job_id, :status, :input, :action
+        
+    named_scope :taken,     {:conditions => ["worker_pid is not null"]}
+    named_scope :available, {:conditions => {:worker_pid => nil, :status => INCOMPLETE}}
+    named_scope :reserved,  {:conditions => {:worker_pid => 0}}
     
-    after_save :check_for_job_completion
+    # Attempt to send a list of work_units to nodes with available capacity.
+    # Do this in a separate thread so that the request can return, satisfied.
+    # A single application server process stops the same WorkUnit from being
+    # distributed to multiple nodes by reserving all the available ones.
+    def self.distribute_to_nodes
+      return unless WorkUnit.reserve_available
+      work_units = WorkUnit.reserved
+      available_nodes = NodeRecord.available
+      until work_units.empty? do
+        node = available_nodes.shift
+        break unless node
+        sent = node.send_work_unit(work_units[0])
+        if sent
+          work_units.shift
+          available_nodes.push(node) unless node.busy?
+        end
+      end
+      WorkUnit.cancel_reservations
+    end
     
-    named_scope :taken, {:conditions => ["worker_pid is not null"]}
+    # Reserves all available WorkUnits. Returns false if there were none 
+    # available.
+    def self.reserve_available
+      WorkUnit.available.update_all('worker_pid = 0') > 0
+    end
+    
+    def self.cancel_reservations
+      WorkUnit.reserved.update_all('worker_pid = null')
+    end
     
     # Find the first available WorkUnit in the queue, and take it out.
     # +enabled_actions+ must be passed to whitelist the types of WorkUnits than
@@ -29,11 +59,6 @@ module CloudCrowd
     #   unit ? unit.assign_to(worker_name) : nil
     # end
     
-    # After saving a WorkUnit, its Job should check if it just became complete.
-    def check_for_job_completion
-      self.job.check_for_completion if complete?
-    end
-    
     # Mark this unit as having finished successfully.
     def finish(output, time_taken)
       update_attributes({
@@ -44,6 +69,7 @@ module CloudCrowd
         :output         => output,
         :time           => time_taken
       })
+      self.job.check_for_completion
     end
     
     # Mark this unit as having failed. May attempt a retry.
@@ -58,6 +84,7 @@ module CloudCrowd
         :output         => output,
         :time           => time_taken
       })
+      self.job.check_for_completion
     end
     
     # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.

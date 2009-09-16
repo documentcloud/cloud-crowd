@@ -22,26 +22,30 @@ window.Console = {
   
   // All options for drawing the system graphs.
   GRAPH_OPTIONS : {
-    xaxis :   {mode : 'time', timeformat : '%M:%S'},
-    yaxis :   {tickDecimals : 0},
-    legend :  {show : false},
-    grid :    {backgroundColor : '#7f7f7f', color : '#555', tickColor : '#666', borderWidth : 2}
+    xaxis   : {mode : 'time', timeformat : '%M:%S'},
+    yaxis   : {tickDecimals : 0},
+    legend  : {show : false},
+    grid    : {backgroundColor : '#7f7f7f', color : '#555', tickColor : '#666', borderWidth : 2}
   },
   JOBS_COLOR        : '#db3a0f',
-  WORKERS_COLOR     : '#a1003d',
+  NODES_COLOR       : '#1870ab',
+  WORKERS_COLOR     : '#45a4e5',
   WORK_UNITS_COLOR  : '#ffba14',
   
   // Starting the console begins polling the server.
   initialize : function() {
     this._jobsHistory = [];
+    this._nodesHistory = [];
     this._workersHistory = [];
     this._workUnitsHistory = [];
-    this._histories = [this._jobsHistory, this._workersHistory, this._workUnitsHistory];
+    this._histories = [this._jobsHistory, this._nodesHistory, this._workersHistory, this._workUnitsHistory];
     this._queue = $('#jobs');
     this._workerInfo = $('#worker_info');
     this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
     $('#workers .worker').live('click', Console.getWorkerInfo);
+    $('#workers_legend').css({background : this.WORKERS_COLOR});
+    $('#nodes_legend').css({background : this.NODES_COLOR});
     this.getStatus();
     $.each(this.PRELOAD_IMAGES, function(){ var i = new Image(); i.src = this; });
   },
@@ -53,7 +57,7 @@ window.Console = {
       Console._jobs           = resp.jobs;
       Console._nodes          = resp.nodes;
       Console._workUnitCount  = resp.work_unit_count;
-      Console._workerCount    = resp.worker_count;
+      Console._workerCount    = Console.countWorkers();
       Console.recordDataPoint();
       if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
       $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
@@ -65,6 +69,13 @@ window.Console = {
       if (!Console._disconnected.is(':visible')) Console._disconnected.fadeIn(Console.ANIMATION_SPEED);
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
     }});
+  },
+  
+  // Count the total number of workers in the current list of nodes.
+  countWorkers : function() {
+    var sum = 0;
+    for (var i=0; i < this._nodes.length; i++) sum += this._nodes[i].workers.length;
+    return sum;
   },
   
   // Render an individual job afresh.
@@ -125,6 +136,7 @@ window.Console = {
   recordDataPoint : function() {
     var timestamp = (new Date()).getTime();
     this._jobsHistory.push([timestamp, this._jobs.length]);
+    this._nodesHistory.push([timestamp, this._nodes.length]);
     this._workersHistory.push([timestamp, this._workerCount]);
     this._workUnitsHistory.push([timestamp, this._workUnitCount]);
     $.each(this._histories, function() { 
@@ -134,9 +146,16 @@ window.Console = {
   
   // Convert our recorded data points into a format Flot can understand.
   renderGraphs : function() {
-    $.plot($('#jobs_graph'), [{label : 'Jobs in Queue', color : Console.JOBS_COLOR, data : Console._jobsHistory}], Console.GRAPH_OPTIONS);
-    $.plot($('#workers_graph'), [{label : 'Active Workers', color : Console.WORKERS_COLOR, data : Console._workersHistory}], Console.GRAPH_OPTIONS);
-    $.plot($('#work_units_graph'), [{label : 'Work Units in Queue', color : Console.WORK_UNITS_COLOR, data : Console._workUnitsHistory}], Console.GRAPH_OPTIONS);
+    $.plot($('#work_units_graph'), [
+      {label : 'Work Units in Queue', color : Console.WORK_UNITS_COLOR, data : Console._workUnitsHistory}
+    ], Console.GRAPH_OPTIONS);
+    $.plot($('#jobs_graph'), [
+      {label : 'Jobs in Queue', color : Console.JOBS_COLOR, data : Console._jobsHistory}
+    ], Console.GRAPH_OPTIONS);
+    $.plot($('#workers_graph'), [
+      {label : 'Nodes', color : Console.NODES_COLOR, data : Console._nodesHistory},
+      {label : 'Workers', color : Console.WORKERS_COLOR, data : Console._workersHistory}
+    ], Console.GRAPH_OPTIONS);
   },
   
   // Request the Worker info from the central server.

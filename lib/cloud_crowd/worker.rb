@@ -19,9 +19,11 @@ module CloudCrowd
     # connection to S3. This AssetStore gets passed into each action, for use
     # as it is run.
     def initialize(node, work_unit)
+      Signal.trap('INT') { kill_worker_thread_and_exit }
+      Signal.trap('KILL') { kill_worker_thread_and_exit }
+      Signal.trap('TERM') { kill_worker_thread_and_exit }
       @pid  = $$
       @node = node
-      log 'started'
       setup_work_unit(work_unit)
       run
     end
@@ -52,29 +54,6 @@ module CloudCrowd
       end
     end
     
-    # # Check in with the central server. Let it know the condition of the work 
-    # # thread, the action and status we're processing, and our hostname and PID.
-    # def check_in(thread_status)
-    #   keep_trying_to "check in with central" do
-    #     @server["/worker"].put({
-    #       :name          => @name,
-    #       :thread_status => thread_status
-    #     })
-    #   end
-    # end
-    
-    # # Inform the central server that this worker is finished. This is the only
-    # # remote method that doesn't retry on connection errors -- if the worker 
-    # # can't connect to the central server while it's trying to shutdown, it 
-    # # should close, regardless.
-    # def check_out
-    #   @server["/worker"].put({
-    #     :name       => @name,
-    #     :terminated => true
-    #   })
-    #   log 'exiting'
-    # end
-    
     # We expect and require internal communication between the central server
     # and the workers to succeed. If it fails for any reason, log it, and then 
     # keep trying the same request.
@@ -90,33 +69,31 @@ module CloudCrowd
       end
     end
     
-    # # Does this Worker have a job to do?
-    # def has_work?
-    #   @action_name && @input && @options
-    # end
-    
     # Loggable string of the current work unit.
     def display_work_unit
-      "unit ##{@options['work_unit_id']} (#{@action_name})"
+      "unit ##{@options['work_unit_id']} (#{@action_name}/#{CloudCrowd.display_status(@status)})"
     end
     
     # Executes the current work unit, catching all exceptions as failures.
     def run_work_unit
-      begin
-        result = nil
-        @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, @node.asset_store)
-        Dir.chdir(@action.work_directory) do
-          result = case @status
-          when PROCESSING then @action.process
-          when SPLITTING  then @action.split
-          when MERGING    then @action.merge
-          else raise Error::StatusUnspecified, "work units must specify their status"
+      @worker_thread = Thread.new do
+        begin
+          result = nil
+          @action = CloudCrowd.actions[@action_name].new(@status, @input, @options, @node.asset_store)
+          Dir.chdir(@action.work_directory) do
+            result = case @status
+            when PROCESSING then @action.process
+            when SPLITTING  then @action.split
+            when MERGING    then @action.merge
+            else raise Error::StatusUnspecified, "work units must specify their status"
+            end
           end
+          complete_work_unit({'output' => result}.to_json)
+        rescue Exception => e
+          fail_work_unit(e)
         end
-        complete_work_unit({'output' => result}.to_json)
-      rescue Exception => e
-        fail_work_unit(e)
       end
+      @worker_thread.join
     end
     
     # Wraps <tt>run_work_unit</tt> to benchmark the execution time, if requested.
@@ -159,7 +136,7 @@ module CloudCrowd
     
     # Log a message to the daemon log. Includes PID for identification.
     def log(message)
-      puts "Worker ##{@id}: #{message}" unless ENV['RACK_ENV'] == 'test'
+      puts "Worker ##{@pid}: #{message}" unless ENV['RACK_ENV'] == 'test'
     end
     
     # When we're done with a unit, clear out our instance variables to make way 
@@ -167,6 +144,14 @@ module CloudCrowd
     def clear_work_unit
       @action.cleanup_work_directory
       @action, @action_name, @input, @options, @start_time = nil, nil, nil, nil, nil
+    end
+    
+    # Force the worker to quit, even if it's in the middle of processing.
+    # If it had checked out a work unit, the node should have released it on
+    # the central server already.
+    def kill_worker_thread_and_exit
+      @worker_thread.kill if @worker_thread
+      Process.exit
     end
     
   end

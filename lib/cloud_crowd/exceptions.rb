@@ -8,6 +8,10 @@ module CloudCrowd
     # exist.
     class ActionNotFound < Error
     end
+    
+    # CentralServerUnavailable is used then the central server can't be reached.
+    class CentralServerUnavailable < Error
+    end
   
     # StorageNotFound is raised when config.yml specifies a storage back end that
     # doesn't exist.

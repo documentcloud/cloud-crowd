@@ -215,6 +215,15 @@ body {
       text-shadow: 0px 1px 1px #eee;
       margin-bottom: 10px;
     }
+      .legend_box {
+        display: inline-block;
+        width: 10px; height: 10px;
+        border: 1px solid #bbb;
+        position: relative;
+        top: 1px;
+        margin: 0 1px;
+        background-color: #a1003d;
+      }
     .graph {
       height: 150px;
     }
