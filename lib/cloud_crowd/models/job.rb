@@ -31,7 +31,7 @@ module CloudCrowd
     # finished, if so, continue on to the next phase of the job. 
     def check_for_completion
       return unless all_work_units_complete?
-      transition_to_next_phase    
+      set_next_status    
       outs = gather_outputs_from_work_units
       update_attributes(:outputs => outs.to_json, :time => time_taken) if complete?
       
@@ -43,11 +43,22 @@ module CloudCrowd
       self
     end
     
+    # Transition this Job's status to the appropriate next status.
+    def set_next_status
+      update_attribute(:status,
+        any_work_units_failed? ? FAILED     :
+        self.splitting?        ? PROCESSING :
+        self.mergeable?        ? MERGING    :
+                                 SUCCEEDED
+      )
+    end
+    
     # If a <tt>callback_url</tt> is defined, post the Job's JSON to it upon 
     # completion. The <tt>callback_url</tt> may include HTTP basic authentication,
     # if you like:
     #   http://user:password@example.com/job_complete
     # If the callback_url is successfully pinged, we proceed to cleanup the job.
+    # TODO: This should be moved into a Work Unit...
     def fire_callback
       return unless callback_url
       begin
@@ -93,8 +104,9 @@ module CloudCrowd
     end
     
     # How complete is this Job?
+    # Unfortunately, with the current processing sequence, the percent_complete
+    # can pull a fast one and go backwards.
     def percent_complete
-      return 0   if splitting?
       return 99  if merging?
       return 100 if complete?
       (work_units.complete.count / work_units.count.to_f * 100).round
@@ -137,16 +149,6 @@ module CloudCrowd
       outs = self.work_units.complete.map {|u| JSON.parse(u.output)['output'] }
       self.work_units.complete.destroy_all
       outs
-    end
-    
-    # Transition this Job's status to the appropriate next status.
-    def transition_to_next_phase
-      update_attribute(:status,
-        any_work_units_failed? ? FAILED     :
-        self.splitting?        ? PROCESSING :
-        self.mergeable?        ? MERGING    :
-                                 SUCCEEDED
-      )
     end
         
     # When starting a new job, or moving to a new stage, split up the inputs 

@@ -60,16 +60,30 @@ module CloudCrowd
     # end
     
     # Mark this unit as having finished successfully.
+    # TODO: Refactor alongside check_for_completion ... look into doubleparse.
     def finish(output, time_taken)
-      update_attributes({
-        :status         => SUCCEEDED,
-        :node_record    => nil,
-        :worker_pid     => nil,
-        :attempts       => self.attempts + 1,
-        :output         => output,
-        :time           => time_taken
-      })
-      self.job.check_for_completion
+      if splitting?
+        [JSON.parse(JSON.parse(output)['output'])].flatten.each do |wu_input|
+          WorkUnit.create(
+            :job    => job, 
+            :action => action, 
+            :input  => wu_input, 
+            :status => PROCESSING
+          )
+        end
+        self.destroy
+        job.set_next_status if job.work_units.splitting.count <= 0
+      else
+        update_attributes({
+          :status         => SUCCEEDED,
+          :node_record    => nil,
+          :worker_pid     => nil,
+          :attempts       => attempts + 1,
+          :output         => output,
+          :time           => time_taken
+        })
+        job.check_for_completion
+      end
     end
     
     # Mark this unit as having failed. May attempt a retry.

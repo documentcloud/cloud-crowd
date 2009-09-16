@@ -6,6 +6,11 @@ module CloudCrowd
     # installation.
     module FilesystemStore
       
+      # Make sure that local storage is writeable before starting.
+      def setup
+        raise Error::StorageNotWritable, "#{LOCAL_STORAGE_PATH} is not writable" unless File.writable?(LOCAL_STORAGE_PATH)
+      end
+      
       # Save a file to somewhere semi-persistent on the filesystem. Can be used
       # in development, when offline, or if you happen to have a single-machine
       # CloudCrowd installation. To use, configure <tt>:storage => 'filesystem'</tt>.

@@ -25,9 +25,9 @@ module CloudCrowd
     
     # Creating the AssetStore ensures that its scratch directory exists.
     def initialize
-      @use_auth = CloudCrowd.config[:use_s3_authentication]
       FileUtils.mkdir_p temp_storage_path unless File.exists? temp_storage_path
       raise Error::StorageNotWritable, "#{temp_storage_path} is not writable" unless File.writable?(temp_storage_path)
+      setup if respond_to? :setup
     end
     
     # Get the path to CloudCrowd's temporary local storage. All actions run
