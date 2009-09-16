@@ -83,6 +83,7 @@ public/images/header_back.png
 public/images/logo.png
 public/images/queue_fill.png
 public/images/server.png
+public/images/server_busy.png
 public/images/server_error.png
 public/images/sidebar_bottom.png
 public/images/sidebar_top.png

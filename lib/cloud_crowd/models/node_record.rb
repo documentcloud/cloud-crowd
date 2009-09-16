@@ -1,8 +1,8 @@
 module CloudCrowd
 
   # A NodeRecord is the central server's record of a Node running remotely. We 
-  # can use it to assign work units to the node, and keep track of its status.
-  # When a node exits, it destroys this record.
+  # can use it to assign WorkUnits to the Node, and keep track of its status.
+  # When a Node exits, it destroys this record.
   class NodeRecord < ActiveRecord::Base
         
     has_many :work_units
@@ -17,18 +17,21 @@ module CloudCrowd
       :order      => 'updated_at asc'
     }
     
-    # Save a Node's current status to the database.
+    # Register a Node with the central server. Currently this only happens at
+    # Node startup.
     def self.check_in(params, request)
       attrs = {
         :ip_address       => request.ip,
         :port             => params[:port],
         :max_workers      => params[:max_workers],
-        :enabled_actions  => params[:enabled_actions],
-        :updated_at       => Time.now
+        :enabled_actions  => params[:enabled_actions]
       }
       self.find_or_create_by_host(params[:host]).update_attributes!(attrs)
     end
     
+    # Dispatch a WorkUnit to this node. Places the node at back at the end of
+    # the rotation. If we fail to send the WorkUnit, we consider the node to be
+    # down, and remove this record, freeing up all of its checked-out work units.
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])
@@ -37,18 +40,24 @@ module CloudCrowd
       self.destroy # Couldn't post to node, assume it's gone away.
     end
     
+    # What Actions is this Node able to run?
     def actions
       enabled_actions.split(',')
     end
     
+    # Is this Node too busy for more work? (Determined by number of workers.)
     def busy?
       max_workers && work_units.count >= max_workers
     end
     
+    # The URL at which this Node may be reached.
+    # TODO: Make sure that the host actually has externally accessible DNS.
     def url
       @url ||= "http://#{host}:#{port}"
     end
     
+    # Keep a RestClient::Resource handy for contacting the Node, including 
+    # HTTP authentication, if configured.
     def node
       return @node if @node
       params = [url]
@@ -56,6 +65,7 @@ module CloudCrowd
       @node = RestClient::Resource.new(*params)
     end
     
+    # The printable status of the Node.
     def display_status
       busy? ? 'busy' : 'available'
     end
@@ -67,7 +77,7 @@ module CloudCrowd
     def to_json(opts={})
       { 'host'    => host,
         'workers' => worker_pids,
-        'status'  => display_status,
+        'status'  => display_status
       }.to_json
     end
     

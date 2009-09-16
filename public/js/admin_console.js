@@ -125,7 +125,8 @@ window.Console = {
     header.toggleClass('no_nodes', this._nodes.length <= 0);
     $('#nodes').html($.map(this._nodes, function(node) { 
       var html = "";
-      html += '<div class="node">' + node.host + '</div>';
+      var extra = node.status == 'busy' ? ' <span class="busy">[busy]</span>' : '';
+      html += '<div class="node ' + node.status + '">' + node.host + extra + '</div>';
       html += $.map(node.workers, function(pid) {
         var name = pid + '@' + node.host;
         return '<div class="worker" rel="' + name + '">' + name + '</div>';

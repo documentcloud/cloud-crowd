@@ -158,23 +158,33 @@ body {
       border: 1px solid transparent;
       margin: 1px 7px;
       padding-left: 18px;
+      background-position: left center;
+      background-repeat: no-repeat;
     }
       #nodes .node {
         font-size: 11px;
         line-height: 22px;
-        background: url(/images/server.png) no-repeat left center;
+        background-image: url(/images/server.png);
       }
+        #nodes .node.busy {
+          background-image: url(/images/server_busy.png);
+        }
+          #nodes .node.busy span.busy {
+            font-size: 9px;
+            color: #7f7f7f;
+            text-transform: uppercase;
+          }
       #nodes .worker {
         font-size: 10px;
         line-height: 18px;
         cursor: pointer;
-        background: url(/images/bullet_green.png) no-repeat left center;
+        background-image: url(/images/bullet_green.png);
       }
-      #nodes .worker:hover {
-        border: 1px solid #aaa;
-        border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
-        background-color: #ccc;
-      }
+        #nodes .worker:hover {
+          border: 1px solid #aaa;
+          border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
+          background-color: #ccc;
+        }
       
 #worker_info {
   position: absolute;
