@@ -63,10 +63,10 @@
     # Edit the configuration files to your satisfaction, add AWS credentials, 
     # and then load the CloudCrowd schema into your configured database.
     
-			>> cd ~/config/cloud-crowd
+      >> cd ~/config/cloud-crowd
       >> mate config.yml
       >> mate database.yml
-			>> [create the database you just configured...]
+      >> [create the database you just configured...]
       >> crowd load_schema
     
     # Write your actions, and install them into the 'actions' subdirectory.
@@ -78,7 +78,7 @@
       >> crowd server
     
     # The configuration folder also includes 'config.ru', which can be used by
- 		# any Rack-compliant webserver to run your central server.
+     # any Rack-compliant webserver to run your central server.
     
     # Then, to launch a node of workers:
     
@@ -86,7 +86,7 @@
     
     # To spin up remote nodes, install the 'cloud-crowd' gem and copy over
     # your configuration directory. Run `crowd node`, and the remote machines
-		# will register with the central server, becoming available for processing.
+    # will register with the central server, becoming available for processing.
     
     # At this point you can visit your Operations Center at localhost:9173 to 
     # view all of your nodes, ready for action.
