@@ -12,9 +12,8 @@ module CloudCrowd
     
     validates_presence_of :job_id, :status, :input, :action
         
-    named_scope :taken,     {:conditions => ["worker_pid is not null"]}
-    named_scope :available, {:conditions => {:worker_pid => nil, :status => INCOMPLETE}}
-    named_scope :reserved,  {:conditions => {:worker_pid => 0}}
+    named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
+    named_scope :reserved,  {:conditions => {:reservation => $$}}
     
     # Attempt to send a list of work_units to nodes with available capacity.
     # Do this in a separate thread so that the request can return, satisfied.
@@ -41,11 +40,11 @@ module CloudCrowd
     # Reserves all available WorkUnits. Returns false if there were none 
     # available.
     def self.reserve_available
-      WorkUnit.available.update_all('worker_pid = 0') > 0
+      WorkUnit.available.update_all("reservation = #{$$}") > 0
     end
     
     def self.cancel_reservations
-      WorkUnit.reserved.update_all('worker_pid = null')
+      WorkUnit.reserved.update_all('reservation = null')
     end
     
     def self.find_by_worker_name(name)
@@ -54,20 +53,21 @@ module CloudCrowd
       node && node.work_units.find_by_worker_pid(pid)
     end
     
+    def self.start(job, action, input, status)
+      self.create(:job => job, :action => action, :input => input, :status => status)
+    end
+    
     # Mark this unit as having finished successfully.
-    # TODO: Refactor alongside check_for_completion ... look into doubleparse.
+    # Splitting work units are handled differently (an optimization) -- they 
+    # immediately fire off all of their resulting WorkUnits for processing, 
+    # without waiting for their splitting cousins to complete.
     def finish(output, time_taken)
       if splitting?
-        [JSON.parse(JSON.parse(output)['output'])].flatten.each do |wu_input|
-          WorkUnit.create(
-            :job    => job, 
-            :action => action, 
-            :input  => wu_input, 
-            :status => PROCESSING
-          )
+        [JSON.parse(parsed_output)].flatten.each do |new_input|
+          WorkUnit.start(job, action, new_input, PROCESSING)
         end
         self.destroy
-        job.set_next_status if job.work_units.splitting.count <= 0
+        job.set_next_status if job.done_splitting?
       else
         update_attributes({
           :status         => SUCCEEDED,
@@ -109,6 +109,12 @@ module CloudCrowd
     # WorkUnit and NodeRecord.
     def assign_to(node_record, worker_pid)
       update_attributes!(:node_record => node_record, :worker_pid => worker_pid)
+    end
+    
+    # All output needs to be wrapped in a JSON object for consistency. Provides
+    # the parsed version.
+    def parsed_output
+      JSON.parse(output)['output']
     end
     
     # The JSON representation of a WorkUnit shares the Job's options with all

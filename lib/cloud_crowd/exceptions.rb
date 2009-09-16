@@ -2,15 +2,13 @@ module CloudCrowd
   
   # Base Error class which all custom CloudCrowd exceptions inherit from.
   # Rescuing CloudCrowd::Error (or RuntimeError) will get all custom exceptions.
+  # If your cluster is correctly configured, you should never expect to see any
+  # of these.
   class Error < RuntimeError
     
     # ActionNotFound is raised when a job is created for an action that doesn't 
     # exist.
     class ActionNotFound < Error
-    end
-    
-    # CentralServerUnavailable is used then the central server can't be reached.
-    class CentralServerUnavailable < Error
     end
   
     # StorageNotFound is raised when config.yml specifies a storage back end that

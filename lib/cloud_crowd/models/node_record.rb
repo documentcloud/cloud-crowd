@@ -1,7 +1,8 @@
 module CloudCrowd
 
-  # A NodeRecord is the record of a Node running remotely. We can use it to 
-  # assign work units to the node, and keep track of its status.
+  # A NodeRecord is the central server's record of a Node running remotely. We 
+  # can use it to assign work units to the node, and keep track of its status.
+  # When a node exits, it destroys this record.
   class NodeRecord < ActiveRecord::Base
         
     has_many :work_units

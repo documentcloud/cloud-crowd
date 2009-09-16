@@ -33,10 +33,12 @@ module CloudCrowd
       
       private
       
+      # Provide a Rack Authorization object.
       def auth
         @auth ||= Rack::Auth::Basic::Request.new(request.env)
       end
       
+      # Unauthorized requests will prompt the browser to provide credentials.
       def unauthorized!(realm = Server.authorization_realm)
         response['WWW-Authenticate'] = "Basic realm=\"#{realm}\""
         halt 401, 'Authorization Required'

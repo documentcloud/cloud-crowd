@@ -1,5 +1,5 @@
 # Complete schema for CloudCrowd.
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define(:version => 2) do
 
   create_table "jobs", :force => true do |t|
     t.integer  "status",                      :null => false
@@ -29,9 +29,10 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer  "job_id",                          :null => false
     t.text     "input",                           :null => false
     t.string   "action",                          :null => false
-    t.integer  "attempts",     :default => 0,     :null => false
+    t.integer  "attempts",      :default => 0,    :null => false
     t.integer  "node_record_id"
     t.integer  "worker_pid"
+    t.integer  "reservation"
     t.float    "time"
     t.text     "output"
     t.datetime "created_at"
