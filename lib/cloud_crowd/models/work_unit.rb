@@ -46,6 +46,12 @@ module CloudCrowd
       WorkUnit.reserved.update_all('worker_pid = null')
     end
     
+    def self.find_by_worker_name(name)
+      pid, host = name.split('@')
+      node = NodeRecord.find_by_host(host)
+      node && node.work_units.find_by_worker_pid(pid)
+    end
+    
     # Find the first available WorkUnit in the queue, and take it out.
     # +enabled_actions+ must be passed to whitelist the types of WorkUnits than
     # can be retrieved for processing. Optionally, specify the +offset+ to peek

@@ -157,13 +157,17 @@ body {
     #nodes .node, #nodes .worker {
       border: 1px solid transparent;
       margin: 1px 7px;
-      font-size: 11px;
-      padding-left: 3px;
-      line-height: 22px;
-      cursor: pointer;
+      padding-left: 18px;
     }
+      #nodes .node {
+        font-size: 11px;
+        line-height: 22px;
+        background: url(/images/server.png) no-repeat left center;
+      }
       #nodes .worker {
-        padding-left: 18px;
+        font-size: 10px;
+        line-height: 18px;
+        cursor: pointer;
         background: url(/images/bullet_green.png) no-repeat left center;
       }
       #nodes .worker:hover {

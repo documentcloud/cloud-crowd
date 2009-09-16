@@ -48,10 +48,9 @@ module CloudCrowd
     end
     
     # Get the JSON for a worker record's work unit, if one exists.
-    # get '/worker/:name' do
-    #   record = WorkerRecord.find_by_name params[:name]
-    #   json((record && record.work_unit) || {})
-    # end
+    get '/worker/:name' do
+      json WorkUnit.find_by_worker_name(params[:name]) || {}
+    end
     
     # To monitor the central server with Monit, God, Nagios, or another 
     # monitoring tool, you can hit /heartbeat to make sure.

@@ -43,7 +43,7 @@ window.Console = {
     this._workerInfo = $('#worker_info');
     this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
-    $('#workers .worker').live('click', Console.getWorkerInfo);
+    $('#nodes .worker').live('click', Console.getWorkerInfo);
     $('#workers_legend').css({background : this.WORKERS_COLOR});
     $('#nodes_legend').css({background : this.NODES_COLOR});
     this.getStatus();
@@ -124,9 +124,10 @@ window.Console = {
     header.toggleClass('no_nodes', this._nodes.length <= 0);
     $('#nodes').html($.map(this._nodes, function(node) { 
       var html = "";
-      html += '<div class="node ' + node.status + '" rel="' + node.host + '">' + node.host + '</div>';
+      html += '<div class="node">' + node.host + '</div>';
       html += $.map(node.workers, function(pid) {
-        return '<div class="worker">' + pid + '</div>';
+        var name = pid + '@' + node.host;
+        return '<div class="worker" rel="' + name + '">' + name + '</div>';
       }).join('');
       return html;
     }).join(''));
