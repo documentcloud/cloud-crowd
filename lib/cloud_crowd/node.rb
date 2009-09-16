@@ -2,6 +2,10 @@ module CloudCrowd
   
   class Node < Sinatra::Default
     
+    # A Node's default port. You only run a single node per machine, so they
+    # can all use the same port without problems.
+    DEFAULT_PORT = 9063
+    
     attr_reader :server, :asset_store
         
     # LOAD_MONITOR_INTERVAL = 10
@@ -19,13 +23,8 @@ module CloudCrowd
       login_required if CloudCrowd.config[:use_http_authentication]
     end
     
-    # Render the admin console.
-    get '/' do
-      "I'm a node."
-    end
-    
-    # To monitor the central server with Monit, God, Nagios, or another 
-    # monitoring tool, you can hit /heartbeat to make sure.
+    # To monitor a Node with Monit, God, Nagios, or another tool, you can hit 
+    # /heartbeat to make sure its still up.
     get '/heartbeat' do
       "buh-bump"
     end
@@ -37,17 +36,15 @@ module CloudCrowd
       json :pid => pid
     end
     
-    def initialize
+    def initialize(port=DEFAULT_PORT)
       require 'json'
-      Signal.trap('INT')  { kill_workers_and_check_out }
-      Signal.trap('KILL') { kill_workers_and_check_out }
-      Signal.trap('TERM') { kill_workers_and_check_out }
       @server           = CloudCrowd.central_server
       @host             = Socket.gethostname
-      @port             = CloudCrowd.config[:node_port]
       @enabled_actions  = CloudCrowd.actions.keys
       @asset_store      = AssetStore.new
+      @port             = port || DEFAULT_PORT
       
+      trap_signals
       start_server
       check_in
       @server_thread.join
@@ -74,15 +71,14 @@ module CloudCrowd
       end
     end
     
-    # def monitor_load
-    #   loop do
-    #     puts `top -s1 -n0 -l2`
-    #     sleep 10
-    #   end
-    # end
-    
     
     private
+    
+    def trap_signals
+      Signal.trap('INT')  { kill_workers_and_check_out }
+      Signal.trap('KILL') { kill_workers_and_check_out }
+      Signal.trap('TERM') { kill_workers_and_check_out }
+    end
     
     def kill_workers_and_check_out
       # TODO: Kill workers.

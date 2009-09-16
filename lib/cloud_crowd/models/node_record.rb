@@ -4,16 +4,11 @@ module CloudCrowd
   # assign work units to the node, and keep track of its status.
   class NodeRecord < ActiveRecord::Base
         
-    # EXPIRES_AFTER = 2 * Node::CHECK_IN_INTERVAL
-    
     has_many :work_units
     
     validates_presence_of :host, :ip_address, :port
     
     before_destroy :clear_work_units
-        
-    # named_scope :alive, lambda { {:conditions => ['updated_at > ?', Time.now - EXPIRES_AFTER]} }
-    # named_scope :dead,  lambda { {:conditions => ['updated_at <= ?', Time.now - EXPIRES_AFTER]} }
     
     # Available Nodes haven't used up their maxiumum number of workers yet.
     named_scope :available, {
@@ -36,7 +31,9 @@ module CloudCrowd
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])
-      touch      
+      touch
+    rescue Errno::ECONNREFUSED
+      self.destroy # Couldn't post to node, assume it's gone away.
     end
     
     def busy?
@@ -53,12 +50,6 @@ module CloudCrowd
       params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:use_http_authentication]
       @node = RestClient::Resource.new(*params)
     end
-    
-    # We consider the worker to be alive if it's checked in more recently
-    # than twice the expected interval ago.
-    # def alive?
-    #   updated_at > Time.now - EXPIRES_AFTER
-    # end
     
     def display_status
       busy? ? 'busy' : 'available'

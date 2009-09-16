@@ -4,13 +4,10 @@ module CloudCrowd
   class CommandLine
     
     # Configuration files required for the `crowd` command to function.
-    CONFIG_FILES = ['config.yml', 'server.ru', 'database.yml']
+    CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
     
     # Reference the absolute path to the root.
     CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
-    
-    # Path to the Daemons gem script which launches workers.
-    WORKER_RUNNER = File.expand_path("#{CC_ROOT}/lib/cloud_crowd/runner.rb")
     
     # Command-line banner for the usage message.
     BANNER = <<-EOS
@@ -24,7 +21,7 @@ Usage: crowd COMMAND OPTIONS
 Commands:
   install       Install the CloudCrowd configuration files to the specified directory
   server        Start up the central server (requires a database)
-  workers       Control worker daemons, use: (start | stop | restart | status | run)
+  node          Start up a worker node (only one node per machine, please)
   console       Launch a CloudCrowd console, connected to the central database
   load_schema   Load the schema into the database specified by database.yml
 
@@ -39,7 +36,6 @@ Options:
       when 'console'      then run_console
       when 'server'       then run_server
       when 'node'         then run_node
-      when 'workers'      then run_workers_command
       when 'load_schema'  then run_load_schema
       when 'install'      then run_install
       else                     usage
@@ -59,13 +55,14 @@ Options:
     
     # Convenience command for quickly spinning up the central server. More 
     # sophisticated deployments, load-balancing across multiple app servers, 
-    # should use the server.ru rackup file directly. This method will start
+    # should use the config.ru rackup file directly. This method will start
     # a single Thin server, if Thin is installed, otherwise the rackup defaults 
     # (Mongrel, falling back to WEBrick). The equivalent of Rails' script/server.
     def run_server
       ensure_config
+      @options[:port] ||= 9173
       require 'rubygems'
-      rackup_path = File.expand_path("#{@options[:config_path]}/server.ru")
+      rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
       if Gem.available? 'thin'
         exec "thin -e #{@options[:environment]} -p #{@options[:port]} -R #{rackup_path} start"
       else
@@ -73,9 +70,12 @@ Options:
       end
     end
     
+    # Launch a Node. Please only run a single node per machine. The Node process
+    # will be long-lived, although its workers will come and go.
     def run_node
+      ENV['RACK_ENV'] = @options['environment']
       load_code
-      Node.new
+      Node.new(@options[:port])
     end
     
     # Load in the database schema to the database specified in 'database.yml'.
@@ -93,48 +93,8 @@ Options:
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
       install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
-      install_file "#{CC_ROOT}/config/server.example.ru", "#{install_path}/server.ru"
+      install_file "#{CC_ROOT}/config/server.example.ru", "#{install_path}/config.ru"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
-    end
-    
-    # Manipulate worker daemons -- handles all commands that the Daemons gem
-    # provides: start, stop, restart, run, and status.
-    def run_workers_command
-      ensure_config
-      command = ARGV.shift
-      case command
-      when 'start'    then start_workers
-      when 'stop'     then stop_workers
-      when 'restart'  then stop_workers && start_workers
-      when 'run'      then run_worker
-      when 'status'   then show_worker_status
-      else                 usage
-      end
-    end
-    
-    # Start up N workers, specified by argument or the number of workers in
-    # config.yml.
-    def start_workers
-      load_code
-      num_workers = @options[:num_workers] || CloudCrowd.config[:num_workers]
-      num_workers.times do
-        `CLOUD_CROWD_CONFIG='#{File.expand_path(@options[:config_path] + "/config.yml")}' ruby #{WORKER_RUNNER} start`
-      end
-    end
-    
-    # For debugging, run a single worker in the current process, showing output.
-    def run_worker
-      exec "CLOUD_CROWD_CONFIG='#{File.expand_path(@options[:config_path] + "/config.yml")}' ruby #{WORKER_RUNNER} run"
-    end
-    
-    # Stop all active workers.
-    def stop_workers
-      `ruby #{WORKER_RUNNER} stop`
-    end
-
-    # Display the status of all active workers.
-    def show_worker_status
-      puts `ruby #{WORKER_RUNNER} status`
     end
     
     # Print `crowd` usage.
@@ -156,7 +116,6 @@ Options:
     # Parse all options for all commands.
     def parse_options
       @options = {
-        :port         => 9173,
         :environment  => 'production',
         :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.'
       }
@@ -164,10 +123,7 @@ Options:
         opts.on('-c', '--config PATH', 'path to configuration directory') do |conf_path|
           @options[:config_path] = conf_path
         end
-        opts.on('-n', '--num-workers NUM', OptionParser::DecimalInteger, 'number of worker processes') do |num|
-          @options[:num_workers] = num
-        end
-        opts.on('-p', '--port PORT', 'central server port number') do |port_num|
+        opts.on('-p', '--port PORT', 'port number for server (central or node)') do |port_num|
           @options[:port] = port_num
         end
         opts.on('-e', '--environment ENV', 'server environment (sinatra)') do |env|

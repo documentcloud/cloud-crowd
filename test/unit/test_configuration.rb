@@ -5,7 +5,7 @@ class ConfigurationTest < Test::Unit::TestCase
   context "CloudCrowd Configuration" do
             
     should "have read in config.yml" do
-      assert CloudCrowd.config[:num_workers] == 4
+      assert CloudCrowd.config[:max_workers] == 4
       assert CloudCrowd.config[:storage] == 'filesystem'
     end
     
