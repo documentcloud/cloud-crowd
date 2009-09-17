@@ -30,6 +30,17 @@ module CloudCrowd
     class MissingConfiguration < Error
     end
     
+    # CommandFailed is raised when an action shells out, and the external 
+    # command returns a non-zero exit code.
+    class CommandFailed < Error
+      attr_reader :exit_code
+      
+      def initialize(message, exit_code)
+        super(message)
+        @exit_code = exit_code
+      end
+    end
+    
   end
   
 end

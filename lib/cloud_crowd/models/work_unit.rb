@@ -74,7 +74,7 @@ module CloudCrowd
           WorkUnit.start(job, action, new_input, PROCESSING)
         end
         self.destroy
-        job.set_next_status if job.done_splitting?
+        job.set_next_status if job && job.done_splitting?
       else
         update_attributes({
           :status         => SUCCEEDED,
@@ -84,7 +84,7 @@ module CloudCrowd
           :output         => result,
           :time           => time_taken
         })
-        job.check_for_completion
+        job && job.check_for_completion
       end
     end
     

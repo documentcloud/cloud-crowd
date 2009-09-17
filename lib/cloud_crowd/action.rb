@@ -12,6 +12,9 @@ module CloudCrowd
   #
   # All actions have use of an individual +work_directory+, for scratch files,
   # and spend their duration inside of it, so relative paths work well.
+  #
+  # Note that Actions inherit a backticks (`) method that raises an Exception
+  # if the external command fails.
   class Action
     
     FILE_URL = /\Afile:\/\//
@@ -64,6 +67,15 @@ module CloudCrowd
     # to the root directory (where workers run by default).
     def cleanup_work_directory
       FileUtils.rm_r(@work_directory) if File.exists?(@work_directory)
+    end
+    
+    # Actions have a backticks command that raises a CommandFailed exception 
+    # on failure, so that processing doesn't just blithely continue.
+    def `(command)
+      result    = super(command)
+      exit_code = $?.to_i
+      raise Error::CommandFailed.new(result, exit_code) unless exit_code == 0
+      result
     end
     
     

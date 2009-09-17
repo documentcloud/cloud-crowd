@@ -49,6 +49,8 @@ module CloudCrowd
     def keep_trying_to(title)
       begin
         yield
+      rescue RestClient::ResourceNotFound => e
+        log "work unit ##{@options['work_unit_id']} doesn't exist. discarding..."
       rescue Exception => e
         log "failed to #{title} -- retry in #{RETRY_WAIT} seconds"
         log e.message
