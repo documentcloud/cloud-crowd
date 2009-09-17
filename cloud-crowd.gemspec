@@ -107,6 +107,6 @@ test/unit/test_action.rb
 test/unit/test_configuration.rb
 test/unit/test_job.rb
 test/unit/test_work_unit.rb
-views/index.erb
+views/operations_center.erb
 )
 end

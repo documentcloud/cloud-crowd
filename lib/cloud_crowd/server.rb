@@ -34,7 +34,7 @@ module CloudCrowd
     
     # Render the admin console.
     get '/' do
-      erb :index
+      erb :operations_center
     end
     
     # Get the JSON for every active job in the queue and every active worker
