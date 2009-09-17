@@ -94,8 +94,9 @@ public/js/excanvas.js
 public/js/flot.js
 public/js/jquery.js
 README
-test/acceptance/test_server.rb
+test/acceptance/test_node.rb
 test/acceptance/test_failing_work_units.rb
+test/acceptance/test_server.rb
 test/acceptance/test_word_count.rb
 test/blueprints.rb
 test/config/config.ru
@@ -105,7 +106,9 @@ test/config/actions/failure_testing.rb
 test/test_helper.rb
 test/unit/test_action.rb
 test/unit/test_configuration.rb
+test/unit/test_node.rb
 test/unit/test_job.rb
+test/unit/test_worker.rb
 test/unit/test_work_unit.rb
 views/operations_center.erb
 )

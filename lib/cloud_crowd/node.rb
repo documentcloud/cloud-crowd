@@ -12,7 +12,7 @@ module CloudCrowd
     # can all use the same port without any problems.
     DEFAULT_PORT = 9063
     
-    attr_reader :server, :asset_store
+    attr_reader :asset_store, :enabled_actions, :host, :port, :server
             
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
@@ -36,13 +36,12 @@ module CloudCrowd
     
     # Posts a WorkUnit to this Node. Forks a Worker and returns the process id.
     post '/work' do
-      pid = fork { Worker.new(self, JSON.parse(params[:work_unit])) }
+      pid = fork { Worker.new(self, JSON.parse(params[:work_unit])).run }
       Process.detach(pid)
       json :pid => pid
     end
     
-    # Creating a Node registers with the central server and starts listening for
-    # incoming WorkUnits.
+    # When creating a node, specify the port it should run on.
     def initialize(port=DEFAULT_PORT)
       require 'json'
       @server           = CloudCrowd.central_server
@@ -50,7 +49,12 @@ module CloudCrowd
       @enabled_actions  = CloudCrowd.actions.keys
       @asset_store      = AssetStore.new
       @port             = port || DEFAULT_PORT
-      
+      start unless test?
+    end
+    
+    # Starting up a Node registers with the central server and begins to listen
+    # for incoming WorkUnits.
+    def start
       trap_signals
       start_server
       check_in

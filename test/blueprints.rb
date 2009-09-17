@@ -11,6 +11,6 @@ end
 CloudCrowd::WorkUnit.blueprint do
   job               { CloudCrowd::Job.make }
   status            { CloudCrowd::PROCESSING }
-  input             { Sham.url }
+  input             { '{"key":"value"}' }
   action            { 'graphics_magick' }
 end
