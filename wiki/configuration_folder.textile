@@ -6,11 +6,12 @@ h2. config.yml
 
 |*central_server*|The URL to the *central server*. If you're developing, this is probably localhost. If you've got a full production deployment, then this is probably aiming at your *load balancer*. If you're running an internal CloudCrowd installation, this DNS probably only resolves on your local network.|
 |*max_workers*|The maximum number of @Workers@ that a @Node@ is allowed to run. If a node reaches this number, it will be considered 'busy', and will have to wait for some of its workers to finish processing before accepting any new @WorkUnits@.|
-|*storage*|'*s3*' or '*filesystem*'. The storage system used by the @AssetStore@ to store work unit results. 'filesystem' storage is only appropriate in development. In the future, it would be nice to have the ability for 'filesystem' storage to use shared NFS volumes.|
+|*storage*|'*s3*' or '*filesystem*'. The storage system used by the @AssetStore@ to store work unit results. 'filesystem' storage is only appropriate in development, on single-machine installations, or if you have a networked volume handy.|
 |*aws_access_key*|Your Amazon Web Services *access key*, for S3 storage.|
 |*aws_secret_key*|Your Amazon Web Services *secret access key*, for S3 storage.|
 |*s3_bucket*|The S3 bucket you'd like to store your CloudCrowd results in.|
 |*s3_authentication*|If this option is turned on with S3 storage, all results will be saved as private files, and the URLs returned will be temporarily authenticated for 24 hours|
+|*local_storage_path*|If using the '*filesystem*' storage, all results will be saved inside of this directory. The default value is @'/tmp/cloud_crowd_storage'@. Useful if you have a networked drive.|
 |*http_authentication*|If this option is turned on, all communication with the central server, including web requests to view the Operations Center, API calls, and requests to and from Nodes, will use HTTP basic authentication with the login and password specified.|
 |*login*|The common login for all CloudCrowd requests via HTTP basic authentication, if enabled.|
 |*password*|The password for all CloudCrowd requests via HTTP basic authentication, if enabled.|

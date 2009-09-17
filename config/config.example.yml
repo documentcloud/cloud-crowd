@@ -22,17 +22,17 @@
 :s3_bucket:           [your CloudCrowd bucket]
 :s3_authentication:   no
 
+# If you're using the 'filesystem' storage, perhaps with an NFS share or
+# something similar, all files will be saved inside of the 'local_storage_path'.
+# The default value if left unspecified is '/tmp/cloud_crowd_storage'.
+:local_storage_path:  /tmp/cloud_crowd_storage
+
 # Use HTTP Basic Auth for all requests? (Includes all internal worker requests 
 # to the central server). If yes, specify the login and password that all 
 # requests must provide for authentication.
 :http_authentication: no
 :login:               [your login name]
 :password:            [your password]
-
-# If you're using the 'filesystem' storage, perhaps with an NFS share or
-# something similar, you can configure the path in which all results are saved.
-# The default path if left unspecified is '/tmp/cloud_crowd_storage'.
-:local_storage_path:  /tmp/cloud_crowd_storage
 
 # By default, CloudCrowd looks for installed actions inside the 'actions'
 # subdirectory of this configuration folder. 'actions_path' allows you to load
