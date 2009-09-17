@@ -42,35 +42,38 @@ module CloudCrowd
   autoload :Worker,       'cloud_crowd/worker'
   autoload :WorkUnit,     'cloud_crowd/models'
   
-  # Root directory of the CloudCrowd gem.
-  ROOT        = File.expand_path(File.dirname(__FILE__) + '/..')
-  
   # Keep this version in sync with the gemspec.
-  VERSION     = '0.1.1'
+  VERSION        = '0.1.1'
+  
+  # Increment the schema version when there's a backwards incompatible change.
+  SCHEMA_VERSION = 2
+  
+  # Root directory of the CloudCrowd gem.
+  ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')
     
   # A Job is processing if its WorkUnits are in the queue to be handled by nodes.
-  PROCESSING  = 1
+  PROCESSING     = 1
   
   # A Job has succeeded if all of its WorkUnits have finished successfully.
-  SUCCEEDED   = 2
+  SUCCEEDED      = 2
   
   # A Job has failed if even a single one of its WorkUnits has failed (they may
   # be attempted multiple times on failure, however).
-  FAILED      = 3
+  FAILED         = 3
   
   # A Job is splitting if it's in the process of dividing its inputs up into
   # multiple WorkUnits.
-  SPLITTING   = 4
+  SPLITTING      = 4
   
   # A Job is merging if it's busy collecting all of its successful WorkUnits
   # back together into the final result.
-  MERGING     = 5
+  MERGING        = 5
   
   # A Job is considered to be complete if it succeeded or if it failed.
-  COMPLETE    = [SUCCEEDED, FAILED]
+  COMPLETE       = [SUCCEEDED, FAILED]
   
   # A Job is considered incomplete if it's being processed, split up or merged.
-  INCOMPLETE  = [PROCESSING, SPLITTING, MERGING]
+  INCOMPLETE     = [PROCESSING, SPLITTING, MERGING]
   
   # Mapping of statuses to their display strings.
   DISPLAY_STATUS_MAP = ['unknown', 'processing', 'succeeded', 'failed', 'splitting', 'merging']
@@ -90,6 +93,9 @@ module CloudCrowd
     def configure_database(config_path)
       configuration = YAML.load_file(config_path)
       ActiveRecord::Base.establish_connection(configuration)
+      version = ActiveRecord::Base.connection.select_values('select version from schema_migrations').first.to_i
+      return true if version == SCHEMA_VERSION
+      raise Error::SchemaObsolete, "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first."
     end
     
     # Get a reference to the central server, including authentication if 
