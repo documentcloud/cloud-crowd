@@ -1,0 +1,14 @@
+h3. Version 0.2.0
+
+* Version 0.2.0 is backward-incompatible. The internals have changed a good deal. You'll need to reload your schema and update your *config.yml*.
+* New architecture that gets rid of persistent *workers* in favor of persistent *nodes* (one node per machine), and ephemeral *workers*. This setup avoids polling, reduces latency when starting jobs, decreases load on the central server substantially, decreases resource use on the nodes, prevents actions from being capable of leaking memory, and so on...
+* The *Operations Center* interface has been updated to show the nodes, and to display it if they become busy (have exhausted their allowed number of workers).
+* The FilesystemStore now can be configured with a @local_storage_path@. This allows you to use a networked drive for asset storage.
+* The dependency on the Daemons gem has been removed.
+* The S3Store now uses HTTPS to upload files when you have @s3_authentication@ turned on.
+* More validations and sanity checks all around.
+* Added a @rake db:create_test_database@ task to help out folks who want to contribute to CloudCrowd.
+
+h3. Version 0.1.0
+
+* Initial release.
