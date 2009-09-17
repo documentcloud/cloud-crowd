@@ -43,7 +43,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
   
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.1.1'
+  VERSION        = '0.2.0'
   
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 2
@@ -104,10 +104,20 @@ module CloudCrowd
     # Get a reference to the central server, including authentication if 
     # configured.
     def central_server
-      return @central_server if @central_server
-      params = [CloudCrowd.config[:central_server]]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:http_authentication]
-      @central_server = RestClient::Resource.new(*params)
+      @central_server ||= RestClient::Resource.new(CloudCrowd.config[:central_server], CloudCrowd.client_options)
+    end
+    
+    # The standard RestClient options for the central server talking to nodes,
+    # as well as the other way around. There's a timeout of 5 seconds to open
+    # a connection, and a timeout of 30 to finish reading it.
+    def client_options
+      return @client_options if @client_options
+      @client_options = {:timeout => 30, :open_timeout => 5}
+      if CloudCrowd.config[:http_authentication]
+        @client_options[:user]      = CloudCrowd.config[:login]
+        @client_options[:password]  = CloudCrowd.config[:password]
+      end
+      @client_options
     end
 
     # Return the displayable status name of an internal CloudCrowd status number.

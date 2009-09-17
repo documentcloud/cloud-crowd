@@ -59,10 +59,7 @@ module CloudCrowd
     # Keep a RestClient::Resource handy for contacting the Node, including 
     # HTTP authentication, if configured.
     def node
-      return @node if @node
-      params = [url]
-      params += [CloudCrowd.config[:login], CloudCrowd.config[:password]] if CloudCrowd.config[:http_authentication]
-      @node = RestClient::Resource.new(*params)
+      @node ||= RestClient::Resource.new(url, CloudCrowd.client_options)
     end
     
     # The printable status of the Node.

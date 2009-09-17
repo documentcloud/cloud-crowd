@@ -92,8 +92,8 @@ Options:
       install_path = ARGV.shift || '.'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
-      install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
       install_file "#{CC_ROOT}/config/config.example.ru", "#{install_path}/config.ru"
+      install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     

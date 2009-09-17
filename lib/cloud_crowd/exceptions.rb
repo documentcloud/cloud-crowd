@@ -25,6 +25,11 @@ module CloudCrowd
     class StatusUnspecified < Error
     end
     
+    # MissingConfiguration is raised when we're trying to run a method that
+    # needs configuration not present in config.yml.
+    class MissingConfiguration < Error
+    end
+    
   end
   
 end
