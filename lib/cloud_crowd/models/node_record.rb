@@ -9,7 +9,7 @@ module CloudCrowd
     
     validates_presence_of :host, :ip_address, :port
     
-    before_destroy :clear_work_units
+    after_destroy :clear_work_units
     
     # Available Nodes haven't used up their maxiumum number of workers yet.
     named_scope :available, {
