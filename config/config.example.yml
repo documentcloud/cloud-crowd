@@ -9,6 +9,7 @@
 # The storage back-end that you'd like to use for intermediate and final results
 # of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
 # be used in development, on single-machine installations, or networked drives.
+# If you *are* developing an action, filesystem is certainly faster and easier.
 :storage:             s3
 
 # Please provide your AWS credentials for S3 storage of job output.

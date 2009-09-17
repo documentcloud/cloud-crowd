@@ -1,6 +1,2 @@
-:adapter:  mysql
-:encoding: utf8
-:username: root
-:password:
-:socket:   /tmp/mysql.sock
-:database: cloud_crowd_test
+:adapter:   sqlite3
+:database:  test/cloud_crowd_test.db

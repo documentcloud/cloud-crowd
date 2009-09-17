@@ -1,5 +1,7 @@
 require 'rake/testtask'
 
+# To get started testing, run `crowd -c test/config load_schema`, in order to
+# create and load a fresh test database, and then `rake test`.
 desc 'Run all tests'
 task :test do
   $LOAD_PATH.unshift(File.expand_path('test'))
@@ -19,16 +21,6 @@ namespace :gem do
   desc 'Uninstall the cloud-crowd gem'
   task :uninstall do
     sh "sudo gem uninstall -x cloud-crowd"
-  end
-  
-end
-
-namespace :db do
-  
-  desc "Creates a MySQL 'cloud_crowd_test' database, and loads the schema"
-  task :create_test_database do
-    sh "mysqladmin -uroot create cloud_crowd_test"
-    sh "bin/crowd -c test/config load_schema"
   end
   
 end

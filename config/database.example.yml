@@ -7,3 +7,9 @@
 :password:
 :socket:   /tmp/mysql.sock
 :database: cloud_crowd
+
+# If you'd prefer to use an SQLite database instead, the following configuration
+# will do nicely:
+#
+# :adapter:  sqlite3
+# :database: cloud_crowd.db
