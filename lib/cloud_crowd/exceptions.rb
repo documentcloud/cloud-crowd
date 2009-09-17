@@ -25,10 +25,6 @@ module CloudCrowd
     class StatusUnspecified < Error
     end
     
-    # When the database's schema needs to be updated.
-    class SchemaObsolete < Error
-    end
-    
   end
   
 end

@@ -49,7 +49,7 @@ Options:
       require 'irb/completion'
       require 'pp'
       load_code
-      connect_to_database
+      connect_to_database(true)
       IRB.start
     end
     
@@ -81,7 +81,7 @@ Options:
     # Load in the database schema to the database specified in 'database.yml'.
     def run_load_schema
       load_code
-      connect_to_database
+      connect_to_database(false)
       require 'cloud_crowd/schema.rb'
     end
     
@@ -149,9 +149,9 @@ Options:
     
     # Establish a connection to the central server's database. Not all commands
     # require this.
-    def connect_to_database
+    def connect_to_database(validate_schema)
       require 'cloud_crowd/models'
-      CloudCrowd.configure_database("#{@options[:config_path]}/database.yml")
+      CloudCrowd.configure_database("#{@options[:config_path]}/database.yml", validate_schema)
     end
     
     # Exit with an explanation if the configuration files couldn't be found.

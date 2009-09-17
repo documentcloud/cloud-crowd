@@ -8,7 +8,7 @@
 
 # The storage back-end that you'd like to use for intermediate and final results
 # of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
-# be used in development, or on single-machine installations.
+# be used in development, on single-machine installations, or networked drives.
 :storage:             s3
 
 # Please provide your AWS credentials for S3 storage of job output.
@@ -28,6 +28,11 @@
 :http_authentication: no
 :login:               [your login name]
 :password:            [your password]
+
+# If you're using the 'filesystem' storage, perhaps with an NFS share or
+# something similar, you can configure the path in which all results are saved.
+# The default path if left unspecified is '/tmp/cloud_crowd_storage'.
+:local_storage_path:  /tmp/cloud_crowd_storage
 
 # By default, CloudCrowd looks for installed actions inside the 'actions'
 # subdirectory of this configuration folder. 'actions_path' allows you to load

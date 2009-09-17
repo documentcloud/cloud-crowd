@@ -90,12 +90,15 @@ module CloudCrowd
     # Configure the CloudCrowd central database (and connect to it), by passing
     # in a path to <tt>database.yml</tt>. The file should use the standard 
     # ActiveRecord connection format.
-    def configure_database(config_path)
+    def configure_database(config_path, validate_schema=true)
       configuration = YAML.load_file(config_path)
       ActiveRecord::Base.establish_connection(configuration)
-      version = ActiveRecord::Base.connection.select_values('select version from schema_migrations').first.to_i
-      return true if version == SCHEMA_VERSION
-      raise Error::SchemaObsolete, "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first."
+      if validate_schema
+        version = ActiveRecord::Base.connection.select_values('select max(version) from schema_migrations').first.to_i
+        return true if version == SCHEMA_VERSION
+        puts "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first.\nexiting..."
+        exit
+      end
     end
     
     # Get a reference to the central server, including authentication if 

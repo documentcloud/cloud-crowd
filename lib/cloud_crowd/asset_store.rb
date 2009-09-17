@@ -3,9 +3,9 @@ require 'tmpdir'
 module CloudCrowd
 
   # The AssetStore provides a common API for storing files and returning URLs 
-  # that can access them. In production this will be S3 but in development 
-  # it may be the filesystem. You shouldn't need to use the AssetStore directly 
-  # -- Action's +download+ and +save+ methods use it behind the scenes.
+  # that can access them. At the moment, the files can be saved to either S3, or
+  # the local filesystem. You shouldn't need to use the AssetStore directly -- 
+  # Action's +download+ and +save+ methods use it behind the scenes.
   #
   # To implement a new back-end for the AssetStore, you must provide 
   # <tt>save(local_path, save_path)</tt>, <tt>cleanup(job)</tt>, and optionally, 
@@ -14,9 +14,7 @@ module CloudCrowd
     
     autoload :S3Store,         'cloud_crowd/asset_store/s3_store'
     autoload :FilesystemStore, 'cloud_crowd/asset_store/filesystem_store'
-    
-    LOCAL_STORAGE_PATH = '/tmp/cloud_crowd_storage'
-    
+        
     # Configure the AssetStore with the specific storage implementation 
     # specified by 'storage' in <tt>config.yml</tt>.
     case CloudCrowd.config[:storage]

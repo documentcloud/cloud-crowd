@@ -27,7 +27,7 @@ class ActionTest < Test::Unit::TestCase
     end
     
     should "be able to save (to the filesystem while testing)" do
-      assert @action.save(@action.input_path) == "file://#{CloudCrowd::AssetStore::LOCAL_STORAGE_PATH}/word_count/job_1/unit_1/test_action.rb"
+      assert @action.save(@action.input_path) == "file://#{@store.local_storage_path}/word_count/job_1/unit_1/test_action.rb"
     end
     
     should "be able to clean up after itself" do

@@ -1,5 +1,5 @@
 # Complete schema for CloudCrowd.
-ActiveRecord::Schema.define(:version => 2) do
+ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "jobs", :force => true do |t|
     t.integer  "status",                      :null => false
