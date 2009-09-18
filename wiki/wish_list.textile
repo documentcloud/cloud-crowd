@@ -6,16 +6,21 @@ A brief list of things it would be nice to see contributed to CloudCrowd:
 * Some performance tests and benchmarks, to see what the expected throughput looks like at different levels.
 * It would be nice to take a look at *Grand Central Dispatch* for ideas on how to efficiently manage workers and job queues.
 * A UI for changing the @max_workers@ setting for each Node, via the *Operations Center*.
-* It would be great to add more conditions (in addition to @max_workers@), to limit the number of Workers that can be run on a node. @max_memory@, @max_cpu@, and @max_load@ seem particularly promising -- the Node would be considered busy if it hit any of those limits.
+
+<div style="color:#777; margin-top: 40px;">
 
 h3. Completed Wishes:
 
-* Add/Remove Workers via the server UI - drnic
+* _It would be great to add more conditions (in addition to @max_workers@), to limit the number of Workers that can be run on a node. @max_memory@, @max_cpu@, and @max_load@ seem particularly promising. The node would be considered busy if it hit any of those limits._
+  -- *(Version 0.2.1)* @max_load@ and @min_free_memory@ are now implemented. @max_cpu@ can be added with the same mechanism as soon as someone figures out a good, accurate, cross-UNIX way to measure it.
+* _Add/Remove Workers via the server UI - drnic_
   -- *(Version 0.2)* Workers are created and removed on-the-fly, up to @max_workers@, so there's no longer a need to manually add and remove them.
-* And how about running a single daemon process per box, that fetches work and forks off workers. You could configure a "percentage of memory to leave free", and the daemon would continue to fetch work and fork workers up to that limit. Would be a nice way to scale to the confines of a box while avoiding memory leaks.
+* _And how about running a single daemon process per box, that fetches work and forks off workers. You could configure a "percentage of memory to leave free", and the daemon would continue to fetch work and fork workers up to that limit. Would be a nice way to scale to the confines of a box while avoiding memory leaks._
   -- *(Version 0.2)* Now there's the notion of Nodes, representing a physical machine that runs a cluster of ephemeral workers. Scales to the confines of the machine without persistent processes that could leak memory.
 
 h3. Discarded Wishes:
 
-* We should also at least consider a queue-per-worker / *work-stealing* setup.
+* _We should also at least consider a queue-per-worker / *work-stealing* setup._
   -- Work-stealing would only make sense for CloudCrowd if a particular node had a backed-up queue. That's currently not the case. Any work units that a node receives begin execution immediately.
+  
+</div>

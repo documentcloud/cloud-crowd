@@ -12,13 +12,17 @@ module CloudCrowd
     # can all use the same port without any problems.
     DEFAULT_PORT        = 9063
     
-    # Extract the one-minute load average from the 'uptime' command, which 
-    # doesn't format quite the same on different flavors of UNIX.
-    UPTIME_PARSER       = /\d+\.\d+/
+    # A list of regex scrapers, which let us extract the one-minute load 
+    # average and the amount of free memory on different flavors of UNIX.
     
-    # The interval at which the node monitors the machine's load (if configured
-    # to do so in config.yml).
-    MONITOR_INTERVAL    = 1
+    SCRAPE_UPTIME       = /\d+\.\d+/
+    SCRAPE_LINUX_MEMORY = /MemFree:\s+(\d+) kB/
+    SCRAPE_MAC_MEMORY   = /Pages free:\s+(\d+)./   
+    SCRAPE_MAC_PAGE     = /page size of (\d+) bytes/
+    
+    # The interval at which the node monitors the machine's load and memory use
+    # (if configured to do so in config.yml).
+    MONITOR_INTERVAL    = 3
     
     # The response sent back when this node is overloaded.
     OVERLOADED_MESSAGE  = 'Node Overloaded'
@@ -64,6 +68,7 @@ module CloudCrowd
       @port             = port || DEFAULT_PORT
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
+      @min_memory       = CloudCrowd.config[:min_free_memory]
       start unless test?
     end
     
@@ -72,7 +77,7 @@ module CloudCrowd
     def start
       trap_signals
       start_server
-      monitor_load if @max_load
+      monitor_system if @max_load || @min_memory
       check_in(true)
       @server_thread.join
     end
@@ -98,9 +103,23 @@ module CloudCrowd
       @server["/node/#{@host}"].delete
     end
     
-    # Get the current one-minute load average.
+    # The current one-minute load average.
     def load_average
-      `uptime`.match(UPTIME_PARSER).to_s.to_f
+      `uptime`.match(SCRAPE_UPTIME).to_s.to_f
+    end
+    
+    # The current amount of free memory in megabytes.
+    def free_memory
+      case RUBY_PLATFORM
+      when /darwin/
+        stats = `vm_stat`
+        @mac_page_size ||= stats.match(SCRAPE_MAC_PAGE)[1].to_f / 1048576.0
+        stats.match(SCRAPE_MAC_MEMORY)[1].to_f * @mac_page_size
+      when /linux/
+        `cat /proc/meminfo`.match(SCRAPE_LINUX_MEMORY)[1].to_f / 1024.0
+      else
+        raise NotImplementedError, "'min_free_memory' is not yet implemented on your platform"
+      end
     end
     
     
@@ -114,12 +133,14 @@ module CloudCrowd
     end
     
     # Launch a monitoring thread that periodically checks the node's load 
-    # average. If we transition out of the overloaded state, let central know.
-    def monitor_load
+    # average and the amount of free memory remaining. If we transition out of 
+    # the overloaded state, let central know.
+    def monitor_system
       @monitor_thread = Thread.new do
         loop do
           was_overloaded = @overloaded
-          @overloaded = load_average > @max_load
+          @overloaded = (@max_load && load_average > @max_load) ||
+                        (@min_memory && free_memory < @min_memory)
           check_in if was_overloaded && !@overloaded
           sleep MONITOR_INTERVAL
         end

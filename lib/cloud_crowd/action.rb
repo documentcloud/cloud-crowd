@@ -36,7 +36,7 @@ module CloudCrowd
     
     # Each Action subclass must implement a +process+ method, overriding this.
     def process
-      raise NotImplementedError.new("CloudCrowd::Actions must override 'process' with their own processing code.")
+      raise NotImplementedError, "CloudCrowd::Actions must override 'process' with their own processing code."
     end
     
     # Download a file to the specified path.

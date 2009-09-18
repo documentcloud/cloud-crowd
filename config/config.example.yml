@@ -1,15 +1,16 @@
 # The URL where you're planning on running the central server/queue/database.
 :central_server:      http://localhost:9173
 
-# Set the maximum number of workers allowed per-node. Workers only run while 
-# there's work to be done. It's best to set 'max_workers' below the point where 
-# you'd start to swap or peg your CPU (as determined by experiment).
+# The following settings allow you to control the number of workers that can run
+# on a given node, to prevent the node from becoming overloaded. 'max_workers' 
+# is a simple cap on the maximum number of workers a node is allowed to run
+# concurrently. 'max_load' is the maximum (one-minute) load average, above which
+# a node will refuse to take new work. 'min_free_memory' is the minimum amount
+# of free RAM (in megabytes) a node is allowed to have, below which no new 
+# workers are run. These settings may be used in any combination.
 :max_workers:         5
-
-# Set the maximum (one-minute) load average allowed per-node. When a node's load
-# rises above this point, stop accepting work until the load falls back down 
-# below the threshold.
-# :max_load:          5.0
+# :max_load:            5.0
+# :min_free_memory:     150
 
 # The storage back-end that you'd like to use for intermediate and final results
 # of processing. 's3' and 'filesystem' are supported. 'filesystem' should only

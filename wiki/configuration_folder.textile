@@ -6,6 +6,8 @@ h2. config.yml
 
 |*central_server*|The URL to the *central server*. If you're developing, this is probably localhost. If you've got a full production deployment, then this is probably aiming at your *load balancer*. If you're running an internal CloudCrowd installation, this DNS probably only resolves on your local network.|
 |*max_workers*|The maximum number of @Workers@ that a @Node@ is allowed to run. If a node reaches this number, it will be considered 'busy', and will have to wait for some of its workers to finish processing before accepting any new @WorkUnits@.|
+|*max_load*|The highest that the (one-minute) load average is allowed to climb before a @Node@ starts refusing to take any more work. When the load drops back down, the node starts receiving work again. The optimal value for this depends on the number of processors in your node, and is probably higher than you expect -- the load average trails the actual load over the course of a minute, and this may aggravate spiky behavior.|
+|*min_free_memory*|The lowest that available memory can drop before the node refuses to take more work. Measured in megabytes. This, in conjunction with *max_workers*, is a good way to ensure that your node doesn't start to swap.|
 |*storage*|'*s3*' or '*filesystem*'. The storage system used by the @AssetStore@ to store work unit results. 'filesystem' storage is only appropriate in development, on single-machine installations, or if you have a networked volume handy.|
 |*aws_access_key*|Your Amazon Web Services *access key*, for S3 storage.|
 |*aws_secret_key*|Your Amazon Web Services *secret access key*, for S3 storage.|
