@@ -33,7 +33,8 @@ module CloudCrowd
     # Dispatch a WorkUnit to this node. Places the node at back at the end of
     # the rotation. If we fail to send the WorkUnit, we consider the node to be
     # down, and remove this record, freeing up all of its checked-out work units.
-    # If the Node responds that it's overloaded, we mark it as busy.
+    # If the Node responds that it's overloaded, we mark it as busy. Returns 
+    # true if the WorkUnit was dispatched successfully.
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])

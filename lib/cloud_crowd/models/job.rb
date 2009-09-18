@@ -15,8 +15,7 @@ module CloudCrowd
     after_create                :queue_for_workers
     before_destroy              :cleanup_assets
       
-    # Create a Job from an incoming JSON or XML request, and add it to the queue.
-    # TODO: Think about XML support.
+    # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)
       self.create(
         :inputs       => h['inputs'].to_json,
@@ -41,7 +40,8 @@ module CloudCrowd
       self
     end
     
-    # Transition this Job's status to the appropriate next status.
+    # Transition this Job's current status to the appropriate next one, based
+    # on the state of the WorkUnits and the nature of the Action.
     def set_next_status
       update_attribute(:status,
         any_work_units_failed? ? FAILED     :
@@ -66,8 +66,8 @@ module CloudCrowd
       end
     end
     
-    # Cleaning up after a job will remove all of its files from S3. Destroying
-    # a Job calls cleanup_assets first.
+    # Cleaning up after a job will remove all of its files from S3 or the
+    # filesystem. Destroying a Job will cleanup_assets first.
     # TODO: Convert this into a 'cleanup' work unit that gets run by a worker.
     def cleanup_assets
       AssetStore.new.cleanup(self)

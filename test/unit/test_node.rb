@@ -22,6 +22,16 @@ class NodeUnitTest < Test::Unit::TestCase
       @node.expects(:check_in)
       @node.start
     end
+    
+    should "be able to determine if the node is overloaded" do
+      assert !@node.overloaded?
+      @node.instance_variable_set :@max_load, 0.01
+      assert @node.overloaded?
+      @node.instance_variable_set :@max_load, nil
+      assert !@node.overloaded?
+      @node.instance_variable_set :@min_memory, 8000
+      assert @node.overloaded?
+    end
       
   end
   

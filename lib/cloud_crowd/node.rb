@@ -103,6 +103,14 @@ module CloudCrowd
       @server["/node/#{@host}"].delete
     end
     
+    # Is the node overloaded? If configured, checks if the load average is 
+    # greater than 'max_load', or if the available RAM is less than
+    # 'min_free_memory'.
+    def overloaded?
+      (@max_load && load_average > @max_load) ||
+      (@min_memory && free_memory < @min_memory)
+    end
+    
     # The current one-minute load average.
     def load_average
       `uptime`.match(SCRAPE_UPTIME).to_s.to_f
@@ -139,8 +147,7 @@ module CloudCrowd
       @monitor_thread = Thread.new do
         loop do
           was_overloaded = @overloaded
-          @overloaded = (@max_load && load_average > @max_load) ||
-                        (@min_memory && free_memory < @min_memory)
+          @overloaded = overloaded?
           check_in if was_overloaded && !@overloaded
           sleep MONITOR_INTERVAL
         end

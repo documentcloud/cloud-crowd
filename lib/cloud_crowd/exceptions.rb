@@ -11,7 +11,7 @@ module CloudCrowd
     class ActionNotFound < Error
     end
   
-    # StorageNotFound is raised when config.yml specifies a storage back end that
+    # StorageNotFound is raised when config.yml specifies a storage back-end that
     # doesn't exist.
     class StorageNotFound < Error
     end
