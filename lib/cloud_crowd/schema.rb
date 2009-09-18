@@ -15,10 +15,11 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
   end
   
   create_table "node_records", :force => true do |t|
-    t.string   "host",                            :null => false
-    t.string   "ip_address",                      :null => false
-    t.integer  "port",                            :null => false
-    t.string   "enabled_actions", :default => '', :null => false
+    t.string   "host",                                :null => false
+    t.string   "ip_address",                          :null => false
+    t.integer  "port",                                :null => false
+    t.string   "enabled_actions", :default => '',     :null => false
+    t.boolean  "busy",            :default => false,  :null => false
     t.integer  "max_workers"
     t.datetime "created_at"
     t.datetime "updated_at"

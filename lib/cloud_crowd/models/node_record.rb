@@ -23,6 +23,7 @@ module CloudCrowd
       attrs = {
         :ip_address       => request.ip,
         :port             => params[:port],
+        :busy             => params[:busy],
         :max_workers      => params[:max_workers],
         :enabled_actions  => params[:enabled_actions]
       }
@@ -32,12 +33,16 @@ module CloudCrowd
     # Dispatch a WorkUnit to this node. Places the node at back at the end of
     # the rotation. If we fail to send the WorkUnit, we consider the node to be
     # down, and remove this record, freeing up all of its checked-out work units.
+    # If the Node responds that it's overloaded, we mark it as busy.
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])
-      touch
-    rescue Errno::ECONNREFUSED
-      self.destroy # Couldn't post to node, assume it's gone away.
+      touch && true
+    rescue Errno::ECONNREFUSED # Couldn't post to node, assume it's gone away.
+      destroy && false
+    rescue RestClient::RequestFailed => e
+      raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE
+      update_attribute(:busy, true) && false
     end
     
     # What Actions is this Node able to run?
@@ -45,9 +50,10 @@ module CloudCrowd
       enabled_actions.split(',')
     end
     
-    # Is this Node too busy for more work? (Determined by number of workers.)
+    # Is this Node too busy for more work? Determined by number of workers, or 
+    # the Node's load average, as configured in config.yml.
     def busy?
-      max_workers && work_units.count >= max_workers
+      busy || (max_workers && work_units.count >= max_workers)
     end
     
     # The URL at which this Node may be reached.

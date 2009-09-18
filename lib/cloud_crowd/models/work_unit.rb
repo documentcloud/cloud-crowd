@@ -51,6 +51,12 @@ module CloudCrowd
       WorkUnit.reserved.update_all('reservation = null')
     end
     
+    # Cancels all outstanding WorkUnit reservations for all processes. (Useful
+    # in the console for debugging.)
+    def self.cancel_all_reservations
+      WorkUnit.update_all('reservation = null')
+    end
+    
     # Look up a WorkUnit by the worker that's currently processing it. Specified
     # by <tt>pid@host</tt>.
     def self.find_by_worker_name(name)

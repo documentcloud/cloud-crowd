@@ -6,6 +6,11 @@
 # you'd start to swap or peg your CPU (as determined by experiment).
 :max_workers:         5
 
+# Set the maximum (one-minute) load average allowed per-node. When a node's load
+# rises above this point, stop accepting work until the load falls back down 
+# below the threshold.
+# :max_load:          5.0
+
 # The storage back-end that you'd like to use for intermediate and final results
 # of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
 # be used in development, on single-machine installations, or networked drives.
