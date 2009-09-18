@@ -46,6 +46,7 @@ class ServerTest < Test::Unit::TestCase
     end
     
     should "be able to create a job" do
+      WorkUnit.expects(:distribute_to_nodes).returns(true)
       post('/jobs', :job => '{"action":"graphics_magick","inputs":["http://www.google.com/"]}')
       assert last_response.ok?
       job_info = JSON.parse(last_response.body)

@@ -4,6 +4,7 @@ require 'test_helper'
 class FailingWorkUnitsTest < Test::Unit::TestCase
 
   should "retry work units when they fail" do
+    WorkUnit.expects(:distribute_to_nodes).returns(true)
     browser = Rack::Test::Session.new(Rack::MockSession.new(CloudCrowd::Server))
     
     browser.post '/jobs', :job => {

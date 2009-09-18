@@ -5,6 +5,7 @@ class WordCountTest < Test::Unit::TestCase
   context "the word_count action" do
     
     setup do
+      WorkUnit.expects(:distribute_to_nodes).returns(true)
       @asset_store = AssetStore.new
       @browser = Rack::Test::Session.new(Rack::MockSession.new(CloudCrowd::Server))
       @browser.put('/worker', :name => 'test_worker', :thread_status => 'sleeping')
@@ -22,7 +23,7 @@ class WordCountTest < Test::Unit::TestCase
     should "be able to perform the processing stage of a word_count" do
       action = CloudCrowd.actions['word_count'].new(1, "file://#{File.expand_path(__FILE__)}", {}, @asset_store)
       count = action.process
-      assert count == 100
+      assert count == 101
     end
     
   end
