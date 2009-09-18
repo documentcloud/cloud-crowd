@@ -1,2 +1,3 @@
 :adapter:   sqlite3
 :database:  test/cloud_crowd_test.db
+:timeout:   5000

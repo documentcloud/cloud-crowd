@@ -11,10 +11,6 @@ class WordCountTest < Test::Unit::TestCase
       post_job_to_count_words_in_this_file
       @job_id = JSON.parse(@browser.last_response.body)['id']
     end
-    
-    teardown do
-      CloudCrowd::Job.destroy_all
-    end
 
     should "be able to create a word_count job" do
       assert @browser.last_response.ok? 
@@ -26,7 +22,7 @@ class WordCountTest < Test::Unit::TestCase
     should "be able to perform the processing stage of a word_count" do
       action = CloudCrowd.actions['word_count'].new(1, "file://#{File.expand_path(__FILE__)}", {}, @asset_store)
       count = action.process
-      assert count == 104
+      assert count == 100
     end
     
   end

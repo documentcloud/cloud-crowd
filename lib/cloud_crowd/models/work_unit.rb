@@ -28,7 +28,7 @@ module CloudCrowd
       until work_units.empty? do
         node = available_nodes.shift
         unit = work_units.first
-        break unless node
+        break unless node && unit
         next unless node.actions.include? unit.action
         sent = node.send_work_unit(unit)
         if sent

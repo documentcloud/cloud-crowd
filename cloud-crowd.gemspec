@@ -107,6 +107,7 @@ test/test_helper.rb
 test/unit/test_action.rb
 test/unit/test_configuration.rb
 test/unit/test_node.rb
+test/unit/test_node_record.rb
 test/unit/test_job.rb
 test/unit/test_worker.rb
 test/unit/test_work_unit.rb

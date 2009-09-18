@@ -7,9 +7,9 @@ module CloudCrowd
         
     has_many :work_units
     
-    validates_presence_of :host, :ip_address, :port
+    validates_presence_of :host, :ip_address, :port, :enabled_actions
     
-    after_destroy :clear_work_units
+    after_destroy :redistribute_work_units
     
     # Available Nodes haven't used up their maxiumum number of workers yet.
     named_scope :available, {
@@ -79,6 +79,11 @@ module CloudCrowd
       work_units.all(:select => 'worker_pid').map(&:worker_pid)
     end
     
+    # Release all of this Node's WorkUnits for other nodes to take.
+    def release_work_units
+      WorkUnit.update_all('node_record_id = null, worker_pid = null', "node_record_id = #{id}")
+    end
+    
     # The JSON representation of a NodeRecord includes its worker_pids.
     def to_json(opts={})
       { 'host'    => host,
@@ -90,11 +95,10 @@ module CloudCrowd
     
     private
     
-    # When a Node shuts down, we free up all of the WorkUnits that it had
-    # reserved, and they become available for others to pick up. Redistribute
-    # the WorkUnits in a separate thread to avoid delaying Node shutdown.
-    def clear_work_units
-      WorkUnit.update_all('node_record_id = null, worker_pid = null', "node_record_id = #{id}")
+    # When a Node exits, release its WorkUnits and redistribute them to others. 
+    # Redistribute in a separate thread to avoid delaying shutdown.
+    def redistribute_work_units
+      release_work_units
       Thread.new { WorkUnit.distribute_to_nodes }
     end
     

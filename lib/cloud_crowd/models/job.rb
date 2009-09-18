@@ -67,7 +67,8 @@ module CloudCrowd
     end
     
     # Cleaning up after a job will remove all of its files from S3 or the
-    # filesystem. Destroying a Job will cleanup_assets first.
+    # filesystem. Destroying a Job will cleanup_assets first. Run this in a 
+    # separate thread to get out of the transaction's way.
     # TODO: Convert this into a 'cleanup' work unit that gets run by a worker.
     def cleanup_assets
       AssetStore.new.cleanup(self)
