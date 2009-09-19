@@ -81,6 +81,7 @@ module CloudCrowd
       @server.log_file = CloudCrowd.log_path('node.log')
       @server.daemonize if @daemon
       trap_signals
+      FileUtils.mkdir_p(CloudCrowd.log_path) if @daemon && !File.exists?(CloudCrowd.log_path)
       asset_store
       @server_thread   = Thread.new { @server.start }
       check_in(true)

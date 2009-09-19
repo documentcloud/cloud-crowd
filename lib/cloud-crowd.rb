@@ -114,13 +114,15 @@ module CloudCrowd
     end
     
     # The path that daemonized servers and nodes will log to.
-    def log_path(log_file)
-      File.join(config[:log_path] || LOG_PATH, log_file)
+    def log_path(log_file=nil)
+      @log_path ||= config[:log_path] || LOG_PATH
+      log_file ? File.join(@log_path, log_file) : @log_path
     end
     
     # The path in which daemonized servers and nodes will store their pids.
-    def pid_path(pid_file)
-      File.join(config[:pid_path] || PID_PATH, pid_file)
+    def pid_path(pid_file=nil)
+      @pid_path ||= config[:pid_path] || PID_PATH
+      pid_file ? File.join(@pid_path, pid_file) : @pid_path
     end
     
     # The standard RestClient options for the central server talking to nodes,
