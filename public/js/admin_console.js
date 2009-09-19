@@ -18,7 +18,7 @@ window.Console = {
   DISPLAY_STATUS_MAP : ['unknown', 'processing', 'succeeded', 'failed', 'splitting', 'merging'],    
   
   // Images to preload
-  PRELOAD_IMAGES : ['/images/server_error.png'],
+  PRELOAD_IMAGES : ['images/server_error.png'],
   
   // All options for drawing the system graphs.
   GRAPH_OPTIONS : {
@@ -53,7 +53,7 @@ window.Console = {
   // Request the lastest status of all jobs and workers, re-render or update
   // the DOM to reflect.
   getStatus : function() {
-    $.ajax({url : '/status', dataType : 'json', success : function(resp) {
+    $.ajax({url : 'status', dataType : 'json', success : function(resp) {
       Console._jobs           = resp.jobs;
       Console._nodes          = resp.nodes;
       Console._workUnitCount  = resp.work_unit_count;
@@ -167,7 +167,7 @@ window.Console = {
     var info = Console._workerInfo;
     var row = $(this);
     info.addClass('loading');
-    $.get('/worker/' + row.attr('rel'), null, Console.renderWorkerInfo, 'json');
+    $.get('worker/' + row.attr('rel'), null, Console.renderWorkerInfo, 'json');
     info.css({top : row.offset().top, left : 325});
     info.fadeIn(Console.ANIMATION_SPEED);
     $(document).bind('click', Console.hideWorkerInfo);

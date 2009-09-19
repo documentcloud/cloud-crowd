@@ -14,13 +14,13 @@ body {
   height: 110px;
   position: absolute;
   top: 0; left: 0; right: 0;
-  background: url(/images/header_back.png);
+  background: url(../images/header_back.png);
 }
   #logo {
     position: absolute;
     left: 37px; top: 9px;
     width: 236px; height: 91px;
-    background: url(/images/logo.png);
+    background: url(../images/logo.png);
   }
   
 #disconnected {
@@ -37,7 +37,7 @@ body {
   #disconnected .server_error {
     float: left;
     width: 16px; height: 16px;
-    background: url(/images/server_error.png);
+    background: url(../images/server_error.png);
     opacity: 0.7;
     margin-right: 3px;
   }
@@ -64,7 +64,7 @@ body {
     height: 75px;
     border: 1px solid #5c5c5c;
     -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px;
-    background: transparent url(/images/queue_fill.png) repeat-x 0px -1px;
+    background: transparent url(../images/queue_fill.png) repeat-x 0px -1px;
   }
     #queue.no_jobs #queue_fill {
       opacity: 0.3;
@@ -126,11 +126,11 @@ body {
   }
     #sidebar_top {
       top: 0px;
-      background: url(/images/sidebar_top.png);
+      background: url(../images/sidebar_top.png);
     }
     #sidebar_bottom {
       bottom: 0px;
-      background: url(/images/sidebar_bottom.png);
+      background: url(../images/sidebar_bottom.png);
     }
   #sidebar_header {
     position: absolute;
@@ -164,10 +164,10 @@ body {
       #nodes .node {
         font-size: 11px;
         line-height: 22px;
-        background-image: url(/images/server.png);
+        background-image: url(../images/server.png);
       }
         #nodes .node.busy {
-          background-image: url(/images/server_busy.png);
+          background-image: url(../images/server_busy.png);
         }
           #nodes .node.busy span.busy {
             font-size: 9px;
@@ -178,7 +178,7 @@ body {
         font-size: 10px;
         line-height: 18px;
         cursor: pointer;
-        background-image: url(/images/bullet_green.png);
+        background-image: url(../images/bullet_green.png);
       }
         #nodes .worker:hover {
           border: 1px solid #aaa;
@@ -190,7 +190,7 @@ body {
   position: absolute;
   width: 231px; height: 79px;
   margin: -9px 0 0 -20px;
-  background: url(/images/worker_info.png);
+  background: url(../images/worker_info.png);
   overflow: hidden;
   cursor: pointer;
 }
@@ -201,7 +201,7 @@ body {
     text-shadow: 0px 1px 1px #eee;
   }
     #worker_info.loading #worker_info_inner {
-      background: url(/images/worker_info_loading.gif) no-repeat right bottom;
+      background: url(../images/worker_info_loading.gif) no-repeat right bottom;
       width: 45px; height: 9px;
     }
     #worker_info.awake #worker_details, 
