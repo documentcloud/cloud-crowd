@@ -24,6 +24,9 @@ Commands:
   node          Start up a worker node (only one node per machine, please)
   console       Launch a CloudCrowd console, connected to the central database
   load_schema   Load the schema into the database specified by database.yml
+  
+  server -d [start | stop | restart]    Servers and nodes can be launched as
+  node -d [start | stop | restart]      daemons, then stopped or restarted.
 
 Options:
     EOS
