@@ -69,8 +69,8 @@ Options:
       end
     end
     
-    # Convenience command for quickly spinning up the central server. More 
-    # sophisticated deployments, load-balancing across multiple app servers, 
+    # Convenience command for quickly spinning up the central server. More
+    # sophisticated deployments, load-balancing across multiple app servers,
     # should use the config.ru rackup file directly. This method will start
     # a single Thin server.
     def start_server
