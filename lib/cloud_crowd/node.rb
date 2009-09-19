@@ -27,7 +27,7 @@ module CloudCrowd
     # The response sent back when this node is overloaded.
     OVERLOADED_MESSAGE  = 'Node Overloaded'
     
-    attr_reader :asset_store, :enabled_actions, :host, :port, :server
+    attr_reader :enabled_actions, :host, :port, :central
             
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
@@ -59,13 +59,13 @@ module CloudCrowd
     end
     
     # When creating a node, specify the port it should run on.
-    def initialize(port=DEFAULT_PORT)
+    def initialize(port=nil, daemon=false)
       require 'json'
-      @server           = CloudCrowd.central_server
+      @central          = CloudCrowd.central_server
       @host             = Socket.gethostname
       @enabled_actions  = CloudCrowd.actions.keys
-      @asset_store      = AssetStore.new
       @port             = port || DEFAULT_PORT
+      @daemon           = daemon
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
       @min_memory       = CloudCrowd.config[:min_free_memory]
@@ -75,10 +75,16 @@ module CloudCrowd
     # Starting up a Node registers with the central server and begins to listen
     # for incoming WorkUnits.
     def start
+      @server          = Thin::Server.new('0.0.0.0', @port, self, :signals => false)
+      @server.tag      = 'cloud-crowd-node'
+      @server.pid_file = CloudCrowd.pid_path('node.pid')
+      @server.log_file = CloudCrowd.log_path('node.log')
+      @server.daemonize if @daemon
       trap_signals
-      start_server
-      monitor_system if @max_load || @min_memory
+      asset_store
+      @server_thread   = Thread.new { @server.start }
       check_in(true)
+      monitor_system if @max_load || @min_memory
       @server_thread.join
     end
     
@@ -86,21 +92,26 @@ module CloudCrowd
     # configuration of this Node. If it can't check-in, there's no point in 
     # starting.
     def check_in(critical=false)
-      @server["/node/#{@host}"].put(
+      @central["/node/#{@host}"].put(
         :port             => @port,
         :busy             => @overloaded,
         :max_workers      => CloudCrowd.config[:max_workers],
         :enabled_actions  => @enabled_actions.join(',')
       )
     rescue Errno::ECONNREFUSED
-      puts "Failed to connect to the central server (#{@server.to_s})."
+      puts "Failed to connect to the central server (#{@central.to_s})."
       raise SystemExit if critical
     end
     
     # Before exiting, the Node checks out with the central server, releasing all
     # of its WorkUnits for other Nodes to handle
     def check_out
-      @server["/node/#{@host}"].delete
+      @central["/node/#{@host}"].delete
+    end
+    
+    # Lazy-initialize the asset_store, preferably after the Node has launched.
+    def asset_store
+      @asset_store ||= AssetStore.new
     end
     
     # Is the node overloaded? If configured, checks if the load average is 
@@ -133,13 +144,6 @@ module CloudCrowd
     
     private
     
-    # Launch the Node's Thin server in a separate thread because it blocks.
-    def start_server
-      @server_thread = Thread.new do
-        Thin::Server.start('0.0.0.0', @port, self, :signals => false)
-      end
-    end
-    
     # Launch a monitoring thread that periodically checks the node's load 
     # average and the amount of free memory remaining. If we transition out of 
     # the overloaded state, let central know.
@@ -156,6 +160,7 @@ module CloudCrowd
     
     # Trap exit signals in order to shut down cleanly.
     def trap_signals
+      Signal.trap('QUIT') { shut_down }
       Signal.trap('INT')  { shut_down }
       Signal.trap('KILL') { shut_down }
       Signal.trap('TERM') { shut_down }
@@ -165,7 +170,7 @@ module CloudCrowd
     def shut_down
       @monitor_thread.kill if @monitor_thread
       check_out
-      @server_thread.kill
+      @server_thread.kill if @server_thread
       Process.exit
     end
     

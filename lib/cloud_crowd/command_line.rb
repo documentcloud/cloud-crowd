@@ -31,11 +31,12 @@ Options:
     # Creating a CloudCrowd::CommandLine runs from the contents of ARGV.
     def initialize
       parse_options
-      command = ARGV.shift
+      command     = ARGV.shift
+      subcommand  = ARGV.shift
       case command
       when 'console'      then run_console
-      when 'server'       then run_server
-      when 'node'         then run_node
+      when 'server'       then run_server(subcommand)
+      when 'node'         then run_node(subcommand)
       when 'load_schema'  then run_load_schema
       when 'install'      then run_install
       else                     usage
@@ -53,29 +54,76 @@ Options:
       IRB.start
     end
     
+    # `crowd server` can either 'start', 'stop', or 'restart'.
+    def run_server(subcommand)
+      ensure_config
+      load_code
+      subcommand ||= 'start'
+      case subcommand
+      when 'start'    then start_server
+      when 'stop'     then stop_server
+      when 'restart'  then restart_server
+      end
+    end
+    
     # Convenience command for quickly spinning up the central server. More 
     # sophisticated deployments, load-balancing across multiple app servers, 
     # should use the config.ru rackup file directly. This method will start
-    # a single Thin server, if Thin is installed, otherwise the rackup defaults 
-    # (Mongrel, falling back to WEBrick). The equivalent of Rails' script/server.
-    def run_server
-      ensure_config
-      @options[:port] ||= 9173
-      require 'rubygems'
+    # a single Thin server.
+    def start_server
+      port        = @options[:port] || 9173
+      daemonize   = @options[:daemonize] ? '-d' : ''
+      log_path    = CloudCrowd.log_path('server.log')
+      pid_path    = CloudCrowd.pid_path('server.pid')
       rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
-      if Gem.available? 'thin'
-        exec "thin -e #{@options[:environment]} -p #{@options[:port]} -R #{rackup_path} start"
-      else
-        exec "rackup -E #{@options[:environment]} -p #{@options[:port]} #{rackup_path}"
+      puts "Starting CloudCrowd Central Server on port #{port}..."
+      exec "thin -e #{@options[:environment]} -p #{port} #{daemonize} --tag cloud-crowd-server --log #{log_path} --pid #{pid_path} -R #{rackup_path} start"
+    end
+    
+    # Stop the daemonized central server, if it exists.
+    def stop_server
+      Thin::Server.kill(CloudCrowd.pid_path('server.pid'), 0)
+    end
+    
+    # Restart the daemonized central server.
+    def restart_server
+      stop_server
+      sleep 1
+      start_server
+    end
+    
+    # `crowd node` can either 'start', 'stop', or 'restart'.
+    def run_node(subcommand)
+      ensure_config
+      load_code
+      subcommand ||= 'start'
+      case subcommand
+      when 'start'    then start_node
+      when 'stop'     then stop_node
+      when 'restart'  then restart_node
       end
     end
     
     # Launch a Node. Please only run a single node per machine. The Node process
     # will be long-lived, although its workers will come and go.
-    def run_node
+    def start_node
       ENV['RACK_ENV'] = @options['environment']
       load_code
-      Node.new(@options[:port])
+      port = @options[:port] || Node::DEFAULT_PORT
+      puts "Starting CloudCrowd Node on port #{port}..."
+      Node.new(port, @options[:daemonize])
+    end
+    
+    # If the daemonized Node is running, stop it.
+    def stop_node
+      Thin::Server.kill CloudCrowd.pid_path('node.pid')
+    end
+    
+    # Restart the daemonized Node, if it exists.
+    def restart_node
+      stop_node
+      sleep 1
+      start_node
     end
     
     # Load in the database schema to the database specified in 'database.yml'.
@@ -117,7 +165,8 @@ Options:
     def parse_options
       @options = {
         :environment  => 'production',
-        :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.'
+        :config_path  => ENV['CLOUD_CROWD_CONFIG'] || '.',
+        :daemonize    => false
       }
       @option_parser = OptionParser.new do |opts|
         opts.on('-c', '--config PATH', 'path to configuration directory') do |conf_path|
@@ -128,6 +177,9 @@ Options:
         end
         opts.on('-e', '--environment ENV', 'server environment (sinatra)') do |env|
           @options[:environment] = env
+        end
+        opts.on('-d', '--daemonize', 'run as a background daemon') do |daemonize|
+          @options[:daemonize] = daemonize
         end
         opts.on_tail('-v', '--version', 'show version') do
           require "#{CC_ROOT}/lib/cloud-crowd"

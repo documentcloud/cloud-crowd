@@ -50,6 +50,12 @@ module CloudCrowd
   
   # Root directory of the CloudCrowd gem.
   ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')
+  
+  # Default folder to log daemonized servers and nodes into.
+  LOG_PATH       = 'log'
+  
+  # Default folder to contain the pids of daemonized servers and nodes.
+  PID_PATH       = 'tmp/pids'
     
   # A Job is processing if its WorkUnits are in the queue to be handled by nodes.
   PROCESSING     = 1
@@ -105,6 +111,16 @@ module CloudCrowd
     # configured.
     def central_server
       @central_server ||= RestClient::Resource.new(CloudCrowd.config[:central_server], CloudCrowd.client_options)
+    end
+    
+    # The path that daemonized servers and nodes will log to.
+    def log_path(log_file)
+      File.join(config[:log_path] || LOG_PATH, log_file)
+    end
+    
+    # The path in which daemonized servers and nodes will store their pids.
+    def pid_path(pid_file)
+      File.join(config[:pid_path] || PID_PATH, pid_file)
     end
     
     # The standard RestClient options for the central server talking to nodes,

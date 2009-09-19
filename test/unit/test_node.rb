@@ -9,7 +9,7 @@ class NodeUnitTest < Test::Unit::TestCase
     end
     
     should "instantiate correctly" do
-      assert @node.server.to_s == "http://localhost:9173"
+      assert @node.central.to_s == "http://localhost:9173"
       assert @node.port == 11011
       assert @node.host == Socket.gethostname
       assert @node.enabled_actions.length > 2
@@ -17,8 +17,7 @@ class NodeUnitTest < Test::Unit::TestCase
     end
     
     should "trap signals and launch a server at start" do
-      Signal.expects(:trap).times(3)
-      Thin::Server.expects(:start)
+      Thin::Server.any_instance.expects(:start)
       @node.expects(:check_in)
       @node.start
     end
