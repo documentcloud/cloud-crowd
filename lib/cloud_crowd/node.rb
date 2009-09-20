@@ -75,13 +75,13 @@ module CloudCrowd
     # Starting up a Node registers with the central server and begins to listen
     # for incoming WorkUnits.
     def start
+      FileUtils.mkdir_p(CloudCrowd.log_path) if @daemon && !File.exists?(CloudCrowd.log_path)
       @server          = Thin::Server.new('0.0.0.0', @port, self, :signals => false)
       @server.tag      = 'cloud-crowd-node'
       @server.pid_file = CloudCrowd.pid_path('node.pid')
       @server.log_file = CloudCrowd.log_path('node.log')
       @server.daemonize if @daemon
       trap_signals
-      FileUtils.mkdir_p(CloudCrowd.log_path) if @daemon && !File.exists?(CloudCrowd.log_path)
       asset_store
       @server_thread   = Thread.new { @server.start }
       check_in(true)
