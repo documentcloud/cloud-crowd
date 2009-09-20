@@ -41,9 +41,25 @@ class ActionTest < Test::Unit::TestCase
     end
     
     should "be able to count the number of words in this file" do
-      assert @action.process == 149
+      assert @action.process == 195
     end
             
+  end
+
+
+  context "A CloudCrowd Job without URL input" do
+        
+    setup do
+      @store = CloudCrowd::AssetStore.new
+      @args = [CloudCrowd::PROCESSING, 'inputstring', {'job_id' => 1, 'work_unit_id' => 1}, @store]
+      @action = CloudCrowd.actions['word_count'].new(*@args)
+    end
+    
+    should "should not interpret the input data as an url" do
+      assert_equal 'inputstring', @action.input
+      assert_nil @action.input_path
+    end
+    
   end
   
 end

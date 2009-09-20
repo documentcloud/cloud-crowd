@@ -103,10 +103,13 @@ module CloudCrowd
       @input = JSON.parse(@input)
     end
     
+    def input_is_url?
+      !URI.parse(@input).scheme.nil? rescue false
+    end
+    
     # If the input is a URL, download the file before beginning processing.
     def download_input
-      input_is_url = !!URI.parse(@input) rescue false
-      return unless input_is_url
+      return unless input_is_url?
       Dir.chdir(@work_directory) do
         @input_path = File.join(@work_directory, safe_filename(@input))
         @file_name = File.basename(@input_path, File.extname(@input_path))
