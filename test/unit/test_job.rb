@@ -31,6 +31,11 @@ class JobTest < Test::Unit::TestCase
       assert @job.percent_complete == 100
       assert @job.outputs == "[\"hello\"]"
     end
+
+    should "not throw a FloatDomainError, even when WorkUnits have vanished" do
+      @job.work_units.destroy_all
+      assert @job.percent_complete == 100
+    end
     
     should "be able to create a job from a JSON request" do
       job = CloudCrowd::Job.create_from_request(JSON.parse(<<-EOS
