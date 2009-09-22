@@ -114,7 +114,9 @@ module CloudCrowd
     def percent_complete
       return 99  if merging?
       return 100 if complete?
-      (work_units.complete.count / work_units.count.to_f * 100).round
+      unit_count = work_units.count
+      return 100 if unit_count <= 0
+      (work_units.complete.count / unit_count.to_f * 100).round
     end
     
     # How long has this Job taken?
