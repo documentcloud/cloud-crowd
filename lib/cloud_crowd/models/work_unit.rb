@@ -30,17 +30,14 @@ module CloudCrowd
       return unless WorkUnit.reserve_available
       work_units = WorkUnit.reserved
       available_nodes = NodeRecord.available
-      while ((node = available_nodes.shift) && (unit = work_units.shift)) do
-        if !node.actions.include?(unit.action)
-          work_units.push(unit)
-          next
+      while node = available_nodes.shift and unit = work_units.shift do
+        if node.actions.include? unit.action
+          if node.send_work_unit(unit)
+            available_nodes.push(node) unless node.busy?
+            next
+          end
         end
-        sent = node.send_work_unit(unit)
-        if sent
-          available_nodes.push(node) unless node.busy?
-        else
-          work_units.push(unit)
-        end
+        work_units.push(unit)
       end
     ensure
       WorkUnit.cancel_reservations
