@@ -106,7 +106,7 @@ module CloudCrowd
         :output         => output,
         :time           => time_taken
       })
-      self.job.check_for_completion
+      job && job.check_for_completion
     end
     
     # Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.

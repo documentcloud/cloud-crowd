@@ -48,7 +48,7 @@ module CloudCrowd
     
     # What Actions is this Node able to run?
     def actions
-      enabled_actions.split(',')
+      @actions ||= enabled_actions.split(',')
     end
     
     # Is this Node too busy for more work? Determined by number of workers, or 
