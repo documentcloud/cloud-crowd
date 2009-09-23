@@ -17,10 +17,15 @@ module CloudCrowd
     # Reserved WorkUnits have been marked for distribution by a central server process.
     named_scope :reserved,  {:conditions => {:reservation => $$}, :order => 'updated_at asc'}
     
-    # Attempt to send a list of work_units to nodes with available capacity.
+    # Attempt to send a list of WorkUnits to nodes with available capacity.
     # A single central server process stops the same WorkUnit from being
     # distributed to multiple nodes by reserving it first. The algorithm used
     # should be lock-free.
+    #
+    # We loop over the WorkUnits reserved by this process and try to match them
+    # to Nodes that are capable of handling the Action. WorkUnits get removed 
+    # from the availability list when they are successfully sent, and Nodes get
+    # removed when they are busy or have the action in question disabled.
     def self.distribute_to_nodes
       return unless WorkUnit.reserve_available
       work_units = WorkUnit.reserved
