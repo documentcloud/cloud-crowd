@@ -9,7 +9,7 @@ end
 
 class ActionTest < Test::Unit::TestCase
   
-  context "A CloudCrowd Job" do
+  context "A CloudCrowd::Action" do
         
     setup do
       @store = CloudCrowd::AssetStore.new
@@ -41,13 +41,18 @@ class ActionTest < Test::Unit::TestCase
     end
     
     should "be able to count the number of words in this file" do
-      assert @action.process == 195
+      assert @action.process == 212
+    end
+    
+    should "raise an exception when backticks fail" do
+      def @action.process; `utter failure 2>&1`; end
+      assert_raise(CloudCrowd::Error::CommandFailed) { @action.process }
     end
             
   end
 
 
-  context "A CloudCrowd Job without URL input" do
+  context "A CloudCrowd::Action without URL input" do
         
     setup do
       @store = CloudCrowd::AssetStore.new
