@@ -53,7 +53,8 @@ module CloudCrowd
     # Returns a 503 if this Node is overloaded.
     post '/work' do
       throw :halt, [503, OVERLOADED_MESSAGE] if @overloaded
-      pid = fork { Worker.new(self, JSON.parse(params[:work_unit])).run }
+      unit = JSON.parse(params[:work_unit])
+      pid = fork { Worker.new(self, unit).run }
       Process.detach(pid)
       json :pid => pid
     end
