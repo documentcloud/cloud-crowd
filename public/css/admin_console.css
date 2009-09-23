@@ -191,7 +191,6 @@ body {
   width: 231px; height: 79px;
   margin: -9px 0 0 -20px;
   background: url(../images/worker_info.png);
-  overflow: hidden;
   cursor: pointer;
 }
   #worker_info_inner {
@@ -199,6 +198,7 @@ body {
     line-height: 15px;
     color: #333;
     text-shadow: 0px 1px 1px #eee;
+    overflow: hidden;
   }
     #worker_info.loading #worker_info_inner {
       background: url(../images/worker_info_loading.gif) no-repeat right bottom;
