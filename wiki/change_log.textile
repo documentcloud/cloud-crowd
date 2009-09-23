@@ -1,3 +1,7 @@
+h3. Version 0.2.3
+
+* Fixed regression in @crowd install@, it takes paths again. Plus tests.
+
 h3. Version 0.2.2
 
 * The @crowd@ command now supports daemonized servers and nodes. The paths to store the log and pid files can be configured in *config.yml*. Use:

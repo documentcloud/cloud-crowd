@@ -41,7 +41,7 @@ Options:
       when 'server'       then run_server(subcommand)
       when 'node'         then run_node(subcommand)
       when 'load_schema'  then run_load_schema
-      when 'install'      then run_install
+      when 'install'      then run_install(subcommand)
       else                     usage
       end
     end
@@ -139,9 +139,9 @@ Options:
     
     # Install the required CloudCrowd configuration files into the specified
     # directory, or the current one.
-    def run_install
+    def run_install(install_path)
       require 'fileutils'
-      install_path = ARGV.shift || '.'
+      install_path ||= '.'
       FileUtils.mkdir_p install_path unless File.exists?(install_path)
       install_file "#{CC_ROOT}/config/config.example.yml", "#{install_path}/config.yml"
       install_file "#{CC_ROOT}/config/config.example.ru", "#{install_path}/config.ru"
@@ -224,7 +224,7 @@ Options:
         return unless ['y', 'yes', 'ok'].include? gets.chomp.downcase
       end
       is_dir ? FileUtils.cp_r(source, dest) : FileUtils.cp(source, dest)
-      puts "installed #{dest}"
+      puts "installed #{dest}" unless ENV['RACK_ENV'] == 'test'
     end
     
   end

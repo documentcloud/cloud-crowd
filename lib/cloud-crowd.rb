@@ -33,6 +33,7 @@ module CloudCrowd
   # Autoload all the CloudCrowd internals.
   autoload :Action,       'cloud_crowd/action'
   autoload :AssetStore,   'cloud_crowd/asset_store'
+  autoload :CommandLine,  'cloud_crowd/command_line'
   autoload :Helpers,      'cloud_crowd/helpers'
   autoload :Inflector,    'cloud_crowd/inflector'
   autoload :Job,          'cloud_crowd/models'
@@ -43,7 +44,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
   
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.2.2'
+  VERSION        = '0.2.3'
   
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 3
