@@ -1,3 +1,8 @@
+h3. Version 0.2.2
+
+* The @crowd@ command now supports daemonized servers and nodes. The paths to store the log and pid files can be configured in *config.yml*. Use:
+<pre>crowd -d [server node] [start stop restart]</pre> 
+
 h3. Version 0.2.1
 
 * Adds the ability to distribute work based on (one-minute) load average or available memory. In *config.yml*, specify @max_load@ or @min_free_memory@ (in megabytes). If a node crosses either of those thresholds, it will be considered busy until it goes back over to the good side of the line.

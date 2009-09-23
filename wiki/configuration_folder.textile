@@ -13,12 +13,14 @@ h2. config.yml
 |*aws_secret_key*|Your Amazon Web Services *secret access key*, for S3 storage.|
 |*s3_bucket*|The S3 bucket you'd like to store your CloudCrowd results in.|
 |*s3_authentication*|If this option is turned on with S3 storage, all results will be saved as private files, and the URLs returned will be temporarily authenticated for 24 hours|
-|*local_storage_path*|If using the '*filesystem*' storage, all results will be saved inside of this directory. The default value is @'/tmp/cloud_crowd_storage'@. Useful if you have a networked drive.|
 |*http_authentication*|If this option is turned on, all communication with the central server, including web requests to view the Operations Center, API calls, and requests to and from Nodes, will use HTTP basic authentication with the login and password specified.|
 |*login*|The common login for all CloudCrowd requests via HTTP basic authentication, if enabled.|
 |*password*|The password for all CloudCrowd requests via HTTP basic authentication, if enabled.|
 |*actions_path*|By default CloudCrowd looks in the 'actions' subdirectory of the *configuration folder* for all your installed actions. If you'd prefer to keep them somewhere else, you can specify an *actions_path*.|
 |*work_unit_retries*|The number of separate attempts that will be made to process an individual @WorkUnit@ before marking it as failed.|
+|*local_storage_path*|If using the '*filesystem*' storage, all results will be saved inside of this directory. The default value is @'/tmp/cloud_crowd_storage'@. Useful if you have a networked drive.|
+|*log_path*|Directory for storing server and node log files if daemonized. Defaults to @log@.|
+|*pid_path*|Directory for storing server and node PID files if daemonized. Defaults to @tmp/pids@.|
 
 
 h2. database.yml

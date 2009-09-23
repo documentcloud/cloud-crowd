@@ -49,9 +49,10 @@ irb(main)> load '~/Downloads/shakespeare_word_count.rb'
 => []
 
 # At this point, looking at the Operations Center, you'll see the number of 
-# work units in the queue spike. The next time they check in, the worker daemons
-# will pick them up, and they should be rapidly dispatched. You can twiddle
-# the 'max_workers' setting to see how it affects how fast the job is completed.
+# work units in the queue spike. The central server will immediately dispatch
+# them to the node, causing workers to come online on the screen. You can 
+# twiddle the 'max_workers' setting and restart the node to see how it affects 
+# the speed with which the job is completed.
 
 irb(main)> CloudCrowd::Job.last.display_status
 => "succeeded"
