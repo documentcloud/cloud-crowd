@@ -1,6 +1,6 @@
 h3. Version 0.2.3
 
-* Fixed regression in @crowd install@, it takes paths again. Plus tests.
+* Fixed regression in @crowd install@, it takes paths again. (plus tests)
 
 h3. Version 0.2.2
 

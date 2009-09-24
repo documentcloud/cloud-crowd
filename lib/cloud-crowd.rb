@@ -162,6 +162,9 @@ module CloudCrowd
         @actions[name] = Module.const_get(Inflector.camelize(name))
       end
       @actions
+    rescue NameError => e
+      adjusted_message = "One of your actions failed to load. Please ensure that the name of your action class can be deduced from the name of the file. ex: 'word_count.rb' => 'WordCount'\n#{e.message}" 
+      raise NameError.new(adjusted_message, e.name)
     end
   end
   
