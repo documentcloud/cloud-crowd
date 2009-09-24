@@ -7,6 +7,10 @@ module CloudCrowd
   class WorkUnit < ActiveRecord::Base
     include ModelStatus
     
+    # Size of the maximum signed integer in MySQL -- SQLite has no limit.
+    # We use a random number in (0...MAX_RESERVATION) to reserve work units.
+    MAX_RESERVATION = 2147483647
+    
     belongs_to :job
     belongs_to :node_record
     
@@ -15,7 +19,9 @@ module CloudCrowd
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
     named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
     # Reserved WorkUnits have been marked for distribution by a central server process.
-    named_scope :reserved,  {:conditions => {:reservation => $$}, :order => 'updated_at asc'}
+    named_scope :reserved,  lambda {|reservation_number| 
+      {:conditions => {:reservation => reservation_number}, :order => 'updated_at asc'}
+    }
     
     # Attempt to send a list of WorkUnits to nodes with available capacity.
     # A single central server process stops the same WorkUnit from being
@@ -27,8 +33,8 @@ module CloudCrowd
     # from the availability list when they are successfully sent, and Nodes get
     # removed when they are busy or have the action in question disabled.
     def self.distribute_to_nodes
-      return unless WorkUnit.reserve_available
-      work_units = WorkUnit.reserved
+      return unless reservation_number = WorkUnit.reserve_available
+      work_units = WorkUnit.reserved(reservation_number)
       available_nodes = NodeRecord.available
       while node = available_nodes.shift and unit = work_units.shift do
         if node.actions.include? unit.action
@@ -40,18 +46,20 @@ module CloudCrowd
         work_units.push(unit)
       end
     ensure
-      WorkUnit.cancel_reservations
+      WorkUnit.cancel_reservations(reservation_number)
     end
     
     # Reserves all available WorkUnits for this process. Returns false if there 
     # were none available.
     def self.reserve_available
-      WorkUnit.available.update_all("reservation = #{$$}") > 0
+      reservation_number = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
+      any = WorkUnit.available.update_all("reservation = #{reservation_number}") > 0
+      any && reservation_number
     end
     
     # Cancels all outstanding WorkUnit reservations for this process.
-    def self.cancel_reservations
-      WorkUnit.reserved.update_all('reservation = null')
+    def self.cancel_reservations(reservation_number)
+      WorkUnit.reserved(reservation_number).update_all('reservation = null')
     end
     
     # Cancels all outstanding WorkUnit reservations for all processes. (Useful

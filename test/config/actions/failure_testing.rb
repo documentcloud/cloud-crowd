@@ -2,7 +2,7 @@
 # all of its retries.
 class FailureTesting < CloudCrowd::Action
   
-  def run
+  def process
     if options['attempts'] + 1 >= CloudCrowd.config[:work_unit_retries]
       return 'made it!'
     else
