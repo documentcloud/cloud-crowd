@@ -24,6 +24,9 @@ module CloudCrowd
     # (if configured to do so in config.yml).
     MONITOR_INTERVAL    = 3
     
+    # The interval at which the node regularly checks in with central (5 min).
+    CHECK_IN_INTERVAL   = 300
+    
     # The response sent back when this node is overloaded.
     OVERLOADED_MESSAGE  = 'Node Overloaded'
     
@@ -86,6 +89,7 @@ module CloudCrowd
       asset_store
       @server_thread   = Thread.new { @server.start }
       check_in(true)
+      check_in_periodically
       monitor_system if @max_load || @min_memory
       @server_thread.join
     end
@@ -100,7 +104,7 @@ module CloudCrowd
         :max_workers      => CloudCrowd.config[:max_workers],
         :enabled_actions  => @enabled_actions.join(',')
       )
-    rescue Errno::ECONNREFUSED
+    rescue RestClient::Exception, Errno::ECONNREFUSED
       puts "Failed to connect to the central server (#{@central.to_s})."
       raise SystemExit if critical
     end
@@ -160,6 +164,18 @@ module CloudCrowd
       end
     end
     
+    # If communication is interrupted for external reasons, the central server 
+    # will assume that the node has gone down. Checking in will let central know 
+    # it's still online.
+    def check_in_periodically
+      @check_in_thread = Thread.new do
+        loop do
+          sleep CHECK_IN_INTERVAL
+          check_in
+        end
+      end
+    end
+    
     # Trap exit signals in order to shut down cleanly.
     def trap_signals
       Signal.trap('QUIT') { shut_down }
@@ -170,6 +186,7 @@ module CloudCrowd
     
     # At shut down, de-register with the central server before exiting.
     def shut_down
+      @check_in_thread.kill if @check_in_thread
       @monitor_thread.kill if @monitor_thread
       check_out
       @server_thread.kill if @server_thread
