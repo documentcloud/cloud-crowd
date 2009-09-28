@@ -39,11 +39,12 @@ module CloudCrowd
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result)['pid'])
       touch && true
-    rescue Errno::ECONNREFUSED # Couldn't post to node, assume it's gone away.
-      destroy && false
     rescue RestClient::RequestFailed => e
       raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE
       update_attribute(:busy, true) && false
+    rescue RestClient::Exception, Errno::ECONNREFUSED 
+      # Couldn't post to node, assume it's gone away.
+      destroy && false
     end
     
     # What Actions is this Node able to run?

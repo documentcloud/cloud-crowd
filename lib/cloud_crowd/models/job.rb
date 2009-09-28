@@ -35,7 +35,7 @@ module CloudCrowd
       return queue_for_workers(outs) if merging?
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
-        fire_callback if callback_url
+        Thread.new { fire_callback } if callback_url
       end
       self
     end

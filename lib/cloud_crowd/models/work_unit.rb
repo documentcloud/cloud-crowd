@@ -7,8 +7,8 @@ module CloudCrowd
   class WorkUnit < ActiveRecord::Base
     include ModelStatus
     
-    # Size of the maximum signed integer in MySQL -- SQLite has no limit.
     # We use a random number in (0...MAX_RESERVATION) to reserve work units.
+    # The size of the maximum signed integer in MySQL -- SQLite has no limit.
     MAX_RESERVATION = 2147483647
     
     belongs_to :job
