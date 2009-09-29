@@ -21,11 +21,11 @@ autoload :JSON,         'json'
 autoload :RestClient,   'restclient'
 autoload :RightAws,     'right_aws'
 autoload :Sinatra,      'sinatra'
-autoload :Socket,       'socket'
 autoload :Thin,         'thin'
 autoload :YAML,         'yaml'
 
 # Common code which should really be required in every circumstance.
+require 'socket'
 require 'cloud_crowd/exceptions'
 
 module CloudCrowd

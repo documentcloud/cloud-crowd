@@ -98,10 +98,9 @@ Options:
     
     # `crowd node` can either 'start', 'stop', or 'restart'.
     def run_node(subcommand)
-      ensure_config
       load_code
-      subcommand ||= 'start'
-      case subcommand
+      ENV['RACK_ENV'] = @options['environment']
+      case (subcommand || 'start')
       when 'start'    then start_node
       when 'stop'     then stop_node
       when 'restart'  then restart_node
@@ -111,8 +110,6 @@ Options:
     # Launch a Node. Please only run a single node per machine. The Node process
     # will be long-lived, although its workers will come and go.
     def start_node
-      ENV['RACK_ENV'] = @options['environment']
-      load_code
       port = @options[:port] || Node::DEFAULT_PORT
       puts "Starting CloudCrowd Node on port #{port}..."
       Node.new(port, @options[:daemonize])
