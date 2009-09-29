@@ -1,5 +1,6 @@
 # This is a standard ActiveRecord database.yml file. You can configure it 
-# to use any database that ActiveRecord supports.
+# to use any database that ActiveRecord supports. Only the central server needs
+# this file to be configured -- nodes never connect directly to the database.
 
 :adapter:  mysql
 :encoding: utf8

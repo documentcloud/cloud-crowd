@@ -27,10 +27,10 @@ h2. database.yml
 
 CloudCrowd uses ActiveRecord to manage the central server's database, so you can use the standard configuration for any ActiveRecord compatible database. See the "ActiveRecord Documentation":http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002364 for more information.
 
-To load the CloudCrowd schema into the database specified by *database.yml*, use:
+Only the central server needs to have the database configured in *database.yml*. Nodes will never connect directly to the database. To load the CloudCrowd schema into the database specified by *database.yml*, use:
 
 <pre>
-crowd -c /path/to/configuration/folder load_schema
+crowd load_schema
 </pre>
 
 h2. actions
