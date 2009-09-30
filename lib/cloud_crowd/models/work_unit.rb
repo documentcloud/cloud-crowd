@@ -46,7 +46,7 @@ module CloudCrowd
         work_units.push(unit)
       end
     ensure
-      WorkUnit.cancel_reservations(reservation_number)
+      WorkUnit.cancel_reservations(reservation_number) if reservation_number
     end
     
     # Reserves all available WorkUnits for this process. Returns false if there 
