@@ -60,7 +60,6 @@ module CloudCrowd
     def fire_callback
       begin
         RestClient.post(callback_url, {:job => self.to_json})
-        self.destroy
       rescue RestClient::Exception => e
         puts "Failed to fire job callback. Hmmm, what should happen here?"
       end
