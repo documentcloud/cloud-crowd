@@ -1,5 +1,4 @@
 TODO:
-  * Use the email field to send mail when the Job's gone bad.
   * Job creation UI. Pick an action, add inputs, set options, go.
   * Think about adding a CLEANUP state, with WorkUnits being dispatched to
     workers to clean up a Job's leftover files on S3, instead of the current
@@ -13,6 +12,7 @@ DONE:
   * Finish fleshing out the crowd command.
   * Security. HTTP Basic Auth via config.yml,
   * Security. S3 authenticated URLs.
+  * Use the email field to send mail when the Job's gone bad. (bad idea)
   * Benchmarking mode -- benchmark every single aspect of a job and report it.
   * Pare down the code that the workers are loading to the absolute minimum.
   * Documentation. (document inside of config.yml, too)

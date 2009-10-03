@@ -45,7 +45,7 @@ You should see the node come online in the Operations Center. It's identified by
 <pre>
 crowd console
 
-irb(main)> load '~/Downloads/shakespeare_word_count.rb'
+irb(main)> load '~/Downloads/count_shakespeare.rb'
 => []
 
 # At this point, looking at the Operations Center, you'll see the number of 
