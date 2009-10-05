@@ -1,6 +1,6 @@
 h3. Version 0.2.6
 
-* Jobs are now automatically cleaned up only if the callback_url returns a '201 Created' HTTP status code (Previously, any 200-range code would cause a cleanup).
+* Jobs are now automatically cleaned up only if firing the @callback_url@ returns a *201 Created* HTTP status code (Previously, any 200-range code would cause a cleanup).
 
 h3. Version 0.2.5
 
