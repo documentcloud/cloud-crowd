@@ -55,9 +55,13 @@ module CloudCrowd
     # completion. The <tt>callback_url</tt> may include HTTP basic authentication,
     # if you like:
     #   http://user:password@example.com/job_complete
+    # If the callback URL returns a '201 Created' HTTP status code, CloudCrowd 
+    # will assume that the resource has been successfully created, and the Job
+    # will be cleaned up.
     def fire_callback
       begin
-        RestClient.post(callback_url, {:job => self.to_json})
+        response = RestClient.post(callback_url, {:job => self.to_json})
+        Thread.new { self.destroy } if response && response.code == 201
       rescue RestClient::Exception => e
         puts "Failed to fire job callback. Hmmm, what should happen here?"
       end
