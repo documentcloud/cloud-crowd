@@ -55,3 +55,7 @@ Here's an example of the final JSON representation of a completed job:
   "outputs" : ["http://s3.amazonaws.com/process_pdfs/job_11/unit_94/pdfs.tar"]
 }
 </pre>
+
+h2. Cleaning Up
+
+After your application has finished importing the results of the job, you can clean up all of the files by making an HTTP *DELETE* request to @/jobs/[job_id]@. Alternately, you can respond with an HTTP *201 Created* status code when the *callback_url* is fired, to avoid having to make an additional request. In either case, the job and all of its intermediate and output files will be removed.
