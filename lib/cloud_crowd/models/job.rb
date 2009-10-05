@@ -55,8 +55,6 @@ module CloudCrowd
     # completion. The <tt>callback_url</tt> may include HTTP basic authentication,
     # if you like:
     #   http://user:password@example.com/job_complete
-    # If the callback_url is successfully pinged, we proceed to cleanup the job.
-    # TODO: This should be moved into a Work Unit...
     def fire_callback
       begin
         RestClient.post(callback_url, {:job => self.to_json})
