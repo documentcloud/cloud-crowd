@@ -99,7 +99,7 @@ Options:
     # `crowd node` can either 'start', 'stop', or 'restart'.
     def run_node(subcommand)
       load_code
-      ENV['RACK_ENV'] = @options['environment']
+      ENV['RACK_ENV'] = @options[:environment]
       case (subcommand || 'start')
       when 'start'    then start_node
       when 'stop'     then stop_node
