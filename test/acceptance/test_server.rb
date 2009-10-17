@@ -11,8 +11,8 @@ class ServerTest < Test::Unit::TestCase
   context "The CloudCrowd::Server (Sinatra)" do
         
     setup do
-      CloudCrowd::Job.destroy_all
-      2.times { CloudCrowd::Job.make }
+      Job.destroy_all
+      2.times { Job.make }
     end
     
     should "be able to render the Operations Center (GET /)" do
@@ -52,20 +52,20 @@ class ServerTest < Test::Unit::TestCase
       job_info = JSON.parse(last_response.body)
       assert job_info['percent_complete'] == 0
       assert job_info['work_units'] == 1
-      assert CloudCrowd::Job.last.id == job_info['id']
+      assert Job.last.id == job_info['id']
     end
     
     should "be able to check in on the status of a job" do
-      get("/jobs/#{CloudCrowd::Job.last.id}")
+      get("/jobs/#{Job.last.id}")
       assert last_response.ok?
       assert JSON.parse(last_response.body)['percent_complete'] == 0
     end
     
     should "be able to clean up a job when we're done with it" do
-      id = CloudCrowd::Job.last.id
+      id = Job.last.id
       delete("/jobs/#{id}")
       assert last_response.successful? && last_response.empty?
-      assert !CloudCrowd::Job.find_by_id(id)
+      assert !Job.find_by_id(id)
     end
   
   end

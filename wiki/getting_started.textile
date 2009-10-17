@@ -54,13 +54,13 @@ irb(main)> load '~/Downloads/count_shakespeare.rb'
 # twiddle the 'max_workers' setting and restart the node to see how it affects 
 # the speed with which the job is completed.
 
-irb(main)> CloudCrowd::Job.last.display_status
+irb(main)> Job.last.display_status
 => "succeeded"
 
-irb(main)> CloudCrowd::Job.last.time_taken
+irb(main)> Job.last.time_taken
 => 5.7215
 
-irb(main)> JSON.parse CloudCrowd::Job.last.outputs
+irb(main)> JSON.parse Job.last.outputs
 => [558804]
 </pre>
 

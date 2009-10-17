@@ -14,7 +14,7 @@ class FailingWorkUnitsTest < Test::Unit::TestCase
     }.to_json
     assert browser.last_response.ok? 
     
-    job = CloudCrowd::Job.last
+    job = Job.last
     (CloudCrowd.config[:work_unit_retries] - 1).times do
       job.work_units.each {|unit| unit.fail('failed', 10) }
     end

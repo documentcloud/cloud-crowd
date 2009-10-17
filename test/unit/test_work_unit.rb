@@ -17,14 +17,14 @@ class WorkUnitTest < Test::Unit::TestCase
     
     should "know if its done" do
       assert !@unit.complete?
-      @unit.status = CloudCrowd::SUCCEEDED
+      @unit.status = SUCCEEDED
       assert @unit.complete?
-      @unit.status = CloudCrowd::FAILED
+      @unit.status = FAILED
       assert @unit.complete?
     end
     
     should "have JSON that includes job attributes" do
-      job = CloudCrowd::Job.make
+      job = Job.make
       unit_data = JSON.parse(job.work_units.first.to_json)
       assert unit_data['job_id'] == job.id
       assert unit_data['action'] == job.action

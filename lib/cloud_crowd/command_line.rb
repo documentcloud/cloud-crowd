@@ -55,7 +55,9 @@ Options:
       require 'irb/completion'
       require 'pp'
       load_code
-      connect_to_database(true)
+      connect_to_database true
+      CloudCrowd::Server # Preload server to autoload classes.
+      Object.send(:include, CloudCrowd)
       IRB.start
     end
     

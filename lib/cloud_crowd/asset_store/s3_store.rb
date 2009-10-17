@@ -14,7 +14,7 @@ module CloudCrowd
         raise Error::MissingConfiguration, "An S3 account must be configured in 'config.yml' before 's3' storage can be used" unless valid_conf
         protocol    = @use_auth ? 'https' : 'http'
         port        = @use_auth ? 443 : 80
-        @s3         = RightAws::S3.new(key, secret, :protocol => protocol, :port => port, :multi_thread => true)
+        @s3         = RightAws::S3.new(key, secret, :protocol => protocol, :port => port)
         @bucket     = @s3.bucket(bucket_name)
         @bucket     = @s3.bucket(bucket_name, true) unless @bucket
       end

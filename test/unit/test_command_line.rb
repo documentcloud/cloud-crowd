@@ -5,7 +5,7 @@ class CommandLineTest < Test::Unit::TestCase
   context "A CloudCrowd::CommandLine" do
     
     should "install into the directory that you ask it to" do
-      dir = 'tmp/install_dir'
+      dir = 'tmp/test_install_dir'
       ARGV.replace ['install', dir]
       CloudCrowd::CommandLine.new
       assert File.exists?(dir)
@@ -14,6 +14,16 @@ class CommandLineTest < Test::Unit::TestCase
         assert File.exists?("#{dir}/#{file}")
       end
       FileUtils.rm_r(dir)
+    end
+    
+    should "mix in CloudCrowd to the top level of `crowd console` sessions" do
+      require 'irb'
+      ARGV.replace ['-c', 'test/config', 'console']
+      IRB.expects(:start)
+      CloudCrowd::CommandLine.new
+      ['Job', 'WorkUnit', 'Server', 'Node', 'SUCCEEDED', 'FAILED'].each do |constant|
+        assert Object.constants.include?(constant)
+      end
     end
     
   end
