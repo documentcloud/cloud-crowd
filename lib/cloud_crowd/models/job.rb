@@ -7,6 +7,8 @@ module CloudCrowd
   class Job < ActiveRecord::Base
     include ModelStatus
     
+    CLEANUP_GRACE_PERIOD = 7 # That's a week.
+    
     has_many :work_units, :dependent => :destroy
     
     validates_presence_of :status, :inputs, :action, :options
@@ -14,6 +16,9 @@ module CloudCrowd
     before_validation_on_create :set_initial_status
     after_create                :queue_for_workers
     before_destroy              :cleanup_assets
+    
+    # Jobs that were last updated more than N days ago.
+    named_scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
       
     # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)
@@ -24,6 +29,14 @@ module CloudCrowd
         :email        => h['email'],
         :callback_url => h['callback_url']
       )
+    end
+    
+    # Clean up all jobs beyond a certain age.
+    def self.cleanup_all(opts = {})
+      days = opts[:days] || CLEANUP_GRACE_PERIOD
+      self.complete.older_than(days).find_in_batches(:batch_size => 100) do |jobs|
+        jobs.each {|job| job.destroy }
+      end
     end
     
     # After work units are marked successful, we check to see if all of them have

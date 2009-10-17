@@ -24,6 +24,7 @@ Commands:
   node          Start up a worker node (only one node per machine, please)
   console       Launch a CloudCrowd console, connected to the central database
   load_schema   Load the schema into the database specified by database.yml
+  cleanup       Removes jobs that were finished over --days (7 by default) ago
   
   server -d [start | stop | restart]    Servers and nodes can be launched as
   node -d [start | stop | restart]      daemons, then stopped or restarted.
@@ -42,6 +43,7 @@ Options:
       when 'node'         then run_node(subcommand)
       when 'load_schema'  then run_load_schema
       when 'install'      then run_install(subcommand)
+      when 'cleanup'      then run_cleanup
       else                     usage
       end
     end
@@ -59,7 +61,6 @@ Options:
     
     # `crowd server` can either 'start', 'stop', or 'restart'.
     def run_server(subcommand)
-      ensure_config
       load_code
       subcommand ||= 'start'
       case subcommand
@@ -146,6 +147,13 @@ Options:
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
     
+    # Clean up all Jobs in the CloudCrowd database older than --days old.
+    def run_cleanup
+      load_code
+      connect_to_database(true)
+      Job.cleanup_all(:days => @options[:days])
+    end
+    
     # Print `crowd` usage.
     def usage
       puts "\n#{@option_parser}\n"
@@ -163,6 +171,7 @@ Options:
     end
     
     # Parse all options for all commands.
+    # Valid options are: --config --port --environment --daemonize --days.
     def parse_options
       @options = {
         :environment  => 'production',
@@ -176,11 +185,14 @@ Options:
         opts.on('-p', '--port PORT', 'port number for server (central or node)') do |port_num|
           @options[:port] = port_num
         end
-        opts.on('-e', '--environment ENV', 'server environment (sinatra)') do |env|
+        opts.on('-e', '--environment ENV', 'server environment (defaults to production)') do |env|
           @options[:environment] = env
         end
         opts.on('-d', '--daemonize', 'run as a background daemon') do |daemonize|
           @options[:daemonize] = daemonize
+        end
+        opts.on('--days NUM_DAYS', 'grace period before cleanup (7 by default)') do |days|
+          @options[:days] = days.to_i if days.match(/\A\d+\Z/)
         end
         opts.on_tail('-v', '--version', 'show version') do
           require "#{CC_ROOT}/lib/cloud-crowd"

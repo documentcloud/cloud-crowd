@@ -5,7 +5,7 @@ class JobTest < Test::Unit::TestCase
   context "A CloudCrowd Job" do
         
     setup do
-      @job = CloudCrowd::Job.make
+      @job = Job.make
       @unit = @job.work_units.first
     end
     
@@ -25,7 +25,7 @@ class JobTest < Test::Unit::TestCase
     
     should "know its completion status" do
       assert !@job.all_work_units_complete?
-      @unit.update_attributes(:status => CloudCrowd::SUCCEEDED, :output => '{"output":"hello"}')
+      @unit.update_attributes(:status => SUCCEEDED, :output => '{"output":"hello"}')
       @job.check_for_completion
       assert @job.reload.all_work_units_complete?
       assert @job.percent_complete == 100
@@ -38,7 +38,7 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "be able to create a job from a JSON request" do
-      job = CloudCrowd::Job.create_from_request(JSON.parse(<<-EOS
+      job = Job.create_from_request(JSON.parse(<<-EOS
       { "inputs"       : ["one", "two", "three"],
         "action"       : "graphics_magick",
         "email"        : "bob@example.com",
@@ -60,25 +60,37 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "create jobs with a SPLITTING status for actions that have a split method defined" do
-      job = CloudCrowd::Job.create_from_request({'inputs' => ['1'], 'action' => 'process_pdfs'})
+      job = Job.create_from_request({'inputs' => ['1'], 'action' => 'process_pdfs'})
       assert job.splittable?
       assert job.splitting?
     end
     
     should "fire a callback when a job has finished, successfully or not" do
       @job.update_attribute(:callback_url, 'http://example.com/callback')
-      CloudCrowd::Job.any_instance.stubs(:fire_callback).returns(true)
-      CloudCrowd::Job.any_instance.expects(:fire_callback)
+      Job.any_instance.stubs(:fire_callback).returns(true)
+      Job.any_instance.expects(:fire_callback)
       @job.work_units.first.finish('{"output":"output"}', 10)
       assert @job.all_work_units_complete?
     end
     
     should "have a 'pretty' display of the Job's status" do
       assert @job.display_status == 'processing'
-      @job.update_attribute(:status, CloudCrowd::FAILED)
+      @job.update_attribute(:status, FAILED)
       assert @job.display_status == 'failed'
-      @job.update_attribute(:status, CloudCrowd::MERGING)
+      @job.update_attribute(:status, MERGING)
       assert @job.display_status == 'merging'
+    end
+    
+    should "be able to clean up jobs that have aged beyond their use" do
+      count = Job.count
+      Job.cleanup_all
+      assert count == Job.count
+      Job.record_timestamps = false
+      @job.update_attributes :status => SUCCEEDED, :updated_at => 10.days.ago
+      Job.record_timestamps = true
+      Job.cleanup_all
+      assert count > Job.count
+      assert !Job.find_by_id(@job.id)
     end
             
   end

@@ -5,10 +5,9 @@ TODO:
     in-request cleanup. (see Job#cleanup_assets)
   * Look into Grand Central Dispatch for ideas about how to implement
     Job ordering/piping around.
-  * Add a 'server_name' option, to specify what shows up in the Ops Center.
-  * Make it possible to destroy jobs through the Ops Center.
 
 DONE:
+  * Make it possible to clean up jobs through something like 'crowd cleanup'.
   * Right now actions just process. Think about map / process / reduce.
   * Basic unit tests.
   * Finish fleshing out the crowd command.
