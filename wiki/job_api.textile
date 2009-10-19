@@ -58,4 +58,10 @@ Here's an example of the final JSON representation of a completed job:
 
 h2. Cleaning Up
 
+*With HTTP:*
+
 After your application has finished importing the results of the job, you can clean up all of the files by making an HTTP *DELETE* request to @/jobs/[job_id]@. Alternately, you can respond with an HTTP *201 Created* status code when the *callback_url* is fired, to avoid having to make an additional request. In either case, the job and all of its intermediate and output files will be removed.
+
+*With Cron:*
+
+To clean up all completed jobs over a certain age, you can run @crowd cleanup --days 3@, which will clean up all jobs that finished over three days ago. The number of days defaults to *7*. Using Cron to run @crowd cleanup@ once a day will ensure that you never have more than a week's worth of completed jobs in the database.
