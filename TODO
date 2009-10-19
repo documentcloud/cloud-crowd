@@ -1,13 +1,14 @@
 TODO:
   * Job creation UI. Pick an action, add inputs, set options, go.
-  * Think about adding a CLEANUP state, with WorkUnits being dispatched to
-    workers to clean up a Job's leftover files on S3, instead of the current
-    in-request cleanup. (see Job#cleanup_assets)
   * Look into Grand Central Dispatch for ideas about how to implement
     Job ordering/piping around.
+  * Think about adding priority to the jobs.
 
 DONE:
   * Make it possible to clean up jobs through something like 'crowd cleanup'.
+  * Think about adding a CLEANUP state, with WorkUnits being dispatched to
+    workers to clean up a Job's leftover files on S3, instead of the current
+    in-request cleanup. (see Job#cleanup_assets)
   * Right now actions just process. Think about map / process / reduce.
   * Basic unit tests.
   * Finish fleshing out the crowd command.
