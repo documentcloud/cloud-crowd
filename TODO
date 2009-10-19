@@ -1,8 +1,4 @@
 TODO:
-  * Job creation UI. Pick an action, add inputs, set options, go.
-  * Look into Grand Central Dispatch for ideas about how to implement
-    Job ordering/piping around.
-  * Think about adding priority to the jobs.
 
 DONE:
   * Make it possible to clean up jobs through something like 'crowd cleanup'.
@@ -11,6 +7,9 @@ DONE:
     in-request cleanup. (see Job#cleanup_assets)
   * Right now actions just process. Think about map / process / reduce.
   * Basic unit tests.
+  * Job creation UI. Pick an action, add inputs, set options, go. (not needed)
+  * Look into Grand Central Dispatch for ideas about how to implement
+    Job ordering/piping around.
   * Finish fleshing out the crowd command.
   * Security. HTTP Basic Auth via config.yml,
   * Security. S3 authenticated URLs.
