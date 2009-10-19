@@ -1,8 +1,8 @@
 h3. Version 0.2.7
 
 * A @crowd cleanup --days DAYS@ command is now available, for cleaning up all completed jobs older than a certain age.
-* The CloudCrowd module is now mixed in at the top level in 'crowd console' sessions, for easier access.
-* Bugfixes for RACK_ENV not being properly set in Nodes, and Timeout::Errors not being rescued in server-node communication.
+* The CloudCrowd module is now mixed in at the top level in @crowd console@ sessions, for easier access.
+* Bugfixes for *RACK_ENV* not being properly set in Nodes, and *Timeout::Error* not being rescued in server-node communication.
 
 h3. Version 0.2.6
 
