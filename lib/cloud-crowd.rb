@@ -152,11 +152,11 @@ module CloudCrowd
     # Actions, then install only those into the actions directory.
     def actions
       return @actions if @actions
-      returning @actions = {} do
-        (default_actions + installed_actions + custom_actions).each do |path|
-          load_action_from(path)
-        end
+      @actions = {}
+      (default_actions + installed_actions + custom_actions).each do |path|
+        load_action_from(path)
       end
+      @actions
     rescue NameError => e
       adjusted_message = "One of your actions failed to load. Please ensure that the name of your action class can be deduced from the name of the file. ex: 'word_count.rb' => 'WordCount'\n#{e.message}" 
       raise NameError.new(adjusted_message, e.name)
