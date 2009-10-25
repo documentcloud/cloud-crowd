@@ -100,7 +100,7 @@ module CloudCrowd
     
     # This job is splittable if its Action has a +split+ method.
     def splittable?
-      self.action_class.public_instance_methods.include?(:split)
+      self.action_class.public_instance_methods.map {|m| m.to_sym }.include? :split
     end
     
     # This job is done splitting if it's finished with its splitting work units.
@@ -110,7 +110,7 @@ module CloudCrowd
     
     # This job is mergeable if its Action has a +merge+ method.
     def mergeable?
-      self.processing? && self.action_class.public_instance_methods.include?(:merge)
+      self.processing? && self.action_class.public_instance_methods.map {|m| m.to_sym }.include?(:merge)
     end
     
     # Retrieve the class for this Job's Action.
