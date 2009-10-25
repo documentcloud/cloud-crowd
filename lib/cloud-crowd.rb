@@ -153,18 +153,31 @@ module CloudCrowd
     def actions
       return @actions if @actions
       @actions = {}
-      default_actions   = Dir["#{ROOT}/actions/*.rb"]
-      installed_actions = Dir["#{@config_path}/actions/*.rb"]
-      custom_actions    = Dir["#{CloudCrowd.config[:actions_path]}/*.rb"]
       (default_actions + installed_actions + custom_actions).each do |path|
-        name = File.basename(path, File.extname(path))
-        require path
-        @actions[name] = Module.const_get(Inflector.camelize(name))
+        load_action_from(path)
       end
       @actions
     rescue NameError => e
       adjusted_message = "One of your actions failed to load. Please ensure that the name of your action class can be deduced from the name of the file. ex: 'word_count.rb' => 'WordCount'\n#{e.message}" 
       raise NameError.new(adjusted_message, e.name)
+    end
+    
+    def default_actions
+      Dir["#{ROOT}/actions/*.rb"]
+    end
+    
+    def installed_actions
+      Dir["#{@config_path}/actions/*.rb"]
+    end
+    
+    def custom_actions
+       CloudCrowd.config[:actions_path] ? Dir["#{CloudCrowd.config[:actions_path]}/*.rb"] : []
+    end
+    
+    def load_action_from(path)
+      name = File.basename(path, File.extname(path))
+      require path
+      @actions[name] = Module.const_get(Inflector.camelize(name))
     end
   end
   
