@@ -3,7 +3,8 @@ require 'test_helper'
 class ConfigurationTest < Test::Unit::TestCase
 
   context "CloudCrowd Configuration" do
-    [:setup, :teardown].each{|hook| send(hook){clear_loaded_actions!}}
+    
+    setup { CloudCrowd.instance_variable_set("@actions", nil) }
 
     should "have read in config.yml" do
       assert CloudCrowd.config[:max_workers] == 10
@@ -24,32 +25,17 @@ class ConfigurationTest < Test::Unit::TestCase
       assert CloudCrowd.actions['graphics_magick']  == GraphicsMagick
     end
     
-    should "not find custom actions unless CloudCrowd.config[:actions_path] is set" do
-      clear_loaded_actions!
+    should "not find custom actions unless 'actions_path' is set" do
       CloudCrowd.config[:actions_path] = nil
-      CloudCrowd.expects(:default_actions).returns(sample_action_list)
-      CloudCrowd.expects(:installed_actions).returns(sample_action_list)
-      CloudCrowd.expects(:load_action_from).times(2)
-      CloudCrowd.actions
+      assert CloudCrowd.actions.keys.length == 4
     end
     
-    should "find custom actions when CloudCrowd.config[:actions_path] is set" do
-      clear_loaded_actions!
-      CloudCrowd.config[:actions_path] = "#{File.join(File.dirname(__FILE__), "..", "config/actions")}"
-      CloudCrowd.expects(:default_actions).returns(sample_action_list)
-      CloudCrowd.expects(:installed_actions).returns(sample_action_list)
-      CloudCrowd.expects(:load_action_from).times(3)
-      CloudCrowd.actions
+    should "find custom actions when 'actions_path' is set" do
+      CloudCrowd.config[:actions_path] = "#{CloudCrowd::ROOT}/test/config/actions/custom"
+      assert CloudCrowd.actions['echo_action'] == EchoAction
+      assert CloudCrowd.actions.keys.length == 5
     end
-         
+            
   end
   
-  private
-    def clear_loaded_actions!
-      CloudCrowd.instance_variable_set("@actions", nil)
-    end
-    
-    def sample_action_list
-      ['hello']
-    end
 end
