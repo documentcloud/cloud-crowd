@@ -39,19 +39,20 @@ module CloudCrowd
     # action in question disabled.
     def self.distribute_to_nodes
       begin
-        return unless reservation_number = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT)
-        work_units = WorkUnit.reserved(reservation_number)
-        available_nodes = NodeRecord.available
-        while node = available_nodes.shift and unit = work_units.shift do
-          if node.actions.include? unit.action
-            if node.send_work_unit(unit)
-              available_nodes.push(node) unless node.busy?
-              next
+        begin
+          return unless reservation_number = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT)
+          work_units = WorkUnit.reserved(reservation_number)
+          available_nodes = NodeRecord.available
+          while node = available_nodes.shift and unit = work_units.shift do
+            if node.actions.include? unit.action
+              if node.send_work_unit(unit)
+                available_nodes.push(node) unless node.busy?
+                next
+              end
             end
+            work_units.push(unit)
           end
-          work_units.push(unit)
-        end
-        retry if work_units.empty? && !available_nodes.empty?
+        end until !work_units.empty? && available_nodes.empty?
       ensure
         WorkUnit.cancel_reservations(reservation_number) if reservation_number
       end
