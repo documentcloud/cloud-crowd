@@ -38,24 +38,23 @@ module CloudCrowd
     # successfully sent, and Nodes get removed when they are busy or have the 
     # action in question disabled.
     def self.distribute_to_nodes
-      begin
-        begin
-          return unless reservation_number = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT)
-          work_units = WorkUnit.reserved(reservation_number)
-          available_nodes = NodeRecord.available
-          while node = available_nodes.shift and unit = work_units.shift do
-            if node.actions.include? unit.action
-              if node.send_work_unit(unit)
-                available_nodes.push(node) unless node.busy?
-                next
-              end
+      loop do
+        return unless reservation_number = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT)
+        work_units = WorkUnit.reserved(reservation_number)
+        available_nodes = NodeRecord.available
+        while node = available_nodes.shift and unit = work_units.shift do
+          if node.actions.include? unit.action
+            if node.send_work_unit(unit)
+              available_nodes.push(node) unless node.busy?
+              next
             end
-            work_units.push(unit)
           end
-        end until !work_units.empty? && available_nodes.empty?
-      ensure
-        WorkUnit.cancel_reservations(reservation_number) if reservation_number
+          work_units.push(unit)
+        end
+        return if work_units.any? || available_nodes.empty?
       end
+    ensure
+      WorkUnit.cancel_reservations(reservation_number) if reservation_number
     end
     
     # Reserves all available WorkUnits for this process. Returns false if there 
