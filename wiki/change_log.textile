@@ -1,8 +1,8 @@
 h3. Version 0.2.8
 
-* WorkUnit.distribute_to_nodes has been optimized to run in chunks (of 25). CloudCrowd installations with many thousands of work units in the job queue should see a speed up in server throughput.
-* Only try to load in actions from the 'actions_path' if it's specified (chad)
-* Fixed checking for 'split' and 'merge' methods in Ruby 1.9 (uiltondutra)
+* @WorkUnit.distribute_to_nodes@ has been optimized to run in chunks (of 25). CloudCrowd installations with many thousands of work units in the job queue should see a speed up in server throughput.
+* Only try to load in actions from the 'actions_path' if it's specified *(chad)*
+* Fixed checking for 'split' and 'merge' methods in Ruby 1.9 *(uiltondutra)*
 
 h3. Version 0.2.7
 
