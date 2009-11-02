@@ -65,6 +65,7 @@ module CloudCrowd
     # When creating a node, specify the port it should run on.
     def initialize(port=nil, daemon=false)
       require 'json'
+      CloudCrowd.identity = :node
       @central          = CloudCrowd.central_server
       @host             = Socket.gethostname
       @enabled_actions  = CloudCrowd.actions.keys

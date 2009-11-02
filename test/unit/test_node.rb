@@ -8,6 +8,10 @@ class NodeUnitTest < Test::Unit::TestCase
       @node = Node.new(11011).instance_variable_get(:@app)
     end
     
+    should "set the identity of the Ruby instance" do
+      assert CloudCrowd.node?
+    end
+    
     should "instantiate correctly" do
       assert @node.central.to_s == "http://localhost:9173"
       assert @node.port == 11011

@@ -112,6 +112,12 @@ module CloudCrowd
       json nil
     end
     
+    # At initialization record the identity of this Ruby instance as a server.
+    def initialize(*args)
+      super(*args)
+      CloudCrowd.identity = :server
+    end
+    
   end
   
 end

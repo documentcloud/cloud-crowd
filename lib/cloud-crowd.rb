@@ -87,6 +87,7 @@ module CloudCrowd
   
   class << self
     attr_reader :config
+    attr_accessor :identity
     
     # Configure CloudCrowd by passing in the path to <tt>config.yml</tt>.
     def configure(config_path)
@@ -169,6 +170,17 @@ module CloudCrowd
       installed_actions = Dir["#{@config_path}/actions/*.rb"]
       custom_actions    = CloudCrowd.config[:actions_path] ? Dir["#{CloudCrowd.config[:actions_path]}/*.rb"] : []
       default_actions + installed_actions + custom_actions
+    end
+    
+    # Is this CloudCrowd instance a server? Useful for avoiding loading unneeded
+    # code from actions.
+    def server?
+      @identity == :server
+    end
+    
+    # Or is it a node?
+    def node?
+      @identity == :node
     end
     
   end

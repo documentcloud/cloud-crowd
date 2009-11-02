@@ -15,6 +15,11 @@ class ServerTest < Test::Unit::TestCase
       2.times { Job.make }
     end
     
+    should "set the identity of the Ruby instance" do
+      app.new
+      assert CloudCrowd.server?
+    end
+    
     should "be able to render the Operations Center (GET /)" do
       get '/'
       assert last_response.body.include? '<div id="nodes">'
@@ -28,18 +33,6 @@ class ServerTest < Test::Unit::TestCase
       assert resp['jobs'][0]['percent_complete'] == 0
       assert resp['work_unit_count'] == 2
     end
-    
-    # should "be able to check in a worker daemon, and then check out a work unit" do
-    #   put '/worker', :name => '101@localhost', :thread_status => 'sleeping'
-    #   assert last_response.successful? && last_response.empty?
-    #   post '/work', :worker_name => '101@localhost', :worker_actions => 'graphics_magick'
-    #   checked_out = JSON.parse(last_response.body)
-    #   assert checked_out['action'] == 'graphics_magick'
-    #   assert checked_out['attempts'] == 0
-    #   assert checked_out['status'] == CloudCrowd::PROCESSING
-    #   status_check = JSON.parse(get('/worker/101@localhost').body)
-    #   assert checked_out == status_check
-    # end
     
     should "have a heartbeat" do
       assert get('/heartbeat').body == 'buh-bump'
