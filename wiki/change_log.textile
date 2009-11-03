@@ -1,3 +1,8 @@
+h3. Version 0.2.9
+
+* Added CloudCrowd.server? and CloudCrowd.node? methods, so that action
+  dependencies can more easily be required only in the node.
+
 h3. Version 0.2.8
 
 * @WorkUnit.distribute_to_nodes@ has been optimized to run in chunks (of 25). CloudCrowd installations with many thousands of work units in the job queue should see a speed up in server throughput.
