@@ -21,7 +21,7 @@ class ProcessPdfs < CloudCrowd::Action
       batch_pdfs = pdfs[batch_num*batch_size...(batch_num + 1)*batch_size]
       `tar -czf #{tar_path} #{batch_pdfs.join(' ')}`
     end
-    Dir["*.tar"].map {|tar| save(tar) }.to_json
+    Dir["*.tar"].map {|tar| save(tar) }
   end
 
   # Convert a pdf page into different-sized thumbnails. Grab the text.
