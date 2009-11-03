@@ -31,7 +31,8 @@ module CloudCrowd
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
       @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
-      status == MERGING ? parse_input : download_input
+      parse_input
+      download_input
     end
     
     # Each Action subclass must implement a +process+ method, overriding this.
@@ -98,9 +99,11 @@ module CloudCrowd
       @storage_prefix ||= File.join(path_parts)
     end
     
-    # If we know that the input is JSON, replace it with the parsed form.
+    # If we think that the input is JSON, replace it with the parsed form.
+    # It would be great if the JSON module had an is_json? method.
     def parse_input
-      @input = JSON.parse(@input)
+      return unless ['[', '{'].include? @input[0..0]
+      @input = JSON.parse(@input) rescue @input
     end
     
     def input_is_url?

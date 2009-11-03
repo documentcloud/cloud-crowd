@@ -96,8 +96,8 @@ module CloudCrowd
     # without waiting for the rest of their splitting cousins to complete.
     def finish(result, time_taken)
       if splitting?
-        [JSON.parse(parsed_output(result))].flatten.each do |new_input|
-          WorkUnit.start(job, action, new_input, PROCESSING)
+        [parsed_output(result)].flatten.each do |new_input|
+          WorkUnit.start(job, action, new_input.to_json, PROCESSING)
         end
         self.destroy
         job.set_next_status if job && job.done_splitting?
