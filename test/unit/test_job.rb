@@ -65,6 +65,11 @@ class JobTest < Test::Unit::TestCase
       assert job.splitting?
     end
     
+    should "not accidentally flatten array inputs" do
+      job = Job.create_from_request({'inputs' => [[1,2], [3,4]], 'action' => 'process_pdfs'})
+      assert JSON.parse(job.work_units.first.input) == [1,2]
+    end
+    
     should "fire a callback when a job has finished, successfully or not" do
       @job.update_attribute(:callback_url, 'http://example.com/callback')
       Job.any_instance.stubs(:fire_callback).returns(true)

@@ -87,6 +87,7 @@ module CloudCrowd
     
     # Convenience method for starting a new WorkUnit.
     def self.start(job, action, input, status)
+      input = input.to_json unless input.is_a? String
       self.create(:job => job, :action => action, :input => input, :status => status)
     end
     
@@ -97,7 +98,6 @@ module CloudCrowd
     def finish(result, time_taken)
       if splitting?
         [parsed_output(result)].flatten.each do |new_input|
-          new_input = new_input.to_json unless new_input.is_a? String
           WorkUnit.start(job, action, new_input, PROCESSING)
         end
         self.destroy

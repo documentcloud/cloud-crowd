@@ -45,7 +45,7 @@ module CloudCrowd
       return unless all_work_units_complete?
       set_next_status    
       outs = gather_outputs_from_work_units
-      return queue_for_workers(outs) if merging?
+      return queue_for_workers([outs]) if merging?
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
         Thread.new { fire_callback } if callback_url
@@ -177,7 +177,7 @@ module CloudCrowd
     # away.
     def queue_for_workers(input=nil)
       input ||= JSON.parse(self.inputs)
-      [input].flatten.each {|i| WorkUnit.start(self, action, i, status) }        
+      input.each {|i| WorkUnit.start(self, action, i, status) }        
       self
     end
     

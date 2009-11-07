@@ -19,6 +19,8 @@ sudo gem install cloud-crowd
 
 [[The Configuration Folder]]
 
+[[CloudCrowd on Rails]]
+
 [[Gallery of Actions]]
 
 [[Wish List]]

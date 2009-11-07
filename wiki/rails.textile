@@ -1,0 +1,17 @@
+CloudCrowd can share code with your Rails applications, taking advantage of pre-existing models, and performing expensive database operations in parallel. The precise technique to accomplish this may vary -- not all applications will need to load the entire Rails stack in order to perform a job. At *DocumentCloud*, we store our actions in @app/actions@, and load the Rails environment in order to seamlessly access all of our models, just like during a real web request. Because CloudCrowd forks a worker for each work unit, Rails is only loaded once when a node spins up, and the child processes don't incur the expense of loading it.
+
+Here's an example snippet of code that we use to setup the Rails environment for an action. The @CloudCrowd.node?@ bit ensures that the Rails stack doesn't ever get loaded on the central server.
+
+<pre>
+# Inherit Rails environment from Sinatra.
+RAILS_ROOT = File.expand_path(Dir.pwd)
+RAILS_ENV = ENV['RAILS_ENV'] = ENV['RACK_ENV']
+
+# Load the DocumentCloud environment if we're in a Node context.
+if CloudCrowd.node?
+  require 'rubygems'
+  require 'activerecord'
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  require 'config/environment'
+end
+</pre>
