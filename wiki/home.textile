@@ -25,6 +25,8 @@ sudo gem install cloud-crowd
 
 [[Wish List]]
 
+[[Change Log]]
+
 "RDoc":http://rdoc.info/projects/documentcloud/cloud-crowd
 
 "Google Group":http://groups.google.com/group/cloud-crowd

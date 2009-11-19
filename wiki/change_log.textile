@@ -1,12 +1,14 @@
+h3. Version 0.3.1
+
+* The cleanup of a work unit's temporary directory now happens before the unit is marked as completed or failed, which is important when using the FilesystemStore with failing actions.
+
 h3. Version 0.3.0
 
-* Fixed a bug where passing arrays as @inputs@ to an action would cause the 
-  arrays to be flattened.
+* Fixed a bug where passing arrays as @inputs@ to an action would cause the arrays to be flattened.
 
 h3. Version 0.2.9
 
-* Added @CloudCrowd.server?@ and @CloudCrowd.node?@ methods, so that action
-  dependencies can more easily be required only in the node.
+* Added @CloudCrowd.server?@ and @CloudCrowd.node?@ methods, so that action dependencies can more easily be required only in the node.
 
 h3. Version 0.2.8
 

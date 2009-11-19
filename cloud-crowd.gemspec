@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.3.0'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2009-11-06'
+  s.version   = '0.3.1'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2009-11-19'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -12,21 +12,21 @@ Gem::Specification.new do |s|
     everywhere is black with people and more come streaming from all sides as though
     streets had only one direction.
   EOS
-  
+
   s.authors           = ['Jeremy Ashkenas']
   s.email             = 'jeremy@documentcloud.org'
   s.rubyforge_project = 'cloud-crowd'
-  
+
   s.require_paths     = ['lib']
   s.executables       = ['crowd']
-    
+
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
   s.rdoc_options      << '--title'    << 'CloudCrowd | Parallel Processing for the Rest of Us' <<
                          '--exclude'  << 'test' <<
                          '--main'     << 'README' <<
                          '--all'
-  
+
   s.add_dependency 'sinatra',       ['>= 0.9.4']
   s.add_dependency 'activerecord',  ['>= 2.3.3']
   s.add_dependency 'json',          ['>= 1.1.7']
@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'rack-test',           ['>= 0.4.1']
     s.add_development_dependency 'mocha',               ['>= 0.9.7']
   end
-  
+
   s.files = %w(
 actions/graphics_magick.rb
 actions/process_pdfs.rb
