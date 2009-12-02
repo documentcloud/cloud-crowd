@@ -12,7 +12,7 @@ gem 'sinatra'
 gem 'thin'
 
 # Autoloading for all the pieces which may or may not be needed:
-autoload :ActiveRecord, 'activerecord'
+autoload :ActiveRecord, 'active_record'
 autoload :Benchmark,    'benchmark'
 autoload :Digest,       'digest'
 autoload :ERB,          'erb'
