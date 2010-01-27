@@ -19,6 +19,7 @@ h2. config.yml
 |*actions_path*|By default CloudCrowd looks in the 'actions' subdirectory of the *configuration folder* for all your installed actions. If you'd prefer to keep them somewhere else, you can specify an *actions_path*.|
 |*work_unit_retries*|The number of separate attempts that will be made to process an individual @WorkUnit@ before marking it as failed.|
 |*local_storage_path*|If using the '*filesystem*' storage, all results will be saved inside of this directory. The default value is @'/tmp/cloud_crowd_storage'@. Useful if you have a networked drive.|
+|*temp_storage_path*|Directory where all workers store their scratch files. The default is @'/tmp/cloud_crowd_temp'@|
 |*log_path*|Directory for storing server and node log files if daemonized. Defaults to @log@.|
 |*pid_path*|Directory for storing server and node PID files if daemonized. Defaults to @tmp/pids@.|
 

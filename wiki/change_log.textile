@@ -1,3 +1,7 @@
+h3. Version 0.3.3
+
+* Configurable @temp_storage_path@ for the worker processes *(delagoya)*
+
 h3. Version 0.3.1
 
 * The cleanup of a work unit's temporary directory now happens before the unit is marked as completed or failed, which is important when using the FilesystemStore with failing actions.
