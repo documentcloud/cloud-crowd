@@ -3,3 +3,4 @@
 
 :central_server:          http://localhost:9173
 :storage:                 filesystem
+:temp_storage_path:       /tmp/cloud_crowd_tests
