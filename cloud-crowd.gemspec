@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rest-client',   ['>= 1.0.3']
   s.add_dependency 'right_aws',     ['>= 1.10.0']
   s.add_dependency 'thin',          ['>= 1.2.4']
+  s.add_dependency 'cloudfiles',    ['>= 1.4.6']
 
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'faker',               ['>= 0.3.1']
@@ -58,6 +59,7 @@ lib/cloud-crowd.rb
 lib/cloud_crowd/action.rb
 lib/cloud_crowd/asset_store/filesystem_store.rb
 lib/cloud_crowd/asset_store/s3_store.rb
+lib/cloud_crowd/asset_store/cloudfiles_store.rb
 lib/cloud_crowd/asset_store.rb
 lib/cloud_crowd/command_line.rb
 lib/cloud_crowd/exceptions.rb

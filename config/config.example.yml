@@ -13,7 +13,7 @@
 # :min_free_memory:     150
 
 # The storage back-end that you'd like to use for intermediate and final results
-# of processing. 's3' and 'filesystem' are supported. 'filesystem' should only
+# of processing. 's3', 'filesystem', and 'cloudfiles' are supported. 'filesystem' should only
 # be used in development, on single-machine installations, or networked drives.
 # If you *are* developing an action, filesystem is certainly faster and easier.
 :storage:             s3
@@ -28,6 +28,11 @@
 # straight URLs to the files on S3.
 :s3_bucket:           [your CloudCrowd bucket]
 :s3_authentication:   no
+
+# Cloudfiles
+:cloudfiles_username:  [your Rackspace Cloud Files username]
+:cloudfiles_api_key:   [your Rackspace Cloud Files API key]
+:cloudfiles_container: [your Rackspace Cloud Files container]
 
 # The following settings configure local paths. 'local_storage_path' is the 
 # directory in which all files will be saved if you're using the 'filesystem'
