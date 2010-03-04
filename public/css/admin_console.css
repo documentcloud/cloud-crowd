@@ -22,7 +22,7 @@ body {
     width: 236px; height: 91px;
     background: url(../images/logo.png);
   }
-  
+
 #disconnected {
   position: absolute;
   top: 122px; right: 15px;
@@ -48,6 +48,21 @@ body {
   height: 77px;
   overflow: hidden;
 }
+  #additional_jobs {
+    position: absolute;
+    left: 0px;
+    top: 1px;
+    height: 75px;
+    width: 100%;
+    opacity: 0.7;
+    text-align: center;
+    z-index: 10;
+    padding-top: 25px;
+    font: 2em Arial, sans-serif;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+
   #no_jobs {
     text-align: left;
     position: absolute;
@@ -105,7 +120,7 @@ body {
       top: 8px; left: 8px;
       z-index: 10;
     }
-    
+
 #sidebar {
   position: absolute;
   top: 120px; left: 10px; bottom: 10px;
@@ -185,7 +200,7 @@ body {
           border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
           background-color: #ccc;
         }
-      
+
 #worker_info {
   position: absolute;
   width: 231px; height: 79px;
@@ -204,15 +219,15 @@ body {
       background: url(../images/worker_info_loading.gif) no-repeat right bottom;
       width: 45px; height: 9px;
     }
-    #worker_info.awake #worker_details, 
+    #worker_info.awake #worker_details,
     #worker_sleeping {
       display: block;
     }
-    #worker_details, #worker_info.loading #worker_details, 
+    #worker_details, #worker_info.loading #worker_details,
     #worker_info.loading #worker_sleeping, #worker_info.awake #worker_sleeping {
       display: none;
     }
-      
+
 #graphs {
   position: absolute;
   padding: 17px 15px 15px 17px;
