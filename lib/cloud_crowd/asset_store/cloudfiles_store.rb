@@ -16,18 +16,18 @@ module CloudCrowd
         @container = @cloud.container container
       end
       
-      # Save a finished file from local storage to Cloud FIles.
+      # Save a finished file from local storage to Cloud Files.
       def save(local_path, save_path)
         object = @container.create_object save_path, true
         object.load_from_filename local_path
         object.public_url
       end
             
-      # Remove all of a Job's resulting files from S3, both intermediate and finished.
+      # Remove all of a Job's resulting files from Cloud Files, both intermediate and finished.
       def cleanup(job)
-          @container.objects(:path => "#{job.action}/job_#{job.id}").each do |object|
+          @container.objects(:prefix => "#{job.action}/job_#{job.id}").each do |object|
             begin
-              @container.delete_object object.name
+              @container.delete_object object
             rescue
               log "failed to delete #{job.action}/job_#{job.id}"
             end
