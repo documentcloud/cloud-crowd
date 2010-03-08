@@ -45,8 +45,12 @@
 :login:               [your login name]
 :password:            [your password]
 
-# Disable the default built-in actions
+# Disable all the default built-in actions
 # :disable_default_actions: true
+
+# Disable specific actions for the node
+# Use this if you want to disable a limited number of actions
+# :disabled_actions: ['word_count']
 
 # By default, CloudCrowd looks for installed actions inside the 'actions'
 # subdirectory of this configuration folder. 'actions_path' allows you to load
