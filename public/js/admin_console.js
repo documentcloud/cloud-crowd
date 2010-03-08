@@ -9,7 +9,7 @@ window.Console = {
   MAX_DATA_POINTS : 100,
 
   // Milliseconds between polling the central server for updates to Job progress.
-  POLL_INTERVAL : 3000,
+  POLL_INTERVAL : 10000,
 
   // Default speed for all animations.
   ANIMATION_SPEED : 300,
