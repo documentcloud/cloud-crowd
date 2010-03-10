@@ -49,6 +49,8 @@ module CloudCrowd
               available_nodes.push(node) unless node.busy?
               next
             end
+          else
+            unit.cancel_reservation
           end
           work_units.push(unit)
         end
@@ -137,6 +139,11 @@ module CloudCrowd
         :worker_pid   => nil,
         :attempts     => self.attempts + 1
       })
+    end
+
+    # If the node can't process the unit, cancel it's reservation
+    def cancel_reservation
+      update_attributes!(:reservation => nil)
     end
 
     # When a Node checks out a WorkUnit, establish the connection between
