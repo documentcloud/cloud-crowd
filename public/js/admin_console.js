@@ -98,17 +98,7 @@ window.Console = {
     var totalWidth = this._queue.width();
     var jobIds = [];
 
-    // to avoid script meltdown, only render the first 25 jobs
-    var allJobs
-    if (this._jobs.length <= 25) {
-      allJobs = this._jobs;
-      $('#additional_jobs').hide();
-    } else {
-      allJobs = this._jobs.slice(0,24);
-      $('#additional_jobs').show();
-    }
-
-    $.each(allJobs, function() {
+    $.each(this._jobs, function() {
       jobIds.push(this.id);
       totalUnits += this.work_units;
     });
@@ -120,7 +110,7 @@ window.Console = {
         });
       }
     });
-    $.each(allJobs, function() {
+    $.each(this._jobs, function() {
       this.width  = (this.work_units / totalUnits) * 100;
       var jobEl = $('#job_' + this.id);
       jobEl[0] ? Console.updateJob(this, jobEl) : Console.renderJob(this);

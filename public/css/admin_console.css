@@ -48,21 +48,6 @@ body {
   height: 77px;
   overflow: hidden;
 }
-  #additional_jobs {
-    position: absolute;
-    left: 0px;
-    top: 1px;
-    height: 75px;
-    width: 100%;
-    opacity: 0.7;
-    text-align: center;
-    z-index: 10;
-    padding-top: 25px;
-    font: 2em Arial, sans-serif;
-    color: #ffffff;
-    text-transform: uppercase;
-  }
-
   #no_jobs {
     text-align: left;
     position: absolute;
