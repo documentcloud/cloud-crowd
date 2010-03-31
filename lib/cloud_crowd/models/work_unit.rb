@@ -13,7 +13,7 @@ module CloudCrowd
 
     # We only reserve a certain number of WorkUnits in a single go, to avoid
     # reserving the entire table.
-    RESERVATION_LIMIT = 1
+    RESERVATION_LIMIT = 25
 
     belongs_to :job
     belongs_to :node_record
@@ -141,7 +141,7 @@ module CloudCrowd
       })
     end
 
-    # If the node can't process the unit, cancel it's reservation
+    # If the node can't process the unit, cancel it's reservation.
     def cancel_reservation
       update_attributes!(:reservation => nil)
     end
