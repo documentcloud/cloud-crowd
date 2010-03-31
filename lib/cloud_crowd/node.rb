@@ -68,7 +68,7 @@ module CloudCrowd
       CloudCrowd.identity = :node
       @central          = CloudCrowd.central_server
       @host             = Socket.gethostname
-      @enabled_actions  = CloudCrowd.actions.keys
+      @enabled_actions  = CloudCrowd.actions.keys - (CloudCrowd.config[:disabled_actions] || [])
       @port             = port || DEFAULT_PORT
       @daemon           = daemon
       @overloaded       = false
