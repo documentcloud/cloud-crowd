@@ -14,7 +14,7 @@ module CloudCrowd
   # [delete /jobs/:job_id] Clean up a Job when you're done downloading the results. Removes all intermediate files.
   #
   # == Internal Workers API
-  # [puts /node/:host] Registers a new Node, making it available for processing.
+  # [put /node/:host] Registers a new Node, making it available for processing.
   # [delete /node/:host] Removes a Node from the registry, freeing up any WorkUnits that it had checked out.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
   class Server < Sinatra::Base
@@ -46,6 +46,11 @@ module CloudCrowd
         'job_count'       => Job.incomplete.count,
         'work_unit_count' => WorkUnit.incomplete.count
       )
+    end
+
+    # Get the last 100 lines of log messages.
+    get '/log' do
+      `tail -n 100 #{CloudCrowd.log_path('server.log')}`
     end
 
     # Get the JSON for what a worker is up to.

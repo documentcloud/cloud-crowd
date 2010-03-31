@@ -91,11 +91,17 @@ body {
     }
   #sidebar_header {
     position: absolute;
-    width: 250px;
+    width: 283px;
     top: 5px; left: 8px;
     color: #404040;
     text-shadow: 0px 1px 1px #eee;
   }
+    #tail_log {
+      text-transform: none;
+      text-decoration: underline;
+      cursor: pointer;
+      float: right;
+    }
     #sidebar_header.no_nodes .no_nodes,
     #sidebar_header .has_nodes {
       display: block;

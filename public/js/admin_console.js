@@ -47,6 +47,7 @@ window.Console = {
     this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
     $('#nodes .worker').live('click', Console.getWorkerInfo);
+    $('#tail_log').bind('click', Console.tailLog);
     $('#workers_legend').css({background : this.WORKERS_COLOR});
     $('#nodes_legend').css({background : this.NODES_COLOR});
     this.getStatus();
@@ -70,6 +71,16 @@ window.Console = {
     }, error : function(request, status, errorThrown) {
       if (!Console._disconnected.is(':visible')) Console._disconnected.fadeIn(Console.ANIMATION_SPEED);
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
+    }});
+  },
+
+  // Fetch the last 100 lines of log from the server.
+  tailLog : function() {
+    $.ajax({url : 'log', success : function(resp) {
+      var win = window.open('');
+      win.document.open();
+      win.document.write('<pre>' + resp + '</pre>');
+      win.document.close();
     }});
   },
 
