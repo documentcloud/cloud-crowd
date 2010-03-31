@@ -38,7 +38,7 @@ module CloudCrowd
     # true if the WorkUnit was dispatched successfully.
     def send_work_unit(unit)
       result = node['/work'].post(:work_unit => unit.to_json)
-      unit.assign_to(self, JSON.parse(result)['pid'])
+      unit.assign_to(self, JSON.parse(result.body)['pid'])
       touch && true
     rescue RestClient::RequestFailed => e
       raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE

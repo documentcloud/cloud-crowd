@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra',       ['~> 0.9']
   s.add_dependency 'activerecord',  ['~> 2.3']
   s.add_dependency 'json',          ['>= 1.1.7']
-  s.add_dependency 'rest-client',   ['~> 1.0']
+  s.add_dependency 'rest-client',   ['>= 1.4']
   s.add_dependency 'thin',          ['>= 1.2.4']
 
   if s.respond_to?(:add_development_dependency)
