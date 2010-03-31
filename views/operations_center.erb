@@ -23,12 +23,24 @@
       Disconnected. Attempting to reconnect&hellip;
     </div>
 
-    <div id="queue">
-      <div id="no_jobs" class="small_caps">no jobs running&hellip;</div>
-      <div id="jobs">
-        <%# Render target for jobs. %>
-      </div>
-      <div id="queue_fill"></div>
+    <div id="stats">
+      <table width="100%">
+        <thead></thead>
+        <tbody>
+          <tr class="data">
+            <td><div id="job_count"></div></td>
+            <td><div id="work_unit_count"></div></td>
+            <td><div id="node_count"></div></td>
+            <td class="last"><div id="worker_count"></div></td>
+          </tr>
+          <tr class="labels">
+            <td>Jobs</td>
+            <td>Work Units</td>
+            <td>Nodes</td>
+            <td>Workers</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div id="sidebar">

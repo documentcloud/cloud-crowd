@@ -42,70 +42,27 @@ body {
     margin-right: 3px;
   }
 
-#queue {
+#stats {
   position: absolute;
-  top: 16px; left: 327px; right: 15px;
+  top: 16px; left: 327px; right: 22px;
   height: 77px;
   overflow: hidden;
+  color: #454545;
 }
-  #no_jobs {
-    text-align: left;
-    position: absolute;
-    bottom: 8px; right: 8px;
-    color: #999;
-    display: none;
+  #stats tr.data td {
+    padding: 0 50px 0 0;
+    font-size: 50px;
   }
-    #queue.no_jobs #no_jobs {
-      display: block;
+    #stats tr.data td.last {
+      padding-right: 0;
     }
-  #queue_fill {
-    position: absolute;
-    left: 0; right: 0; top: 0;
-    height: 75px;
-    border: 1px solid #5c5c5c;
-    -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px;
-    background: transparent url(../images/queue_fill.png) repeat-x 0px -1px;
+    #stats tr.data td div {
+      border-bottom: 1px solid #777;
+    }
+  #stats tr.labels td {
+    font-size: 10px;
+    text-transform: uppercase;
   }
-    #queue.no_jobs #queue_fill {
-      opacity: 0.3;
-    }
-  #queue .job {
-    position: relative;
-    margin-top: 1px;
-    height: 75px;
-    background: blue;
-    float: left;
-    overflow: hidden;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-  }
-    #queue .completion {
-      position: absolute;
-      bottom: -1px;
-      height: 30px;
-      background: black;
-      border: 1px solid white;
-      -moz-border-radius: 10px; -webkit-border-radius: 10px;
-      opacity: 0.5;
-      overflow: hidden;
-    }
-      #queue .completion.zero {
-        border: 0;
-      }
-    #queue .percent_complete {
-      position: absolute;
-      bottom: 8px; left: 8px;
-      color: #c7c7c7;
-      z-index: 10;
-    }
-    #queue .job_id {
-      color: #333;
-      font-size: 14px;
-      position: absolute;
-      top: 8px; left: 8px;
-      z-index: 10;
-    }
-
 #sidebar {
   position: absolute;
   top: 120px; left: 10px; bottom: 10px;

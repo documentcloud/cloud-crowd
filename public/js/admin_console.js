@@ -34,13 +34,16 @@ window.Console = {
 
   // Starting the console begins polling the server.
   initialize : function() {
-    this._jobsHistory = [];
-    this._nodesHistory = [];
-    this._workersHistory = [];
-    this._workUnitsHistory = [];
-    this._histories = [this._jobsHistory, this._nodesHistory, this._workersHistory, this._workUnitsHistory];
-    this._queue = $('#jobs');
-    this._workerInfo = $('#worker_info');
+    this._jobsHistory       = [];
+    this._nodesHistory      = [];
+    this._workersHistory    = [];
+    this._workUnitsHistory  = [];
+    this._histories         = [this._jobsHistory, this._nodesHistory, this._workersHistory, this._workUnitsHistory];
+    this._workerInfo        = $('#worker_info');
+    this._jobCountEl        = $('#job_count');
+    this._workUnitCountEl   = $('#work_unit_count');
+    this._nodeCountEl       = $('#node_count');
+    this._workerCountEl     = $('#worker_count');
     this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
     $('#nodes .worker').live('click', Console.getWorkerInfo);
@@ -54,14 +57,13 @@ window.Console = {
   // the DOM to reflect.
   getStatus : function() {
     $.ajax({url : 'status', dataType : 'json', success : function(resp) {
-      Console._jobs           = resp.jobs;
+      Console._jobCount       = resp.job_count;
       Console._nodes          = resp.nodes;
       Console._workUnitCount  = resp.work_unit_count;
       Console._workerCount    = Console.countWorkers();
       Console.recordDataPoint();
       if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
-      $('#queue').toggleClass('no_jobs', Console._jobs.length <= 0);
-      Console.renderJobs();
+      Console.renderStats();
       Console.renderNodes();
       Console.renderGraphs();
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
@@ -78,43 +80,12 @@ window.Console = {
     return sum;
   },
 
-  // Render an individual job afresh.
-  renderJob : function(job) {
-    this._queue.append('<div class="job" id="job_' + job.id + '" style="width:' + job.width + '%; background: #' + job.color + ';"><div class="completion ' + (job.percent_complete <= 0 ? 'zero' : '') + '" style="width:' + job.percent_complete + '%;"></div><div class="percent_complete">' + job.percent_complete + '%</div><div class="job_id">#' + job.id + '</div></div>');
-  },
-
-  // Animate the update to an existing job in the queue.
-  updateJob : function(job, jobEl) {
-    jobEl.animate({width : job.width + '%'}, this.ANIMATION_SPEED);
-    var completion = $('.completion', jobEl);
-    if (job.percent_complete > 0) completion.removeClass('zero');
-    completion.animate({width : job.percent_complete + '%'}, this.ANIMATION_SPEED);
-    $('.percent_complete', jobEl).html(job.percent_complete + '%');
-  },
-
-  // Render all jobs, calculating relative widths and completions.
-  renderJobs : function() {
-    var totalUnits = 0;
-    var totalWidth = this._queue.width();
-    var jobIds = [];
-
-    $.each(this._jobs, function() {
-      jobIds.push(this.id);
-      totalUnits += this.work_units;
-    });
-    $.each($('.job'), function() {
-      var el = this;
-      if (jobIds.indexOf(parseInt(el.id.replace(/\D/g, ''), 10)) < 0) {
-        $(el).animate({width : '0%'}, Console.ANIMATION_SPEED - 50, 'linear', function() {
-          $(el).remove();
-        });
-      }
-    });
-    $.each(this._jobs, function() {
-      this.width  = (this.work_units / totalUnits) * 100;
-      var jobEl = $('#job_' + this.id);
-      jobEl[0] ? Console.updateJob(this, jobEl) : Console.renderJob(this);
-    });
+  // Render the numeric statistic counts.
+  renderStats : function() {
+    this._jobCountEl.text(this._jobCount);
+    this._workUnitCountEl.text(this._workUnitCount);
+    this._nodeCountEl.text(this._nodes.length);
+    this._workerCountEl.text(this._workerCount);
   },
 
   // Re-render all workers from scratch each time.
@@ -139,7 +110,7 @@ window.Console = {
   // Record the current state and re-render all graphs.
   recordDataPoint : function() {
     var timestamp = (new Date()).getTime();
-    this._jobsHistory.push([timestamp, this._jobs.length]);
+    this._jobsHistory.push([timestamp, this._jobCount]);
     this._nodesHistory.push([timestamp, this._nodes.length]);
     this._workersHistory.push([timestamp, this._workerCount]);
     this._workUnitsHistory.push([timestamp, this._workUnitCount]);
