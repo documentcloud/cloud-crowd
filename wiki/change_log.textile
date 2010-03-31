@@ -1,3 +1,11 @@
+h3. Version 0.4.0
+
+* Updated the Operations Center UI for workflows with large numbers of jobs -- individual jobs are no longer displayed, only aggregate counts. There's a link to grab a quick tail of the last 100 lines of your server log, for debugging.
+* Jonathan Crossman contributed a backend for Rackspace Cloud Files storage.
+* Updated support for recent versions of RestClient.
+* Hardcoded dependencies to ActiveRecord 2.3.x and Sinatra 0.9.x, as more recent versions are incompatible with each other due to Rack 1.1.0.
+* There's now a configuration option to disable individual actions. *(jgeiger)*
+
 h3. Version 0.3.3
 
 * Configurable @temp_storage_path@ for the worker processes *(delagoya)*
