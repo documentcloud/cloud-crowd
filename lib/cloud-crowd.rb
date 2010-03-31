@@ -7,8 +7,6 @@ require 'rubygems'
 gem 'activerecord', '~> 2.0'
 gem 'json'
 gem 'rest-client'
-gem 'right_aws'
-gem 'cloudfiles'
 gem 'sinatra'
 gem 'thin'
 

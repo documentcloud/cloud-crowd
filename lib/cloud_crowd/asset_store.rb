@@ -19,16 +19,10 @@ module CloudCrowd
     # Configure the AssetStore with the specific storage implementation
     # specified by 'storage' in <tt>config.yml</tt>.
     case CloudCrowd.config[:storage]
-    when 'filesystem'
-      include FilesystemStore
-    when 's3'
-      raise Error::StorageNotFound, "The 'right_aws' gem is not installed" unless Gem.available? 'right_aws'
-      include S3Store
-    when 'cloudfiles'
-      raise Error::StorageNotFound, "The 'cloudfiles' gem is not installed" unless Gem.available? 'cloudfiles'
-      include CloudfilesStore
-    else
-      raise Error::StorageNotFound, "#{CloudCrowd.config[:storage]} is not a valid storage back end"
+    when 'filesystem' then include FilesystemStore
+    when 's3'         then include S3Store
+    when 'cloudfiles' then include CloudfilesStore
+    else raise Error::StorageNotFound, "#{CloudCrowd.config[:storage]} is not a valid storage back end"
     end
 
     # Creating the AssetStore ensures that its scratch directory exists.
