@@ -17,13 +17,16 @@ module CloudCrowd
       :order      => 'updated_at asc'
     }
 
+    # Extract the port number from the host id.
+    PORT = /:(\d+)\Z/
+
     # Register a Node with the central server. This happens periodically
     # (once every `Node::CHECK_IN_INTERVAL` seconds). Nodes will be de-registered
     # if they checked in within a reasonable interval.
     def self.check_in(params, request)
       attrs = {
         :ip_address       => request.ip,
-        :port             => params[:port],
+        :port             => params[:host].match(PORT)[1].to_i,
         :busy             => params[:busy],
         :max_workers      => params[:max_workers],
         :enabled_actions  => params[:enabled_actions]
@@ -62,7 +65,7 @@ module CloudCrowd
     # The URL at which this Node may be reached.
     # TODO: Make sure that the host actually has externally accessible DNS.
     def url
-      @url ||= "http://#{host}:#{port}"
+      @url ||= "http://#{host}"
     end
 
     # Keep a RestClient::Resource handy for contacting the Node, including

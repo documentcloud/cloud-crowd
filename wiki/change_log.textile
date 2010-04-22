@@ -1,3 +1,9 @@
+h3. Version 0.4.1
+
+* Making the canonical identifier for nodes the `host:port`, so that it's
+possible (although still undesirable) to have multiple nodes running different
+actions on the same physical machine.
+
 h3. Version 0.4.0
 
 * Updated the Operations Center UI for workflows with large numbers of jobs -- individual jobs are no longer displayed, only aggregate counts. There's a link to grab a quick tail of the last 100 lines of your server log, for debugging.

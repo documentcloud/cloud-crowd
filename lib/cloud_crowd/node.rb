@@ -70,6 +70,7 @@ module CloudCrowd
       @host             = Socket.gethostname
       @enabled_actions  = CloudCrowd.actions.keys - (CloudCrowd.config[:disabled_actions] || [])
       @port             = port || DEFAULT_PORT
+      @id               = "#{@host}:#{@port}"
       @daemon           = daemon
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
@@ -99,8 +100,7 @@ module CloudCrowd
     # configuration of this Node. If it can't check-in, there's no point in
     # starting.
     def check_in(critical=false)
-      @central["/node/#{@host}"].put(
-        :port             => @port,
+      @central["/node/#{@id}"].put(
         :busy             => @overloaded,
         :max_workers      => CloudCrowd.config[:max_workers],
         :enabled_actions  => @enabled_actions.join(',')
@@ -113,7 +113,7 @@ module CloudCrowd
     # Before exiting, the Node checks out with the central server, releasing all
     # of its WorkUnits for other Nodes to handle
     def check_out
-      @central["/node/#{@host}"].delete
+      @central["/node/#{@id}"].delete
     end
 
     # Lazy-initialize the asset_store, preferably after the Node has launched.

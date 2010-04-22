@@ -48,6 +48,7 @@ module CloudCrowd
       return queue_for_workers([outs]) if merging?
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
+        puts "Job ##{id} (#{action}) #{display_status}."
         Thread.new { fire_callback } if callback_url
       end
       self
@@ -76,7 +77,7 @@ module CloudCrowd
         response = RestClient.post(callback_url, {:job => self.to_json})
         Thread.new { self.destroy } if response && response.code == 201
       rescue RestClient::Exception => e
-        puts "Job ##{id} failed to fire callback: #{callback_url}"
+        puts "Job ##{id} (#{action}) failed to fire callback: #{callback_url}"
       end
     end
 
