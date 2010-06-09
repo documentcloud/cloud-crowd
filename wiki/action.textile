@@ -6,9 +6,17 @@ An example of an action which employs all three stages is *process_pdfs*, includ
 
 !http://jashkenas.s3.amazonaws.com/images/cloud_crowd/process_pdfs.png!
 
+h2. Split / Process / Merge
+
+Actions are simple Ruby classes that inherit from @CloudCrowd::Action@, and implement at least a @process@ method, for running the parallel portion of a task.
+
+|@split@|_optional_|A method that uses the @input@ — the input being anything JSON-serializable, or a URL to a file — and splits it up into work units suitable for parallel processing. Return an array of output from this method, and each element in the array will be sent as the input to the next step (@process@), in parallel across all your workers.|
+|@process@|_mandatory_|Perform the parallel portion of the computation. The @input@ comes directly from your Job request, or, if you have a @split@ method defined, from the output of @split@. The return value from @process@ is either returned as the output of the job, or sent to @merge@ for further processing.|
+|@merge@|_optional_|The @input@ is an unordered array of all the outputs from the @process@ stage. The return value of @merge@ is the result of the Job.|
+
 h2. The Action API
 
-Actions inherit from @CloudCrowd::Action@, which provides a handful of convenience methods: 
+Inheriting from @CloudCrowd::Action@ also provides a handful of convenience methods: 
 
 |@input@|The input value to this stage of the action. In @split@ and @process@, this is usually the URL to the file that needs to be processed, but it can be anything JSON-serializable. In @merge@, this is an array containing every result that was returned from all of the workers processing (which are also often, but not necessarily, URLs).|
 |@options@|As part of creating a job, you can specify an options configuration hash of arbitrary JSON for internal use. This options hash is passed through verbatim to each stage and every work unit.|
