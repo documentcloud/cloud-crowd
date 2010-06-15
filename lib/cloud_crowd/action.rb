@@ -84,7 +84,7 @@ module CloudCrowd
 
     # Convert an unsafe URL into a filesystem-friendly filename.
     def safe_filename(url)
-      url.sub!(/\?.*\Z/, '')
+      url  = url.sub(/\?.*\Z/, '')
       ext  = File.extname(url)
       name = URI.unescape(File.basename(url)).gsub(/[^a-zA-Z0-9_\-.]/, '-').gsub(/-+/, '-')
       File.basename(name, ext).gsub('.', '-') + ext

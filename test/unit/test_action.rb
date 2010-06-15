@@ -42,8 +42,15 @@ class ActionTest < Test::Unit::TestCase
       assert name == 'file.pdf'
     end
 
+    should "not change the original URL when generating a safe filename" do
+      url = "http://example.com/file.format?parameter=value"
+      path = @action.safe_filename url
+      assert url == "http://example.com/file.format?parameter=value"
+      assert path == "file.format"
+    end
+
     should "be able to count the number of words in this file" do
-      assert @action.process == 219
+      assert @action.process == 247
     end
 
     should "raise an exception when backticks fail" do
