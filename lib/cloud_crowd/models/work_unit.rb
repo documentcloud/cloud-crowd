@@ -39,8 +39,9 @@ module CloudCrowd
     # action in question disabled.
     def self.distribute_to_nodes
       reservation = nil
+      filter = {}
       loop do
-        return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT)
+        return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
         work_units = WorkUnit.reserved(reservation)
         available_nodes = NodeRecord.available
         while node = available_nodes.shift and unit = work_units.shift do
@@ -53,6 +54,10 @@ module CloudCrowd
             unit.cancel_reservation
           end
           work_units.push(unit)
+        end
+        if work_units.any? && available_nodes.any?
+          filter = {:action => available_nodes.map {|node| node.actions }.flatten.uniq }
+          next
         end
         return if work_units.any? || available_nodes.empty?
       end
