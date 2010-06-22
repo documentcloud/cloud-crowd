@@ -27,13 +27,13 @@ module CloudCrowd
 
       # Remove all of a Job's resulting files from Cloud Files, both intermediate and finished.
       def cleanup(job)
-          @container.objects(:prefix => "#{job.action}/job_#{job.id}").each do |object|
-            begin
-              @container.delete_object object
-            rescue
-              log "failed to delete #{job.action}/job_#{job.id}"
-            end
+        @container.objects(:prefix => "#{job.action}/job_#{job.id}").each do |object|
+          begin
+            @container.delete_object object
+          rescue
+            log "failed to delete #{job.action}/job_#{job.id}"
           end
+        end
       end
     end
 
