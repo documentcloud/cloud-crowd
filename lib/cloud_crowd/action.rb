@@ -42,19 +42,18 @@ module CloudCrowd
 
     # Download a file to the specified path.
     def download(url, path)
-      `curl -s "#{url}" > "#{path}"`
-      return path
-      # The previous implementation is below, and, although it would be
-      # wonderful not to shell out, RestClient wasn't handling URLs with encoded
-      # entities (%20, for example), and doesn't let you download to a given
-      # location. Getting a RestClient patch in would be ideal.
-      #
-      # if url.match(FILE_URL)
-      #   FileUtils.cp(url.sub(FILE_URL, ''), path)
-      # else
-      #   resp = RestClient::Request.execute(:url => url, :method => :get, :raw_response => true)
-      #   FileUtils.mv resp.file.path, path
-      # end
+      if url.match(FILE_URL)
+        FileUtils.cp(url.sub(FILE_URL, ''), path)
+      else
+        File.open(path, 'w+') do |file|
+          Net::HTTP.get_response(URI(url)) do |response|
+            response.read_body do |chunk|
+              file.write chunk
+            end
+          end
+        end
+      end
+      path
     end
 
     # Takes a local filesystem path, saves the file to S3, and returns the

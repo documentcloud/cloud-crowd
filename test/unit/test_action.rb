@@ -50,12 +50,19 @@ class ActionTest < Test::Unit::TestCase
     end
 
     should "be able to count the number of words in this file" do
-      assert @action.process == 247
+      assert @action.process == 274
     end
 
     should "raise an exception when backticks fail" do
       def @action.process; `utter failure 2>&1`; end
       assert_raise(CloudCrowd::Error::CommandFailed) { @action.process }
+    end
+
+    should "be able to download a remote file" do
+      path = "temp.txt"
+      @action.download('http://example.com', path)
+      assert File.read(path).match(/These domain names are reserved for use in documentation/)
+      FileUtils.rm path
     end
 
   end

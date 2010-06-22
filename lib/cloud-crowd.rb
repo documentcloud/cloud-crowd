@@ -26,6 +26,7 @@ autoload :YAML,         'yaml'
 
 # Common code which should really be required in every circumstance.
 require 'socket'
+require 'net/http'
 require 'cloud_crowd/exceptions'
 
 module CloudCrowd
