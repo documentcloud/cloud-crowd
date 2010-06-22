@@ -92,14 +92,14 @@ module CloudCrowd
     # Configure CloudCrowd by passing in the path to <tt>config.yml</tt>.
     def configure(config_path)
       @config_path = File.expand_path(File.dirname(config_path))
-      @config = YAML.load_file(config_path)
+      @config = YAML.load(ERB.new(File.read(config_path)).result)
     end
 
     # Configure the CloudCrowd central database (and connect to it), by passing
     # in a path to <tt>database.yml</tt>. The file should use the standard
     # ActiveRecord connection format.
     def configure_database(config_path, validate_schema=true)
-      configuration = YAML.load_file(config_path)
+      configuration = YAML.load(ERB.new(File.read(config_path)).result)
       ActiveRecord::Base.establish_connection(configuration)
       if validate_schema
         version = ActiveRecord::Base.connection.select_values('select max(version) from schema_migrations').first.to_i

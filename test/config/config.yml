@@ -1,4 +1,4 @@
-:max_workers:             10
+:max_workers:             <%= 5 * 2 %>
 :work_unit_retries:       3
 
 :central_server:          http://localhost:9173
