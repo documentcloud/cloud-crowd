@@ -1,68 +1,7 @@
-# The URL where you're planning on running the central server/queue/database.
-:central_server:      http://localhost:9173
+# This file configures your CloudCrowd installation, and should be consistent
+# between your server and all of your nodes. For more information, see:
+# http://wiki.github.com/documentcloud/cloud-crowd/the-configuration-folder
 
-# The following settings allow you to control the number of workers that can run
-# on a given node, to prevent the node from becoming overloaded. 'max_workers'
-# is a simple cap on the maximum number of workers a node is allowed to run
-# concurrently. 'max_load' is the maximum (one-minute) load average, above which
-# a node will refuse to take new work. 'min_free_memory' is the minimum amount
-# of free RAM (in megabytes) a node is allowed to have, below which no new
-# workers are run. These settings may be used in any combination.
-:max_workers:         5
-# :max_load:            5.0
-# :min_free_memory:     150
-
-# The storage back-end that you'd like to use for intermediate and final results
-# of processing. 's3', 'filesystem', and 'cloudfiles' are supported.
-# 'filesystem' should only be used in development, on single-machine installations,
-# or networked drives. If you *are* developing an action, filesystem is certainly
-# faster and easier.
-:storage:             s3
-
-# Please provide your AWS credentials for S3 storage of job output.
-:aws_access_key:      [your AWS access key]
-:aws_secret_key:      [your AWS secret access key]
-
-# Choose an S3 bucket to store all CloudCrowd output, and decide if you'd like
-# to keep all resulting files on S3 private. If so, you'll receive authenticated
-# S3 URLs as job output, good for 24 hours. If left public, you'll get the
-# straight URLs to the files on S3.
-:s3_bucket:           [your CloudCrowd bucket]
-:s3_authentication:   no
-
-# Cloudfiles
-:cloudfiles_username:  [your Rackspace Cloud Files username]
-:cloudfiles_api_key:   [your Rackspace Cloud Files API key]
-:cloudfiles_container: [your Rackspace Cloud Files container]
-
-# The following settings configure local paths. 'local_storage_path' is the
-# directory in which all files will be saved if you're using the 'filesystem'
-# storage. 'log_path' and 'pid_path' are the directories in which daemonized
-# servers and nodes will store their process ids and log files. The default
-# values are listed.
-# :local_storage_path:  /tmp/cloud_crowd_storage
-# :log_path:            log
-# :pid_path:            tmp/pids
-
-# Use HTTP Basic Auth for all requests? (Includes all internal worker requests
-# to the central server). If yes, specify the login and password that all
-# requests must provide for authentication.
-:http_authentication: no
-:login:               [your login name]
-:password:            [your password]
-
-# Disable all the default built-in actions
-# :disable_default_actions: true
-
-# Disable specific actions for the node
-# Use this if you want to disable a limited number of actions
-# :disabled_actions: ['word_count']
-
-# By default, CloudCrowd looks for installed actions inside the 'actions'
-# subdirectory of this configuration folder. 'actions_path' allows you to load
-# additional actions from a location of your choice.
-# :actions_path: /path/to/actions
-
-# The number of separate attempts that will be made to process an individual
-# work unit, before marking it as having failed.
-:work_unit_retries:   3
+:central_server:    http://localhost:9173
+:max_workers:       5
+:storage:           filesystem
