@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.string   "host",                                :null => false
     t.string   "ip_address",                          :null => false
     t.integer  "port",                                :null => false
-    t.string   "enabled_actions", :default => '',     :null => false
+    t.text     "enabled_actions", :default => '',     :null => false
     t.boolean  "busy",            :default => false,  :null => false
     t.string   "tag"
     t.integer  "max_workers"
