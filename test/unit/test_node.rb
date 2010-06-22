@@ -1,17 +1,17 @@
 require 'test_helper'
 
 class NodeUnitTest < Test::Unit::TestCase
-  
+
   context "A Node" do
-    
+
     setup do
-      @node = Node.new(11011).instance_variable_get(:@app)
+      @node = Node.new(:port => 11011).instance_variable_get(:@app)
     end
-    
+
     should "set the identity of the Ruby instance" do
       assert CloudCrowd.node?
     end
-    
+
     should "instantiate correctly" do
       assert @node.central.to_s == "http://localhost:9173"
       assert @node.port == 11011
@@ -19,13 +19,13 @@ class NodeUnitTest < Test::Unit::TestCase
       assert @node.enabled_actions.length > 2
       assert @node.asset_store.is_a? AssetStore::FilesystemStore
     end
-    
+
     should "trap signals and launch a server at start" do
       Thin::Server.any_instance.expects(:start)
       @node.expects(:check_in)
       @node.start
     end
-    
+
     should "be able to determine if the node is overloaded" do
       assert !@node.overloaded?
       @node.instance_variable_set :@max_load, 0.01
@@ -35,7 +35,7 @@ class NodeUnitTest < Test::Unit::TestCase
       @node.instance_variable_set :@min_memory, 8000
       assert @node.overloaded?
     end
-      
+
   end
-  
+
 end

@@ -63,15 +63,16 @@ module CloudCrowd
     end
 
     # When creating a node, specify the port it should run on.
-    def initialize(port=nil, daemon=false)
+    def initialize(options={})
       require 'json'
       CloudCrowd.identity = :node
       @central          = CloudCrowd.central_server
       @host             = Socket.gethostname
       @enabled_actions  = CloudCrowd.actions.keys - (CloudCrowd.config[:disabled_actions] || [])
-      @port             = port || DEFAULT_PORT
+      @port             = options[:port] || DEFAULT_PORT
       @id               = "#{@host}:#{@port}"
-      @daemon           = daemon
+      @daemon           = !!options[:daemonize]
+      @tag              = options[:tag]
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
       @min_memory       = CloudCrowd.config[:min_free_memory]
@@ -102,6 +103,7 @@ module CloudCrowd
     def check_in(critical=false)
       @central["/node/#{@id}"].put(
         :busy             => @overloaded,
+        :tag              => @tag,
         :max_workers      => CloudCrowd.config[:max_workers],
         :enabled_actions  => @enabled_actions.join(',')
       )

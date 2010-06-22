@@ -126,8 +126,9 @@ body {
     }
       #nodes .node {
         font-size: 11px;
-        line-height: 22px;
+        line-height: 22px; height: 22px;
         background-image: url(../images/server.png);
+        overflow: hidden;
       }
         #nodes .node.busy {
           background-image: url(../images/server_busy.png);

@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.integer  "port",                                :null => false
     t.string   "enabled_actions", :default => '',     :null => false
     t.boolean  "busy",            :default => false,  :null => false
+    t.string   "tag"
     t.integer  "max_workers"
     t.datetime "created_at"
     t.datetime "updated_at"

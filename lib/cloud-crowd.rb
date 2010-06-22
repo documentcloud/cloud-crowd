@@ -47,7 +47,7 @@ module CloudCrowd
   VERSION        = '0.4.1'
 
   # Increment the schema version when there's a backwards incompatible change.
-  SCHEMA_VERSION = 3
+  SCHEMA_VERSION = 4
 
   # Root directory of the CloudCrowd gem.
   ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')

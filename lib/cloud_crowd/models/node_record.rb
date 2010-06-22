@@ -28,6 +28,7 @@ module CloudCrowd
         :ip_address       => request.ip,
         :port             => params[:host].match(PORT)[1].to_i,
         :busy             => params[:busy],
+        :tag              => params[:tag],
         :max_workers      => params[:max_workers],
         :enabled_actions  => params[:enabled_actions]
       }
@@ -93,7 +94,8 @@ module CloudCrowd
     def to_json(opts={})
       { 'host'    => host,
         'workers' => worker_pids,
-        'status'  => display_status
+        'status'  => display_status,
+        'tag'     => tag
       }.to_json
     end
 

@@ -2,13 +2,13 @@ require 'optparse'
 
 module CloudCrowd
   class CommandLine
-    
+
     # Configuration files required for the `crowd` command to function.
     CONFIG_FILES = ['config.yml', 'config.ru', 'database.yml']
-    
+
     # Reference the absolute path to the root.
     CC_ROOT = File.expand_path(File.dirname(__FILE__) + '/../..')
-    
+
     # Command-line banner for the usage message.
     BANNER = <<-EOS
 CloudCrowd is a MapReduce-inspired Parallel Processing System for Ruby.
@@ -25,13 +25,13 @@ Commands:
   console       Launch a CloudCrowd console, connected to the central database
   load_schema   Load the schema into the database specified by database.yml
   cleanup       Removes jobs that were finished over --days (7 by default) ago
-  
+
   server -d [start | stop | restart]    Servers and nodes can be launched as
   node -d [start | stop | restart]      daemons, then stopped or restarted.
 
 Options:
     EOS
-    
+
     # Creating a CloudCrowd::CommandLine runs from the contents of ARGV.
     def initialize
       parse_options
@@ -47,7 +47,7 @@ Options:
       else                     usage
       end
     end
-    
+
     # Spin up an IRB session with the CloudCrowd code loaded in, and a database
     # connection established. The equivalent of Rails' `script/console`.
     def run_console
@@ -60,7 +60,7 @@ Options:
       Object.send(:include, CloudCrowd)
       IRB.start
     end
-    
+
     # `crowd server` can either 'start', 'stop', or 'restart'.
     def run_server(subcommand)
       load_code
@@ -71,7 +71,7 @@ Options:
       when 'restart'  then restart_server
       end
     end
-    
+
     # Convenience command for quickly spinning up the central server. More
     # sophisticated deployments, load-balancing across multiple app servers,
     # should use the config.ru rackup file directly. This method will start
@@ -86,19 +86,19 @@ Options:
       puts "Starting CloudCrowd Central Server on port #{port}..."
       exec "thin -e #{@options[:environment]} -p #{port} #{daemonize} --tag cloud-crowd-server --log #{log_path} --pid #{pid_path} -R #{rackup_path} start"
     end
-    
+
     # Stop the daemonized central server, if it exists.
     def stop_server
       Thin::Server.kill(CloudCrowd.pid_path('server.pid'), 0)
     end
-    
+
     # Restart the daemonized central server.
     def restart_server
       stop_server
       sleep 1
       start_server
     end
-    
+
     # `crowd node` can either 'start', 'stop', or 'restart'.
     def run_node(subcommand)
       load_code
@@ -109,34 +109,34 @@ Options:
       when 'restart'  then restart_node
       end
     end
-    
+
     # Launch a Node. Please only run a single node per machine. The Node process
     # will be long-lived, although its workers will come and go.
     def start_node
-      port = @options[:port] || Node::DEFAULT_PORT
-      puts "Starting CloudCrowd Node on port #{port}..."
-      Node.new(port, @options[:daemonize])
+      @options[:port] ||= Node::DEFAULT_PORT
+      puts "Starting CloudCrowd Node on port #{@options[:port]}..."
+      Node.new(@options)
     end
-    
+
     # If the daemonized Node is running, stop it.
     def stop_node
       Thin::Server.kill CloudCrowd.pid_path('node.pid')
     end
-    
+
     # Restart the daemonized Node, if it exists.
     def restart_node
       stop_node
       sleep 1
       start_node
     end
-    
+
     # Load in the database schema to the database specified in 'database.yml'.
     def run_load_schema
       load_code
       connect_to_database(false)
       require 'cloud_crowd/schema.rb'
     end
-    
+
     # Install the required CloudCrowd configuration files into the specified
     # directory, or the current one.
     def run_install(install_path)
@@ -148,22 +148,22 @@ Options:
       install_file "#{CC_ROOT}/config/database.example.yml", "#{install_path}/database.yml"
       install_file "#{CC_ROOT}/actions", "#{install_path}/actions", true
     end
-    
+
     # Clean up all Jobs in the CloudCrowd database older than --days old.
     def run_cleanup
       load_code
       connect_to_database(true)
       Job.cleanup_all(:days => @options[:days])
     end
-    
+
     # Print `crowd` usage.
     def usage
       puts "\n#{@option_parser}\n"
     end
-    
-    
+
+
     private
-    
+
     # Check for configuration files, either in the current directory, or in
     # the CLOUD_CROWD_CONFIG environment variable. Exit if they're not found.
     def ensure_config
@@ -171,9 +171,9 @@ Options:
       found = CONFIG_FILES.all? {|f| File.exists? "#{@options[:config_path]}/#{f}" }
       found ? @config_dir = true : config_not_found
     end
-    
+
     # Parse all options for all commands.
-    # Valid options are: --config --port --environment --daemonize --days.
+    # Valid options are: --config --port --environment --tag --daemonize --days.
     def parse_options
       @options = {
         :environment  => 'production',
@@ -190,6 +190,9 @@ Options:
         opts.on('-e', '--environment ENV', 'server environment (defaults to production)') do |env|
           @options[:environment] = env
         end
+        opts.on('-t', '--tag TAG', 'tag a node with a name') do |tag|
+          @options[:tag] = tag
+        end
         opts.on('-d', '--daemonize', 'run as a background daemon') do |daemonize|
           @options[:daemonize] = daemonize
         end
@@ -205,7 +208,7 @@ Options:
       @option_parser.banner = BANNER
       @option_parser.parse!(ARGV)
     end
-    
+
     # Load in the CloudCrowd module code, dependencies, lib files and models.
     # Not all commands require this.
     def load_code
@@ -213,21 +216,21 @@ Options:
       require "#{CC_ROOT}/lib/cloud-crowd"
       CloudCrowd.configure("#{@options[:config_path]}/config.yml")
     end
-    
+
     # Establish a connection to the central server's database. Not all commands
     # require this.
     def connect_to_database(validate_schema)
       require 'cloud_crowd/models'
       CloudCrowd.configure_database("#{@options[:config_path]}/database.yml", validate_schema)
     end
-    
+
     # Exit with an explanation if the configuration files couldn't be found.
     def config_not_found
       puts "`crowd` can't find the CloudCrowd configuration directory. Please use `crowd -c path/to/config`, or run `crowd` from inside of the configuration directory itself."
       exit(1)
     end
-    
-    # Install a file and log the installation. If we're overwriting a file, 
+
+    # Install a file and log the installation. If we're overwriting a file,
     # offer a chance to back out.
     def install_file(source, dest, is_dir=false)
       if File.exists?(dest)
@@ -237,6 +240,6 @@ Options:
       is_dir ? FileUtils.cp_r(source, dest) : FileUtils.cp(source, dest)
       puts "installed #{dest}" unless ENV['RACK_ENV'] == 'test'
     end
-    
+
   end
 end
