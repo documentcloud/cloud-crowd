@@ -1,3 +1,10 @@
+h3. Version 0.5.0
+
+* Improved distribution of work units to nodes that are intended to process disjoint sets of actions.
+* Configuration files are now passed through ERB before being used, so that they can be better customized.
+* You can now tag CloudCrowd nodes by passing "--tag" when turning them on. Tags are displayed in the Operations Center.
+* Net::HTTP is now used instead of curl to download files.
+
 h3. Version 0.4.1
 
 * Making the canonical identifier for nodes the `host:port`, so that it's
