@@ -30,7 +30,7 @@ module CloudCrowd
     # The response sent back when this node is overloaded.
     OVERLOADED_MESSAGE  = 'Node Overloaded'
 
-    attr_reader :enabled_actions, :host, :port, :central
+    attr_reader :enabled_actions, :host, :port, :tag, :central
 
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"

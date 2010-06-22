@@ -5,7 +5,7 @@ class NodeUnitTest < Test::Unit::TestCase
   context "A Node" do
 
     setup do
-      @node = Node.new(:port => 11011).instance_variable_get(:@app)
+      @node = Node.new(:port => 11011, :tag => "nodule").instance_variable_get(:@app)
     end
 
     should "set the identity of the Ruby instance" do
@@ -18,6 +18,7 @@ class NodeUnitTest < Test::Unit::TestCase
       assert @node.host == Socket.gethostname
       assert @node.enabled_actions.length > 2
       assert @node.asset_store.is_a? AssetStore::FilesystemStore
+      assert @node.tag == "nodule"
     end
 
     should "trap signals and launch a server at start" do
