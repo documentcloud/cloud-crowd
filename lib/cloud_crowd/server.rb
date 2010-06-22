@@ -71,7 +71,7 @@ module CloudCrowd
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
       WorkUnit.distribute_to_nodes
-      puts "Job ##{job.id} (#{job.action}) started."
+      puts "Job ##{job.id} (#{job.action}) started." unless ENV['RACK_ENV'] == 'test'
       json job
     end
 

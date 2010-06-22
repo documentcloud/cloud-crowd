@@ -48,7 +48,7 @@ module CloudCrowd
       return queue_for_workers([outs]) if merging?
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
-        puts "Job ##{id} (#{action}) #{display_status}."
+        puts "Job ##{id} (#{action}) #{display_status}." unless ENV['RACK_ENV'] == 'test'
         Thread.new { fire_callback } if callback_url
       end
       self
