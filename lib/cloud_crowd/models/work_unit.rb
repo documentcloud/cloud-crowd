@@ -55,6 +55,7 @@ module CloudCrowd
           end
           work_units.push(unit)
           available_nodes.push(node)
+          break if work_units.any? && available_nodes.one?
         end
         if work_units.any? && available_nodes.any?
           filter = {:action => available_nodes.map {|node| node.actions }.flatten.uniq }
