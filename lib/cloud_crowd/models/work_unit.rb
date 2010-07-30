@@ -69,7 +69,7 @@ module CloudCrowd
     # were none available.
     def self.reserve_available(options={})
       reservation = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
-      any = WorkUnit.available.update_all("reservation = #{reservation}", nil, options) > 0
+      any = WorkUnit.available.update_all("reservation = #{reservation}", options[:conditions], options) > 0
       any && reservation
     end
 
