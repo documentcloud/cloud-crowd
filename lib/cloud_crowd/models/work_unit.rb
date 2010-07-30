@@ -41,6 +41,7 @@ module CloudCrowd
       reservation = nil
       filter = {}
       loop do
+        WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
         work_units = WorkUnit.reserved(reservation)
         available_nodes = NodeRecord.available
