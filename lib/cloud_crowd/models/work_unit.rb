@@ -54,6 +54,7 @@ module CloudCrowd
             unit.cancel_reservation
           end
           work_units.push(unit)
+          available_nodes.push(node)
         end
         if work_units.any? && available_nodes.any?
           filter = {:action => available_nodes.map {|node| node.actions }.flatten.uniq }
