@@ -133,7 +133,10 @@ module CloudCrowd
     # a connection, and a timeout of 30 to finish reading it.
     def client_options
       return @client_options if @client_options
-      @client_options = {:timeout => config[:timeout] || 30, :open_timeout => config[:open_timeout] || 5}
+      @client_options = {
+        :timeout => (self.server? ? config[:node_timeout] : config[:server_timeout]) || 30,
+        :open_timeout => config[:open_timeout] || 5
+      }
       if CloudCrowd.config[:http_authentication]
         @client_options[:user]      = CloudCrowd.config[:login]
         @client_options[:password]  = CloudCrowd.config[:password]
