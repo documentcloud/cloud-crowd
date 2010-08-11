@@ -52,6 +52,16 @@ module CloudCrowd
       destroy && false
     end
 
+    # Request for the Node to shutdown gracefully.
+    def shutdown
+      return false if self.work_units.count > 0
+      self.destroy
+      node['/shutdown'].post
+      return true
+    rescue RestClient::RequestFailed
+      return false
+    end
+
     # What Actions is this Node able to run?
     def actions
       @actions ||= enabled_actions.split(',')

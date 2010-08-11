@@ -34,6 +34,7 @@ module CloudCrowd
   # Autoload all the CloudCrowd internals.
   autoload :Action,       'cloud_crowd/action'
   autoload :AssetStore,   'cloud_crowd/asset_store'
+  autoload :AutoScaler,   'cloud_crowd/auto_scaler'
   autoload :CommandLine,  'cloud_crowd/command_line'
   autoload :Helpers,      'cloud_crowd/helpers'
   autoload :Inflector,    'cloud_crowd/inflector'

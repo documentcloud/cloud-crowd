@@ -62,6 +62,11 @@ module CloudCrowd
       json :pid => pid
     end
 
+    # Turn off the Node, remotely.
+    post '/shutdown' do
+      shut_down
+    end
+
     # When creating a node, specify the port it should run on.
     def initialize(options={})
       require 'json'

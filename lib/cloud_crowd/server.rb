@@ -124,6 +124,7 @@ module CloudCrowd
     def initialize(*args)
       super(*args)
       CloudCrowd.identity = :server
+      @auto_scaler = AutoScaler.new if CloudCrowd.config[:autoscale]
     end
 
   end
