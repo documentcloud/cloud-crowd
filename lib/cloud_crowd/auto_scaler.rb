@@ -68,9 +68,11 @@ module CloudCrowd
     def scale_up!
       capacity = @max_nodes - @servers.length
       how_many = capacity < @add_nodes_by ? capacity : @add_nodes_by
-      @servers += @ec2.run_instances(@aws_image_id, how_many, how_many,
+      launched = @ec2.run_instances(@aws_image_id, how_many, how_many,
         @aws_groups, @aws_ssh_key, @aws_user_data, 'public', @aws_instance_type,
         nil, nil, @aws_availability_zone)
+      puts "Scaled Up: " + launched.map {|s| s[:aws_instance_id] }.join(', ')
+      @servers += launched
     end
 
     # Scale down by determining which servers are ready to be terminated
@@ -79,6 +81,8 @@ module CloudCrowd
       expiring     = @servers.select {|server| node_expired?(server) }
       instance_ids = expiring.map {|server| server[:aws_instance_id] }
       @ec2.terminate_instances instance_ids
+      puts "Scaled Down: " + instance_ids.join(', ')
+      expiring.each {|server| @servers.delete(server) }
     end
 
   end
