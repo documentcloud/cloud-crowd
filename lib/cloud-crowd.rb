@@ -59,6 +59,9 @@ module CloudCrowd
   # Default folder to contain the pids of daemonized servers and nodes.
   PID_PATH       = 'tmp/pids'
 
+  # Minimum number of attempts per work unit.
+  MIN_RETRIES    = 1
+
   # A Job is processing if its WorkUnits are in the queue to be handled by nodes.
   PROCESSING     = 1
 
@@ -94,6 +97,7 @@ module CloudCrowd
     def configure(config_path)
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
+      @config[:work_unit_retries] ||= MIN_RETRIES
     end
 
     # Configure the CloudCrowd central database (and connect to it), by passing
