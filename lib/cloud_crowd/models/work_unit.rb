@@ -41,6 +41,7 @@ module CloudCrowd
       reservation = nil
       filter = {}
       loop do
+        WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
         work_units = WorkUnit.reserved(reservation)
         available_nodes = NodeRecord.available
@@ -69,7 +70,7 @@ module CloudCrowd
     # were none available.
     def self.reserve_available(options={})
       reservation = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
-      any = WorkUnit.available.update_all("reservation = #{reservation}", nil, options) > 0
+      any = WorkUnit.available.update_all("reservation = #{reservation}", options[:conditions], options) > 0
       any && reservation
     end
 

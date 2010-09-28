@@ -24,6 +24,7 @@ module CloudCrowd
       @unit       = unit
       @status     = @unit['status']
       @retry_wait = RETRY_WAIT
+      $0 = "#{unit['action']} (#{unit['id']}) [cloud-crowd-worker]"
     end
 
     # Return output to the central server, marking the WorkUnit done.

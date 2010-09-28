@@ -45,7 +45,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.5.0'
+  VERSION        = '0.5.2'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4
@@ -137,7 +137,10 @@ module CloudCrowd
     # a connection, and a timeout of 30 to finish reading it.
     def client_options
       return @client_options if @client_options
-      @client_options = {:timeout => 30, :open_timeout => 5}
+      @client_options = {
+        :timeout => (self.server? ? config[:node_timeout] : config[:server_timeout]) || 30,
+        :open_timeout => config[:open_timeout] || 5
+      }
       if CloudCrowd.config[:http_authentication]
         @client_options[:user]      = CloudCrowd.config[:login]
         @client_options[:password]  = CloudCrowd.config[:password]
