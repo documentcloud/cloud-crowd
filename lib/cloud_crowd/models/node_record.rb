@@ -4,7 +4,8 @@ module CloudCrowd
   # can use it to assign WorkUnits to the Node, and keep track of its status.
   # When a Node exits, it destroys this record.
   class NodeRecord < ActiveRecord::Base
-
+    include DatabaseConnection
+    
     has_many :work_units
 
     validates_presence_of :host, :ip_address, :port, :enabled_actions

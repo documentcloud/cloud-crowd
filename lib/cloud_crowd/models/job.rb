@@ -5,6 +5,7 @@ module CloudCrowd
   # of inputs (usually public urls to files), an action (the name of a script that
   # CloudCrowd knows how to run), and, eventually a corresponding list of output.
   class Job < ActiveRecord::Base
+    include DatabaseConnection
     include ModelStatus
 
     CLEANUP_GRACE_PERIOD = 7 # That's a week.

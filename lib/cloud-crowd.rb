@@ -95,8 +95,8 @@ module CloudCrowd
 
     # Configure CloudCrowd by passing in the path to <tt>config.yml</tt>.
     def configure(config_path)
-      @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
+      @config[:config_path] = File.expand_path(File.dirname(config_path))
       @config[:work_unit_retries] ||= MIN_RETRIES
     end
 
@@ -175,7 +175,7 @@ module CloudCrowd
     # Retrieve the list of every installed Action for this node or server.
     def action_paths
       default_actions   = config[:disable_default_actions] ? [] : Dir["#{ROOT}/actions/*.rb"]
-      installed_actions = Dir["#{@config_path}/actions/*.rb"]
+      installed_actions = Dir["#{@config[:config_path]}/actions/*.rb"]
       custom_actions    = CloudCrowd.config[:actions_path] ? Dir["#{CloudCrowd.config[:actions_path]}/*.rb"] : []
       default_actions + installed_actions + custom_actions
     end
