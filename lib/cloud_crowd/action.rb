@@ -29,7 +29,7 @@ module CloudCrowd
     def initialize(status, input, options, store)
       @input, @options, @store = input, options, store
       @job_id, @work_unit_id = options['job_id'], options['work_unit_id']
-      @work_directory = File.expand_path(File.join(@store.temp_storage_path, storage_prefix))
+      @work_directory = File.expand_path(File.join(@store.temp_storage_path, local_storage_prefix))
       FileUtils.mkdir_p(@work_directory) unless File.exists?(@work_directory)
       parse_input
       download_input
@@ -59,7 +59,7 @@ module CloudCrowd
     # Takes a local filesystem path, saves the file to S3, and returns the
     # public (or authenticated) url on S3 where the file can be accessed.
     def save(file_path)
-      save_path = File.join(storage_prefix, File.basename(file_path))
+      save_path = File.join(remote_storage_prefix, File.basename(file_path))
       @store.save(file_path, save_path)
     end
 
@@ -89,14 +89,18 @@ module CloudCrowd
       File.basename(name, ext).gsub('.', '-') + ext
     end
 
-    # The directory prefix to use for both local and S3 storage.
-    # [action]/job_[job_id]/unit_[work_unit_it]
-    def storage_prefix
-      path_parts = []
-      path_parts << Inflector.underscore(self.class)
-      path_parts << "job_#{@job_id}"
-      path_parts << "unit_#{@work_unit_id}" if @work_unit_id
-      @storage_prefix ||= File.join(path_parts)
+    # The directory prefix to use for remote storage.
+    # [action]/job_[job_id]
+    def remote_storage_prefix
+      @remote_storage_prefix ||= Inflector.underscore(self.class) +
+        "/job_#{@job_id}" + (@work_unit_id ? "/unit_#{@work_unit_id}" : '')
+    end
+
+    # The directory prefix to use for local storage.
+    # [action]/unit_[work_unit_id]
+    def local_storage_prefix
+      @local_storage_prefix ||= Inflector.underscore(self.class) +
+        (@work_unit_id ? "/unit_#{@work_unit_id}" : '')
     end
 
     # If we think that the input is JSON, replace it with the parsed form.
