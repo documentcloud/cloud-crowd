@@ -50,7 +50,7 @@ class ActionTest < Test::Unit::TestCase
     end
 
     should "be able to count the number of words in this file" do
-      assert @action.process == 274
+      assert @action.process == 266
     end
 
     should "raise an exception when backticks fail" do
@@ -60,8 +60,8 @@ class ActionTest < Test::Unit::TestCase
 
     should "be able to download a remote file" do
       path = "temp.txt"
-      @action.download('http://example.com', path)
-      assert File.read(path).match(/These domain names are reserved for use in documentation/)
+      @action.download('http://www.w3.org', path)
+      assert File.read(path).match(/standards/i)
       FileUtils.rm path
     end
 
