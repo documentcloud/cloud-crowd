@@ -41,8 +41,6 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.datetime "updated_at"
   end
 
-  # Here be indices. After looking, it seems faster not to have them at all.
-  #
   add_index "jobs", ["status"], :name => "index_jobs_on_status"
   add_index "work_units", ["job_id"], :name => "index_work_units_on_job_id"
   add_index "work_units", ["worker_pid"], :name => "index_work_units_on_worker_pid"

@@ -41,11 +41,16 @@ module CloudCrowd
       reservation = nil
       filter = {}
       loop do
+
+        # Reserve a handful of available work units.
         WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
         work_units = WorkUnit.reserved(reservation)
+
+        # Round robin through the nodes and units, sending the unit if the node
+        # is able to process it.
         available_nodes = NodeRecord.available
-        while node = available_nodes.shift and unit = work_units.shift do
+        while (node = available_nodes.shift) && (unit = work_units.shift) do
           if node.actions.include?(unit.action)
             if node.send_work_unit(unit)
               available_nodes.push(node) unless node.busy?
@@ -56,10 +61,16 @@ module CloudCrowd
           end
           work_units.push(unit)
         end
+
+        # If there are both units and nodes left over, make sure that the next
+        # time around, we only select units that can currently be served.
         if work_units.any? && available_nodes.any?
           filter = {:action => available_nodes.map {|node| node.actions }.flatten.uniq }
           next
         end
+
+        # If we still have units at this point, or we're fresh out of nodes,
+        # that means we're done.
         return if work_units.any? || available_nodes.empty?
       end
     ensure
