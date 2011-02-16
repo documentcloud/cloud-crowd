@@ -105,9 +105,10 @@ module CloudCrowd
     end
 
     # Convenience method for starting a new WorkUnit.
-    def self.start(job, action, input, status)
+    def self.start(job, input)
       input = input.to_json unless input.is_a? String
-      self.create(:job => job, :action => action, :input => input, :status => status)
+      self.create(:job => job, :action => job.action, :owner => job.owner,
+        :status => job.status, :input => input)
     end
 
     # Mark this unit as having finished successfully.

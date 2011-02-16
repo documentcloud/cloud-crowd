@@ -5,6 +5,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.integer  "status",                      :null => false
     t.text     "inputs",                      :null => false
     t.string   "action",                      :null => false
+    t.string   "owner"
     t.text     "options",                     :null => false
     t.text     "outputs"
     t.float    "time"
@@ -31,6 +32,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.integer  "job_id",                          :null => false
     t.text     "input",                           :null => false
     t.string   "action",                          :null => false
+    t.string   "owner"
     t.integer  "attempts",      :default => 0,    :null => false
     t.integer  "node_record_id"
     t.integer  "worker_pid"
