@@ -21,14 +21,13 @@ module CloudCrowd
     named_scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
 
     # Create a Job from an incoming JSON request, and add it to the queue.
-    def self.create_from_request(data)
+    def self.create_from_request(h)
       self.create(
-        :inputs       => data['inputs'].to_json,
-        :action       => data['action'],
-        :owner        => data['owner'],
-        :options      => (data['options'] || {}).to_json,
-        :email        => data['email'],
-        :callback_url => data['callback_url']
+        :inputs       => h['inputs'].to_json,
+        :action       => h['action'],
+        :options      => (h['options'] || {}).to_json,
+        :email        => h['email'],
+        :callback_url => h['callback_url']
       )
     end
 
@@ -179,7 +178,7 @@ module CloudCrowd
     # away.
     def queue_for_workers(input=nil)
       input ||= JSON.parse(self.inputs)
-      input.each {|i| WorkUnit.start(self, i) }
+      input.each {|i| WorkUnit.start(self, action, i, status) }
       self
     end
 
