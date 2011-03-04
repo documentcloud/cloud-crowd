@@ -1,3 +1,8 @@
+h3. Version 0.6.0
+
+* Fixed a bug in "distribute_to_nodes" logic that would prevent mismatched actions and workers from ever getting served.
+* Better cleanup of temp directories for worker machines.
+
 h3. Version 0.5.2
 
 * Tweaks to timeout settings, name of the worker process, exceptions to be rescued and retried...
