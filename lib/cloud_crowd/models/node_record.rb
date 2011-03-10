@@ -41,7 +41,6 @@ module CloudCrowd
     # If the Node responds that it's overloaded, we mark it as busy. Returns
     # true if the WorkUnit was dispatched successfully.
     def send_work_unit(unit)
-      return false if unit.worker_pid #FIXME: Horrible hack.
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result.body)['pid'])
       touch && true
