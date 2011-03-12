@@ -60,8 +60,6 @@ module CloudCrowd
               available_nodes.push(node) unless node.busy?
               next
             end
-          else
-            unit.cancel_reservation
           end
           work_units.push(unit)
         end
