@@ -1,3 +1,7 @@
+h3. Version 0.6.1
+
+* Fixed a bug in 0.6.0 that could occasionally cause a race condition when delivering work units, sending a single work unit to be processed twice.
+
 h3. Version 0.6.0
 
 * Fixed a bug in "distribute_to_nodes" logic that would prevent mismatched actions and workers from ever getting served.
