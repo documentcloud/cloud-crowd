@@ -54,18 +54,17 @@ module CloudCrowd
 
         # Round robin through the nodes and units, sending the unit if the node
         # is able to process it.
-        while (node = available_nodes.shift) && (unit = work_units.shift) do
-          if node.actions.include?(unit.action)
-            if node.send_work_unit(unit)
-              available_nodes.push(node) unless node.busy?
-              next
+        work_units.each do |unit|
+          available_nodes.each do |node|
+            if node.actions.include? unit.action
+              if node.send_work_unit unit
+                work_units.delete unit
+                available_nodes.delete node if node.busy?
+                break
+              end
             end
           end
-          work_units.push(unit)
         end
-
-        # If there are both units and nodes left over, try again.
-        next if work_units.any? && available_nodes.any?
 
         # If we still have units at this point, or we're fresh out of nodes,
         # that means we're done.
