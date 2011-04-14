@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.6.1'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2011-03-12'
+  s.version   = '0.6.2'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2011-04-14'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.require_paths     = ['lib']
   s.executables       = ['crowd']
 
-  s.has_rdoc          = true
   s.extra_rdoc_files  = ['README']
   s.rdoc_options      << '--title'    << 'CloudCrowd | Parallel Processing for the Rest of Us' <<
                          '--exclude'  << 'test' <<

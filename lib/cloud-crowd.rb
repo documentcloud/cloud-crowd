@@ -45,7 +45,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.6.1'
+  VERSION        = '0.6.2'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4

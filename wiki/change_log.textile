@@ -1,3 +1,7 @@
+h3. Version 0.6.2
+
+* Another stab at fixing the bug for work units being twice delivered.
+
 h3. Version 0.6.1
 
 * Fixed a bug in 0.6.0 that could occasionally cause a race condition when delivering work units, sending a single work unit to be processed twice.
