@@ -2,10 +2,10 @@
 ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "jobs", :force => true do |t|
-    t.integer  "status",                      :null => false
-    t.text     "inputs",                      :null => false
-    t.string   "action",                      :null => false
-    t.text     "options",                     :null => false
+    t.integer  "status",                              :null => false
+    t.text     "inputs",                              :null => false
+    t.string   "action",                              :null => false
+    t.text     "options",                             :null => false
     t.text     "outputs"
     t.float    "time"
     t.string   "callback_url"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
     t.string   "host",                                :null => false
     t.string   "ip_address",                          :null => false
     t.integer  "port",                                :null => false
-    t.text     "enabled_actions", :default => '',     :null => false
+    t.text     "enabled_actions",                     :null => false
     t.boolean  "busy",            :default => false,  :null => false
     t.string   "tag"
     t.integer  "max_workers"
@@ -27,11 +27,11 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
   end
 
   create_table "work_units", :force => true do |t|
-    t.integer  "status",                          :null => false
-    t.integer  "job_id",                          :null => false
-    t.text     "input",                           :null => false
-    t.string   "action",                          :null => false
-    t.integer  "attempts",      :default => 0,    :null => false
+    t.integer  "status",                              :null => false
+    t.integer  "job_id",                              :null => false
+    t.text     "input",                               :null => false
+    t.string   "action",                              :null => false
+    t.integer  "attempts",      :default => 0,        :null => false
     t.integer  "node_record_id"
     t.integer  "worker_pid"
     t.integer  "reservation"
