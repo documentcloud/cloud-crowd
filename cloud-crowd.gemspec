@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
                          '--main'     << 'README' <<
                          '--all'
 
-  s.add_dependency 'sinatra',       ['~> 0.9']
+  s.add_dependency 'sinatra',       ['~> 1.2.6']
   s.add_dependency 'activerecord',  ['~> 2.3']
   s.add_dependency 'json',          ['>= 1.1.7']
   s.add_dependency 'rest-client',   ['>= 1.4']

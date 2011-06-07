@@ -17,7 +17,7 @@ module CloudCrowd
   # [put /node/:host] Registers a new Node, making it available for processing.
   # [delete /node/:host] Removes a Node from the registry, freeing up any WorkUnits that it had checked out.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
-  class Server < Sinatra::Base
+  class Server < Sinatra::Default
 
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
