@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
 require 'rubygems'
-gem 'activerecord', '~> 2.0'
+gem 'activerecord'
 gem 'json'
 gem 'rest-client'
 gem 'sinatra'
@@ -29,6 +29,9 @@ require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
 
+#require 'logger'
+#ActiveRecord::Base.logger = Logger.new(STDERR)
+
 module CloudCrowd
 
   # Autoload all the CloudCrowd internals.
@@ -45,7 +48,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.6.2'
+  VERSION        = '0.6.3'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4
@@ -160,13 +163,16 @@ module CloudCrowd
     # If you wish to have certain nodes be specialized to only handle certain
     # Actions, then install only those into the actions directory.
     def actions
+      # Load the bootstrap file
+      require File.expand_path(File.join(Dir.pwd, 'application')) if File::exists?('application.rb') && self.node?
+      
       return @actions if @actions
       @actions = action_paths.inject({}) do |memo, path|
         name = File.basename(path, File.extname(path))
         require path
         memo[name] = Module.const_get(Inflector.camelize(name))
         memo
-      end
+      end      
     rescue NameError => e
       adjusted_message = "One of your actions failed to load. Please ensure that the name of your action class can be deduced from the name of the file. ex: 'word_count.rb' => 'WordCount'\n#{e.message}"
       raise NameError.new(adjusted_message, e.name)

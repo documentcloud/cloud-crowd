@@ -12,7 +12,7 @@ module CloudCrowd
     after_destroy :redistribute_work_units
 
     # Available Nodes haven't used up their maxiumum number of workers yet.
-    named_scope :available, {
+    scope :available, {
       :conditions => ['(max_workers is null or (select count(*) from work_units where node_record_id = node_records.id) < max_workers)'],
       :order      => 'updated_at asc'
     }

@@ -31,6 +31,7 @@ module CloudCrowd
     def complete_work_unit(result)
       keep_trying_to "complete work unit" do
         data = base_params.merge({:status => 'succeeded', :output => result})
+        log data.inspect
         @node.central["/work/#{data[:id]}"].put(data)
         log "finished #{display_work_unit} in #{data[:time]} seconds"
       end
@@ -40,6 +41,7 @@ module CloudCrowd
     def fail_work_unit(exception)
       keep_trying_to "mark work unit as failed" do
         data = base_params.merge({:status => 'failed', :output => {'output' => exception.message}.to_json})
+        log data.inspect
         @node.central["/work/#{data[:id]}"].put(data)
         log "failed #{display_work_unit} in #{data[:time]} seconds\n#{exception.message}\n#{exception.backtrace}"
       end
