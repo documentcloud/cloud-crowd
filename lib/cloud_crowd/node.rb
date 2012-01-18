@@ -162,7 +162,7 @@ module CloudCrowd
           was_overloaded = @overloaded
           @overloaded = overloaded?
           check_in if was_overloaded && !@overloaded
-          sleep MONITOR_INTERVAL
+          sleep CloudCrowd.config[:monitor_interval] || MONITOR_INTERVAL
         end
       end
     end
@@ -173,7 +173,7 @@ module CloudCrowd
     def check_in_periodically
       @check_in_thread = Thread.new do
         loop do
-          sleep CHECK_IN_INTERVAL
+          sleep CloudCrowd.config[:check_in_interval] || CHECK_IN_INTERVAL
           check_in
         end
       end
