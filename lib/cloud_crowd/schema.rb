@@ -2,10 +2,11 @@
 ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "jobs", :force => true do |t|
-    t.integer  "status",                      :null => false
-    t.text     "inputs",                      :null => false
-    t.string   "action",                      :null => false
-    t.text     "options",                     :null => false
+    t.integer  "status",                        :null => false
+    t.integer  "priority_rank", :default => 1,  :null => false
+    t.text     "inputs",                        :null => false
+    t.string   "action",                        :null => false
+    t.text     "options",                       :null => false
     t.text     "outputs"
     t.float    "time"
     t.string   "callback_url"
@@ -28,6 +29,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "work_units", :force => true do |t|
     t.integer  "status",                          :null => false
+    t.integer  "priority_rank", :default => 1,    :null => false
     t.integer  "job_id",                          :null => false
     t.text     "input",                           :null => false
     t.string   "action",                          :null => false

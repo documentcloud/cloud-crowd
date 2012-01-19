@@ -45,10 +45,10 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.6.2'
+  VERSION        = '0.7.0'
 
   # Increment the schema version when there's a backwards incompatible change.
-  SCHEMA_VERSION = 4
+  SCHEMA_VERSION = 5
 
   # Root directory of the CloudCrowd gem.
   ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')
