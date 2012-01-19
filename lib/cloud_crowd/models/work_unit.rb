@@ -18,13 +18,14 @@ module CloudCrowd
     belongs_to :job
     belongs_to :node_record
 
-    validates_presence_of :job_id, :status, :input, :action
+    validates_presence_of :job_id, :status, :input, :action, :priority_rank
+    def validate; priority_rank >= 0; end
 
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
     named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
     # Reserved WorkUnits have been marked for distribution by a central server process.
     named_scope :reserved,  lambda {|reservation|
-      {:conditions => {:reservation => reservation}, :order => 'updated_at asc'}
+      {:conditions => {:reservation => reservation}, :order => 'priority_rank, updated_at asc'}
     }
 
     # Attempt to send a list of WorkUnits to nodes with available capacity.
@@ -79,7 +80,7 @@ module CloudCrowd
     def self.reserve_available(options={})
       reservation = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
       conditions = "reservation is null and node_record_id is null and status in (#{INCOMPLETE.join(',')}) and #{options[:conditions]}"
-      any = WorkUnit.update_all("reservation = #{reservation}", conditions, options) > 0
+      any = WorkUnit.update_all("reservation = #{reservation}", conditions, {:order=>"priority_rank asc"}.merge(options)) > 0
       any && reservation
     end
 
@@ -103,9 +104,9 @@ module CloudCrowd
     end
 
     # Convenience method for starting a new WorkUnit.
-    def self.start(job, action, input, status)
+    def self.start(job, action, input, status, rank=1)
       input = input.to_json unless input.is_a? String
-      self.create(:job => job, :action => action, :input => input, :status => status)
+      self.create(:job => job, :action => action, :input => input, :status => status, :priority_rank=>rank)
     end
 
     # Mark this unit as having finished successfully.
@@ -178,13 +179,14 @@ module CloudCrowd
     # its cousin WorkUnits.
     def to_json
       {
-        'id'        => self.id,
-        'job_id'    => self.job_id,
-        'input'     => self.input,
-        'attempts'  => self.attempts,
-        'action'    => self.action,
-        'options'   => JSON.parse(self.job.options),
-        'status'    => self.status
+        'id'            => self.id,
+        'job_id'        => self.job_id,
+        'input'         => self.input,
+        'attempts'      => self.attempts,
+        'action'        => self.action,
+        'options'       => JSON.parse(self.job.options),
+        'status'        => self.status,
+        'priority_rank' => self.priority_rank
       }.to_json
     end
 

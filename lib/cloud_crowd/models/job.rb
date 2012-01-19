@@ -11,7 +11,8 @@ module CloudCrowd
 
     has_many :work_units, :dependent => :destroy
 
-    validates_presence_of :status, :inputs, :action, :options
+    validates_presence_of :status, :inputs, :action, :options, :priority_rank
+    def validate; priority_rank >= 0; end
 
     before_validation_on_create :set_initial_status
     after_create                :queue_for_workers
@@ -178,7 +179,7 @@ module CloudCrowd
     # away.
     def queue_for_workers(input=nil)
       input ||= JSON.parse(self.inputs)
-      input.each {|i| WorkUnit.start(self, action, i, status) }
+      input.each {|i| WorkUnit.start(self, action, i, status, priority_rank) }
       self
     end
 
