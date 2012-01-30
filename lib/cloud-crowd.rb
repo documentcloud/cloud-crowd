@@ -25,6 +25,7 @@ autoload :Thin,         'thin'
 autoload :YAML,         'yaml'
 
 # Common code which should really be required in every circumstance.
+require 'yaml'
 require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
