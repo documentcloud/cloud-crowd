@@ -12,7 +12,7 @@ module CloudCrowd
     has_many :work_units, :dependent => :destroy
 
     validates_presence_of :status, :inputs, :action, :options, :priority_rank
-    def validate; priority_rank >= 0; end
+    def validate; errors.add("priority_rank", "must be >= 0") unless priority_rank >= 0; end
 
     before_validation_on_create :set_initial_status
     after_create                :queue_for_workers
@@ -24,11 +24,12 @@ module CloudCrowd
     # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)
       self.create(
-        :inputs       => h['inputs'].to_json,
-        :action       => h['action'],
-        :options      => (h['options'] || {}).to_json,
-        :email        => h['email'],
-        :callback_url => h['callback_url']
+        :inputs         => h['inputs'].to_json,
+        :action         => h['action'],
+        :options        => (h['options'] || {}).to_json,
+        :email          => h['email'],
+        :callback_url   => h['callback_url'],
+        :priority_rank  => h['priority_rank'] || 1 # defaults to 1 in schema.rb
       )
     end
 
