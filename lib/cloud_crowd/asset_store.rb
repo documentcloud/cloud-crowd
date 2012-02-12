@@ -1,5 +1,3 @@
-require 'tmpdir'
-
 module CloudCrowd
 
   # The AssetStore provides a common API for storing files and returning URLs
