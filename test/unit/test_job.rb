@@ -11,9 +11,11 @@ class JobTest < Test::Unit::TestCase
     
     subject { @job }
     
-    should_have_many :work_units
+    should have_many :work_units
     
-    should_validate_presence_of :status, :inputs, :action, :options
+    [:status, :inputs, :action, :options].each do |field|
+      should validate_presence_of(field)
+    end
     
     should "create all of its work units as soon as the job is created" do
       assert @job.work_units.count >= 1

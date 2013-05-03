@@ -11,9 +11,11 @@ class WorkUnitTest < Test::Unit::TestCase
     
     subject { @unit }
     
-    should_belong_to :job
+    should belong_to :job
     
-    should_validate_presence_of :job_id, :status, :input, :action
+    [:job_id, :status, :input, :action].each do |field|
+      should validate_presence_of(field)
+    end
     
     should "know if its done" do
       assert !@unit.complete?
