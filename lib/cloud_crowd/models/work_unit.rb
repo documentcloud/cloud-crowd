@@ -21,9 +21,9 @@ module CloudCrowd
     validates_presence_of :job_id, :status, :input, :action
 
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
-    named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
+    scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
     # Reserved WorkUnits have been marked for distribution by a central server process.
-    named_scope :reserved,  lambda {|reservation|
+    scope :reserved,  lambda {|reservation|
       {:conditions => {:reservation => reservation}, :order => 'updated_at asc'}
     }
 
