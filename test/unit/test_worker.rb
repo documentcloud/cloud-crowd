@@ -6,7 +6,7 @@ class WorkerTest < Test::Unit::TestCase
         
     setup do
       @node = Node.new.instance_variable_get(:@app)
-      @unit = WorkUnit.make
+      @unit = WorkUnit.make!
       @worker = Worker.new(@node, JSON.parse(@unit.to_json))
     end
     

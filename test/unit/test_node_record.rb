@@ -5,7 +5,7 @@ class NodeRecordTest < Test::Unit::TestCase
   context "A NodeRecord" do
         
     setup do
-      @node = CloudCrowd::NodeRecord.make
+      @node = CloudCrowd::NodeRecord.make!
     end
     
     subject { @node }
@@ -28,7 +28,7 @@ class NodeRecordTest < Test::Unit::TestCase
     should "know if the node is busy" do
       assert !@node.busy?
       assert @node.display_status == 'available'
-      (@node.max_workers + 1).times { WorkUnit.make(:node_record => @node) }
+      (@node.max_workers + 1).times { WorkUnit.make!(:node_record => @node) }
       assert @node.busy?
       assert @node.display_status == 'busy'
       @node.release_work_units

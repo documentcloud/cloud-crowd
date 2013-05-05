@@ -12,7 +12,7 @@ class ServerTest < Test::Unit::TestCase
 
     setup do
       Job.destroy_all
-      2.times { Job.make }
+      2.times { Job.make! }
     end
 
     should "set the identity of the Ruby instance" do

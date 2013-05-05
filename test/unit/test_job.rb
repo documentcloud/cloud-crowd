@@ -5,13 +5,13 @@ class JobTest < Test::Unit::TestCase
   context "A CloudCrowd Job" do
         
     setup do
-      @job = Job.make
+      @job = Job.make!
       @unit = @job.work_units.first
     end
     
     subject { @job }
     
-    should have_many :work_units
+    should have_many(:work_units)
     
     [:status, :inputs, :action, :options].each do |field|
       should validate_presence_of(field)
@@ -89,12 +89,10 @@ class JobTest < Test::Unit::TestCase
     end
     
     should "be able to clean up jobs that have aged beyond their use" do
-      count = Job.count
       Job.cleanup_all
-      assert count == Job.count
-      Job.record_timestamps = false
-      @job.update_attributes :status => SUCCEEDED, :updated_at => 10.days.ago
-      Job.record_timestamps = true
+      count = Job.count
+      @job.update_attributes({:status => SUCCEEDED, :updated_at => 10.days.ago })
+      assert @job.status == SUCCEEDED
       Job.cleanup_all
       assert count > Job.count
       assert !Job.find_by_id(@job.id)
