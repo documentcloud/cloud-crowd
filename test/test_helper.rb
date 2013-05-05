@@ -10,7 +10,7 @@ require 'pry'
 require 'faker'
 require 'sham'
 require 'rack/test'
-require 'shoulda/active_record'
+require 'shoulda'
 require 'machinist/active_record'
 require 'mocha/setup'
 require "#{CloudCrowd::ROOT}/test/blueprints.rb"

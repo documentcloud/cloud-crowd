@@ -27,17 +27,17 @@ Gem::Specification.new do |s|
                          '--all'
 
   s.add_dependency 'sinatra',       ['~> 0.9']
-  s.add_dependency 'activerecord',  ['~> 2.3']
+  s.add_dependency 'activerecord'
   s.add_dependency 'json',          ['>= 1.1.7']
   s.add_dependency 'rest-client',   ['>= 1.4']
   s.add_dependency 'thin',          ['>= 1.2.4']
 
   if s.respond_to?(:add_development_dependency)
-    s.add_development_dependency 'faker',               ['>= 0.3.1']
-    s.add_development_dependency 'thoughtbot-shoulda',  ['>= 2.10.2']
-    s.add_development_dependency 'notahat-machinist',   ['>= 1.0.3']
-    s.add_development_dependency 'rack-test',           ['>= 0.4.1']
-    s.add_development_dependency 'mocha',               ['>= 0.9.7']
+    s.add_development_dependency 'faker',              ['>= 0.3.1']
+    s.add_development_dependency 'shoulda'
+    s.add_development_dependency 'machinist',          ['>= 1.0.3']
+    s.add_development_dependency 'rack-test',          ['>= 0.4.1']
+    s.add_development_dependency 'mocha',              ['>= 0.9.7']
   end
 
   s.files = %w(

@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
 require 'rubygems'
-gem 'activerecord', '~> 2.0'
+gem 'activerecord'
 gem 'json'
 gem 'rest-client'
 gem 'sinatra'
