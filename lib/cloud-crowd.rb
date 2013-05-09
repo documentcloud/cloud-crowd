@@ -6,7 +6,6 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 require 'rubygems'
 gem 'activerecord'
 gem 'json'
-gem 'rest-client'
 gem 'sinatra'
 gem 'thin'
 
@@ -17,7 +16,6 @@ autoload :Digest,       'digest'
 autoload :ERB,          'erb'
 autoload :FileUtils,    'fileutils'
 autoload :JSON,         'json'
-autoload :RestClient,   'rest_client'
 autoload :RightAws,     'right_aws'
 autoload :CloudFiles,   'cloudfiles'
 autoload :Sinatra,      'sinatra'
@@ -28,6 +26,7 @@ autoload :YAML,         'yaml'
 require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
+require 'rest_client'
 
 module CloudCrowd
 
