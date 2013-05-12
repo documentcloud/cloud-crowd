@@ -5,7 +5,7 @@ class WorkerTest < Test::Unit::TestCase
   context "A CloudCrowd::Worker" do
         
     setup do
-      @node = Node.new.instance_variable_get(:@app)
+      @node = Node.new.instance_variable_get(:@instance)
       @unit = WorkUnit.make
       @worker = Worker.new(@node, JSON.parse(@unit.to_json))
     end

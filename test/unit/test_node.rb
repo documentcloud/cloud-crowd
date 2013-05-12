@@ -5,7 +5,7 @@ class NodeUnitTest < Test::Unit::TestCase
   context "A Node" do
 
     setup do
-      @node = Node.new(:port => 11011, :tag => "nodule").instance_variable_get(:@app)
+      @node = Node.new(:port => 11011, :tag => "nodule").instance_variable_get(:@instance)
     end
 
     should "set the identity of the Ruby instance" do
