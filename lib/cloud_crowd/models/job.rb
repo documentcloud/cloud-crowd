@@ -23,7 +23,7 @@ module CloudCrowd
     before_destroy              :cleanup_assets
 
     # Jobs that were last updated more than N days ago.
-    scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
+    scope :older_than, lambda {|num| where(['updated_at < ?', num.days.ago]) }
 
     # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)

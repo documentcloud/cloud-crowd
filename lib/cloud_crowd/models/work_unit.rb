@@ -21,10 +21,10 @@ module CloudCrowd
     validates_presence_of :job_id, :status, :input, :action
 
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
-    scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
+    scope :available, ->{ where({:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}) }
     # Reserved WorkUnits have been marked for distribution by a central server process.
     scope :reserved,  lambda {|reservation|
-      {:conditions => {:reservation => reservation}, :order => 'updated_at asc'}
+      where({:reservation => reservation}).order('updated_at asc')
     }
 
     # Attempt to send a list of WorkUnits to nodes with available capacity.
@@ -79,7 +79,9 @@ module CloudCrowd
     def self.reserve_available(options={})
       reservation = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
       conditions = "reservation is null and node_record_id is null and status in (#{INCOMPLETE.join(',')}) and #{options[:conditions]}"
-      any = WorkUnit.update_all("reservation = #{reservation}", conditions, options) > 0
+      query = WorkUnit.where(conditions)
+      query = query.limit(options[:limit]) if options[:limit]
+      any = query.update_all("reservation = #{reservation}") > 0
       any && reservation
     end
 

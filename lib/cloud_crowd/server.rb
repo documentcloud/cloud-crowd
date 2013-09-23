@@ -42,7 +42,7 @@ module CloudCrowd
     # larger -- keep it in mind.
     get '/status' do
       json(
-        'nodes'           => NodeRecord.all(:order => 'host desc'),
+        'nodes'           => NodeRecord.order('host desc'),
         'job_count'       => Job.incomplete.count,
         'work_unit_count' => WorkUnit.incomplete.count
       )
