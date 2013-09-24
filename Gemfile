@@ -1,10 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'sinatra'
-gem 'activerecord'
-gem 'json'
-gem 'rest-client'
-gem 'thin'
 gem 'rake'
 
 group :development do
