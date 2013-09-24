@@ -19,7 +19,6 @@ module CloudCrowd
     belongs_to :node_record
 
     validates_presence_of :job_id, :status, :input, :action
-
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
     scope :available, ->{ where({:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}) }
     # Reserved WorkUnits have been marked for distribution by a central server process.
@@ -50,7 +49,7 @@ module CloudCrowd
         # Reserve a handful of available work units.
         WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
-        work_units = WorkUnit.reserved(reservation)
+        work_units = WorkUnit.reserved(reservation).to_a
 
         # Round robin through the nodes and units, sending the unit if the node
         # is able to process it.
