@@ -97,8 +97,9 @@ module CloudCrowd
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
       @config[:work_unit_retries] ||= MIN_RETRIES
-      if @config[:actions_path] && Pathname.new( @config[:actions_path] ).relative? && ! $LOAD_PATH.include?( '.' )
-        $LOAD_PATH.unshift( '.' )
+      if @config[:actions_path]
+        path = Pathname.new( @config[:actions_path] ).realpath
+        $LOAD_PATH.unshift( path ) unless $LOAD_PATH.include?( path )
       end
     end
 
@@ -164,9 +165,9 @@ module CloudCrowd
     def actions
       return @actions if @actions
       @actions = action_paths.inject({}) do |memo, path|
-        name = File.basename(path, File.extname(path))
-        require path
-        memo[name] = Module.const_get(Inflector.camelize(name))
+        path = Pathname.new( path )
+        require path.relative? ? path.basename : path
+        memo[name] = Module.const_get( Inflector.camelize( path.basename('.*') ) )
         memo
       end
     rescue NameError => e
