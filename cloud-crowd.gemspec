@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.7.0'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2013-05-09'
+  s.version   = '0.7.0.pre'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2013-11-23'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -12,6 +12,8 @@ Gem::Specification.new do |s|
     everywhere is black with people and more come streaming from all sides as though
     streets had only one direction.
   EOS
+  
+  s.license = "MIT"
 
   s.authors           = ['Jeremy Ashkenas', 'Ted Han']
   s.email             = 'opensource@documentcloud.org'
