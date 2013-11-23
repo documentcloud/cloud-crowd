@@ -18,6 +18,7 @@ module CloudCrowd
   # [delete /node/:host] Removes a Node from the registry, freeing up any WorkUnits that it had checked out.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
   class Server < Sinatra::Base
+    use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
