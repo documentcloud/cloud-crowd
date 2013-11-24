@@ -7,7 +7,6 @@ require 'sham'
 require 'rack/test'
 require 'shoulda'
 require 'shoulda/context'
-require 'shoulda/matchers'
 require 'shoulda/matchers/active_record'
 require 'machinist/active_record'
 require 'mocha/setup'
@@ -21,4 +20,8 @@ require "#{CloudCrowd::ROOT}/test/blueprints.rb"
 
 class Test::Unit::TestCase
   include CloudCrowd
+  include Shoulda::Matchers::ActiveRecord
+  extend Shoulda::Matchers::ActiveRecord
+  include Shoulda::Matchers::ActiveModel
+  extend Shoulda::Matchers::ActiveModel
 end
