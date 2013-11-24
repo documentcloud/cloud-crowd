@@ -176,17 +176,14 @@ module CloudCrowd
 
     # The JSON representation of a WorkUnit shares the Job's options with all
     # its cousin WorkUnits.
-    def to_json
-      {
-        'id'        => self.id,
-        'job_id'    => self.job_id,
-        'input'     => self.input,
-        'attempts'  => self.attempts,
-        'action'    => self.action,
-        'options'   => JSON.parse(self.job.options),
-        'status'    => self.status
-      }.to_json
+    class Serializer < ActiveModel::Serializer
+      attributes :id, :job_id, :input, :attempts, :action, :options, :status
+
+      def options; JSON.parse(object.job.options); end
     end
+    
+    def active_model_serializer; Serializer; end
+    def to_json; Serializer.new(self).to_json; end
 
   end
 end
