@@ -28,20 +28,6 @@ Gem::Specification.new do |s|
                          '--main'     << 'README' <<
                          '--all'
 
-  s.add_dependency 'sinatra'
-  s.add_dependency 'activerecord'
-  s.add_dependency 'json',          ['>= 1.1.7']
-  s.add_dependency 'rest-client',   ['>= 1.4']
-  s.add_dependency 'thin',          ['>= 1.2.4']
-
-  if s.respond_to?(:add_development_dependency)
-    s.add_development_dependency 'faker',              ['>= 0.3.1']
-    s.add_development_dependency 'shoulda'
-    s.add_development_dependency 'machinist',          ['>= 1.0.3']
-    s.add_development_dependency 'rack-test',          ['>= 0.4.1']
-    s.add_development_dependency 'mocha',              ['>= 0.9.7']
-  end
-
   s.files = %w(
 actions/graphics_magick.rb
 actions/process_pdfs.rb
