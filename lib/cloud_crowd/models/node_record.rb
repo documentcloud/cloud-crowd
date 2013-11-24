@@ -4,6 +4,20 @@ module CloudCrowd
   # can use it to assign WorkUnits to the Node, and keep track of its status.
   # When a Node exits, it destroys this record.
   class NodeRecord < ActiveRecord::Base
+    
+    class Serializer < ActiveModel::Serializer
+      attributes :host, :tag, :workers, :status
+      
+      def workers
+        object.worker_pids
+      end
+      
+      def status
+        object.display_status
+      end
+    end
+    
+    def active_model_serializer; Serializer; end
 
     has_many :work_units
 

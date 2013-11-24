@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'activerecord'
+gem 'active_model_serializers'
 gem 'json'
 gem 'rest-client'
 gem 'thin'

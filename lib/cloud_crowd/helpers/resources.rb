@@ -7,7 +7,7 @@ module CloudCrowd
       def json(obj)
         content_type :json
         return status(204) && '' if obj.nil?
-        obj.to_json
+        (obj.respond_to?(:as_json) ? obj.as_json : obj).to_json
       end
       
       # Lazy-fetch the job specified by <tt>job_id</tt>.
