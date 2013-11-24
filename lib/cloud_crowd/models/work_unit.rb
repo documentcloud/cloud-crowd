@@ -6,7 +6,7 @@ module CloudCrowd
   # are each run as a single WorkUnit.
   class WorkUnit < ActiveRecord::Base
     include ModelStatus
-
+    
     # We use a random number in (0...MAX_RESERVATION) to reserve work units.
     # The size of the maximum signed integer in MySQL -- SQLite has no limit.
     MAX_RESERVATION = 2147483647
@@ -41,32 +41,53 @@ module CloudCrowd
 
         # Find the available nodes, and determine what actions we're capable
         # of running at the moment.
-        available_nodes   = NodeRecord.available
+        available_nodes   = NodeRecord.available.to_a
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
         filter            = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
 
         # Reserve a handful of available work units.
         WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
-        work_units = WorkUnit.reserved(reservation)
+        work_units = WorkUnit.reserved(reservation).to_a
 
         # Round robin through the nodes and units, sending the unit if the node
         # is able to process it.
-        work_units.each do |unit|
-          available_nodes.each do |node|
-            if node.actions.include? unit.action
-              if node.send_work_unit unit
-                work_units.delete unit
-                available_nodes.delete node if node.busy?
-                break
-              end
+        #work_units.each do |unit|
+        #  available_nodes.each do |node|
+        #    if node.actions.include? unit.action
+        #      if node.send_work_unit unit
+        #        work_units.delete unit # lol this actually deletes the unit
+        #        available_nodes.delete node if node.busy?
+        #        break
+        #      end
+        #    end
+        #  end
+        #end
+        while (unit = work_units.shift) and available_nodes.any? do
+          puts
+          puts "AVAILABLE NODES (#{available_nodes.size}): #{available_nodes}"
+          puts
+          while node = available_nodes.shift do
+            if node.actions.include?(unit.action) and node.send_work_unit(unit)
+              available_nodes.push(node) unless node.busy?
+              break
             end
           end
+          puts
+          puts "UNIT (#{unit.id}) ASSIGNED? #{unit.assigned?}"
+          puts
+          work_units.push(unit) unless unit.assigned?
         end
 
         # If we still have units at this point, or we're fresh out of nodes,
         # that means we're done.
+        puts
+        puts "WORK UNITS? #{work_units.inspect}"
+        puts
+        puts "AVAILABLE NODES? #{available_nodes.inspect}"
+        puts
         return if work_units.any? || available_nodes.empty?
+        puts "END OF LOOP"
       end
     ensure
       WorkUnit.cancel_reservations(reservation) if reservation
@@ -165,6 +186,10 @@ module CloudCrowd
     # WorkUnit and NodeRecord and record the worker_pid.
     def assign_to(node_record, worker_pid)
       update_attributes!(:node_record => node_record, :worker_pid => worker_pid)
+    end
+    
+    def assigned?
+      !!(node_record_id && worker_pid)
     end
 
     # All output needs to be wrapped in a JSON object for consistency
