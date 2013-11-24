@@ -8,13 +8,13 @@ module CloudCrowd
       
       klass.class_eval do
         # Note that COMPLETE and INCOMPLETE are unions of other states.
-        scope 'processing', :conditions => {:status => PROCESSING}
-        scope 'succeeded',  :conditions => {:status => SUCCEEDED}
-        scope 'failed',     :conditions => {:status => FAILED}
-        scope 'splitting',  :conditions => {:status => SPLITTING}
-        scope 'merging',    :conditions => {:status => MERGING}
-        scope 'complete',   :conditions => {:status => COMPLETE}
-        scope 'incomplete', :conditions => {:status => INCOMPLETE}
+        scope 'processing', -> { where( :status => PROCESSING )}
+        scope 'succeeded',  -> { where( :status => SUCCEEDED  )}
+        scope 'failed',     -> { where( :status => FAILED     )}
+        scope 'splitting',  -> { where( :status => SPLITTING  )}
+        scope 'merging',    -> { where( :status => MERGING    )}
+        scope 'complete',   -> { where( :status => COMPLETE   )}
+        scope 'incomplete', -> { where( :status => INCOMPLETE )}
       end
       
     end
