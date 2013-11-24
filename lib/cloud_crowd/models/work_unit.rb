@@ -52,42 +52,19 @@ module CloudCrowd
 
         # Round robin through the nodes and units, sending the unit if the node
         # is able to process it.
-        #work_units.each do |unit|
-        #  available_nodes.each do |node|
-        #    if node.actions.include? unit.action
-        #      if node.send_work_unit unit
-        #        work_units.delete unit # lol this actually deletes the unit
-        #        available_nodes.delete node if node.busy?
-        #        break
-        #      end
-        #    end
-        #  end
-        #end
         while (unit = work_units.shift) and available_nodes.any? do
-          puts
-          puts "AVAILABLE NODES (#{available_nodes.size}): #{available_nodes}"
-          puts
           while node = available_nodes.shift do
             if node.actions.include?(unit.action) and node.send_work_unit(unit)
               available_nodes.push(node) unless node.busy?
               break
             end
           end
-          puts
-          puts "UNIT (#{unit.id}) ASSIGNED? #{unit.assigned?}"
-          puts
           work_units.push(unit) unless unit.assigned?
         end
 
         # If we still have units at this point, or we're fresh out of nodes,
         # that means we're done.
-        puts
-        puts "WORK UNITS? #{work_units.inspect}"
-        puts
-        puts "AVAILABLE NODES? #{available_nodes.inspect}"
-        puts
         return if work_units.any? || available_nodes.empty?
-        puts "END OF LOOP"
       end
     ensure
       WorkUnit.cancel_reservations(reservation) if reservation
