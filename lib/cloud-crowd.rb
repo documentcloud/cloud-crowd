@@ -27,7 +27,7 @@ require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
 require 'rest_client'
-
+require 'pathname'
 module CloudCrowd
 
   # Autoload all the CloudCrowd internals.
@@ -167,7 +167,8 @@ module CloudCrowd
       @actions = action_paths.inject({}) do |memo, path|
         path = Pathname.new( path )
         require path.relative? ? path.basename : path
-        memo[name] = Module.const_get( Inflector.camelize( path.basename('.*') ) )
+        name = path.basename('.*').to_s
+        memo[name] = Module.const_get( Inflector.camelize( name ) )
         memo
       end
     rescue NameError => e
