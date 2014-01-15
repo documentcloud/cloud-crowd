@@ -13,12 +13,12 @@ module CloudCrowd
 
     validates_presence_of :status, :inputs, :action, :options
 
-    before_validation_on_create :set_initial_status
+    before_validation           :set_initial_status, :on => :create
     after_create                :queue_for_workers
     before_destroy              :cleanup_assets
 
     # Jobs that were last updated more than N days ago.
-    named_scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
+    scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
 
     # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)

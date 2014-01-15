@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.6.2'         # Keep version in sync with cloud-cloud.rb
+  s.version   = '0.6.3'         # Keep version in sync with cloud-cloud.rb
   s.date      = '2011-04-14'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
@@ -26,8 +26,8 @@ Gem::Specification.new do |s|
                          '--main'     << 'README' <<
                          '--all'
 
-  s.add_dependency 'sinatra',       ['~> 0.9']
-  s.add_dependency 'activerecord',  ['~> 2.3']
+  s.add_dependency 'sinatra',       ['~> 1.2.6']
+  s.add_dependency 'activerecord',  ['~> 3.0']
   s.add_dependency 'json',          ['>= 1.1.7']
   s.add_dependency 'rest-client',   ['>= 1.4']
   s.add_dependency 'thin',          ['>= 1.2.4']

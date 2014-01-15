@@ -111,6 +111,7 @@ module CloudCrowd
     # they mark it back on the central server and exit. Triggers distribution
     # of pending work units.
     put '/work/:work_unit_id' do
+      puts "Work unit #{params[:work_unit_id]} reported status #{params[:status]}"
       case params[:status]
       when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
