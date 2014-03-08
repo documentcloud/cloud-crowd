@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'sinatra'
-gem 'activerecord', '~>3.0'
+gem 'activerecord'
 gem 'active_model_serializers'
 gem 'json'
 gem 'rest-client'
@@ -15,7 +15,7 @@ group :development do
 end
 
 group :test do
-  gem 'activesupport', '~>3.0'
+  gem 'activesupport'
   gem 'shoulda'
   gem 'shoulda-matchers'
   gem 'shoulda-context'
