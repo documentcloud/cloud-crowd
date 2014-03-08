@@ -8,6 +8,7 @@ require 'rack/test'
 require 'shoulda'
 require 'shoulda/context'
 require 'shoulda/matchers/active_record'
+require 'shoulda/matchers/active_model'
 require 'machinist/active_record'
 require 'mocha/setup'
 
