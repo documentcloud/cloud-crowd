@@ -152,7 +152,7 @@ module CloudCrowd
 
     # A JSON representation of this job includes the statuses of its component
     # WorkUnits, as well as any completed outputs.
-    def to_json(opts={})
+    def as_json(opts={})
       atts = {
         'id'                => id,
         'color'             => color,
@@ -163,7 +163,7 @@ module CloudCrowd
       }
       atts['outputs'] = JSON.parse(outputs) if outputs
       atts['email']   = email               if email
-      atts.to_json
+      atts
     end
 
 
