@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.6.2'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2011-04-14'
+  s.version   = '0.7.0.pre'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2014-03-08'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -12,9 +12,11 @@ Gem::Specification.new do |s|
     everywhere is black with people and more come streaming from all sides as though
     streets had only one direction.
   EOS
+  
+  s.license = "MIT"
 
-  s.authors           = ['Jeremy Ashkenas']
-  s.email             = 'jeremy@documentcloud.org'
+  s.authors           = ['Jeremy Ashkenas', 'Ted Han']
+  s.email             = 'opensource@documentcloud.org'
   s.rubyforge_project = 'cloud-crowd'
 
   s.require_paths     = ['lib']
@@ -25,20 +27,6 @@ Gem::Specification.new do |s|
                          '--exclude'  << 'test' <<
                          '--main'     << 'README' <<
                          '--all'
-
-  s.add_dependency 'sinatra',       ['~> 0.9']
-  s.add_dependency 'activerecord',  ['~> 2.3']
-  s.add_dependency 'json',          ['>= 1.1.7']
-  s.add_dependency 'rest-client',   ['>= 1.4']
-  s.add_dependency 'thin',          ['>= 1.2.4']
-
-  if s.respond_to?(:add_development_dependency)
-    s.add_development_dependency 'faker',               ['>= 0.3.1']
-    s.add_development_dependency 'thoughtbot-shoulda',  ['>= 2.10.2']
-    s.add_development_dependency 'notahat-machinist',   ['>= 1.0.3']
-    s.add_development_dependency 'rack-test',           ['>= 0.4.1']
-    s.add_development_dependency 'mocha',               ['>= 0.9.7']
-  end
 
   s.files = %w(
 actions/graphics_magick.rb

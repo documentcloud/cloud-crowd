@@ -4,9 +4,8 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
 require 'rubygems'
-gem 'activerecord', '~> 2.0'
+gem 'activerecord'
 gem 'json'
-gem 'rest-client'
 gem 'sinatra'
 gem 'thin'
 
@@ -17,7 +16,6 @@ autoload :Digest,       'digest'
 autoload :ERB,          'erb'
 autoload :FileUtils,    'fileutils'
 autoload :JSON,         'json'
-autoload :RestClient,   'rest_client'
 autoload :RightAws,     'right_aws'
 autoload :CloudFiles,   'cloudfiles'
 autoload :Sinatra,      'sinatra'
@@ -28,6 +26,10 @@ autoload :YAML,         'yaml'
 require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
+require 'rest_client'
+
+require 'active_model_serializers'
+ActiveModel::Serializer.root = false
 
 module CloudCrowd
 
@@ -45,7 +47,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.6.2'
+  VERSION        = '0.7.0'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4

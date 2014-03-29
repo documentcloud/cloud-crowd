@@ -18,6 +18,7 @@ module CloudCrowd
   # [delete /node/:host] Removes a Node from the registry, freeing up any WorkUnits that it had checked out.
   # [put /work/:unit_id] Mark a finished WorkUnit as completed or failed, with results.
   class Server < Sinatra::Base
+    use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
@@ -42,7 +43,7 @@ module CloudCrowd
     # larger -- keep it in mind.
     get '/status' do
       json(
-        'nodes'           => NodeRecord.all(:order => 'host desc'),
+        'nodes'           => NodeRecord.order('host desc').map{ |node| NodeRecord::Serializer.new(node).as_json },
         'job_count'       => Job.incomplete.count,
         'work_unit_count' => WorkUnit.incomplete.count
       )

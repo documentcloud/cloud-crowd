@@ -22,7 +22,7 @@ class CommandLineTest < Test::Unit::TestCase
       IRB.expects(:start)
       CloudCrowd::CommandLine.new
       ['Job', 'WorkUnit', 'Server', 'Node', 'SUCCEEDED', 'FAILED'].each do |constant|
-        assert Object.constants.include?(constant)
+        assert Object.constants.include?(constant.to_sym), "CommandLine includes #{constant}"
       end
     end
     

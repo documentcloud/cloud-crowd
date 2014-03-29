@@ -6,7 +6,7 @@ module CloudCrowd
   # are each run as a single WorkUnit.
   class WorkUnit < ActiveRecord::Base
     include ModelStatus
-
+    
     # We use a random number in (0...MAX_RESERVATION) to reserve work units.
     # The size of the maximum signed integer in MySQL -- SQLite has no limit.
     MAX_RESERVATION = 2147483647
@@ -21,11 +21,9 @@ module CloudCrowd
     validates_presence_of :job_id, :status, :input, :action
 
     # Available WorkUnits are waiting to be distributed to Nodes for processing.
-    named_scope :available, {:conditions => {:reservation => nil, :worker_pid => nil, :status => INCOMPLETE}}
+    scope :available, -> { where(:reservation => nil, :worker_pid => nil, :status => INCOMPLETE) }
     # Reserved WorkUnits have been marked for distribution by a central server process.
-    named_scope :reserved,  lambda {|reservation|
-      {:conditions => {:reservation => reservation}, :order => 'updated_at asc'}
-    }
+    scope :reserved, ->(reservation) { where(:reservation => reservation).order('updated_at asc') }
 
     # Attempt to send a list of WorkUnits to nodes with available capacity.
     # A single central server process stops the same WorkUnit from being
@@ -43,27 +41,25 @@ module CloudCrowd
 
         # Find the available nodes, and determine what actions we're capable
         # of running at the moment.
-        available_nodes   = NodeRecord.available
+        available_nodes   = NodeRecord.available.to_a
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
         filter            = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
 
         # Reserve a handful of available work units.
         WorkUnit.cancel_reservations(reservation) if reservation
         return unless reservation = WorkUnit.reserve_available(:limit => RESERVATION_LIMIT, :conditions => filter)
-        work_units = WorkUnit.reserved(reservation)
+        work_units = WorkUnit.reserved(reservation).to_a
 
         # Round robin through the nodes and units, sending the unit if the node
         # is able to process it.
-        work_units.each do |unit|
-          available_nodes.each do |node|
-            if node.actions.include? unit.action
-              if node.send_work_unit unit
-                work_units.delete unit
-                available_nodes.delete node if node.busy?
-                break
-              end
+        while (unit = work_units.shift) and available_nodes.any? do
+          while node = available_nodes.shift do
+            if node.actions.include?(unit.action) and node.send_work_unit(unit)
+              available_nodes.push(node) unless node.busy?
+              break
             end
           end
+          work_units.push(unit) unless unit.assigned?
         end
 
         # If we still have units at this point, or we're fresh out of nodes,
@@ -77,9 +73,11 @@ module CloudCrowd
     # Reserves all available WorkUnits for this process. Returns false if there
     # were none available.
     def self.reserve_available(options={})
-      reservation = ActiveSupport::SecureRandom.random_number(MAX_RESERVATION)
+      reservation = SecureRandom.random_number(MAX_RESERVATION)
       conditions = "reservation is null and node_record_id is null and status in (#{INCOMPLETE.join(',')}) and #{options[:conditions]}"
-      any = WorkUnit.update_all("reservation = #{reservation}", conditions, options) > 0
+      query = WorkUnit.where(conditions)
+      query.limit(options[:limit]) if options[:limit]
+      any = query.update_all("reservation = #{reservation}") > 0
       any && reservation
     end
 
@@ -166,6 +164,10 @@ module CloudCrowd
     def assign_to(node_record, worker_pid)
       update_attributes!(:node_record => node_record, :worker_pid => worker_pid)
     end
+    
+    def assigned?
+      !!(node_record_id && worker_pid)
+    end
 
     # All output needs to be wrapped in a JSON object for consistency
     # (unfortunately, JSON.parse needs the top-level to be an object or array).
@@ -176,17 +178,15 @@ module CloudCrowd
 
     # The JSON representation of a WorkUnit shares the Job's options with all
     # its cousin WorkUnits.
-    def to_json
-      {
-        'id'        => self.id,
-        'job_id'    => self.job_id,
-        'input'     => self.input,
-        'attempts'  => self.attempts,
-        'action'    => self.action,
-        'options'   => JSON.parse(self.job.options),
-        'status'    => self.status
-      }.to_json
+    class Serializer < ActiveModel::Serializer
+      attributes :id, :job_id, :input, :attempts, :action, :options, :status
+
+      def options; JSON.parse(object.job.options); end
     end
+    
+    def active_model_serializer; Serializer; end
+    def to_json; Serializer.new(self).to_json; end
 
   end
 end
+require 'securerandom'

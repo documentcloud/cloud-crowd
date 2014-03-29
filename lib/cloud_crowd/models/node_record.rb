@@ -12,9 +12,9 @@ module CloudCrowd
     after_destroy :redistribute_work_units
 
     # Available Nodes haven't used up their maxiumum number of workers yet.
-    named_scope :available, {
-      :conditions => ['(max_workers is null or (select count(*) from work_units where node_record_id = node_records.id) < max_workers)'],
-      :order      => 'updated_at asc'
+    scope :available, -> { 
+      where('(max_workers is null or (select count(*) from work_units where node_record_id = node_records.id) < max_workers)').
+      order('updated_at asc')
     }
 
     # Extract the port number from the host id.
@@ -32,7 +32,7 @@ module CloudCrowd
         :max_workers      => params[:max_workers],
         :enabled_actions  => params[:enabled_actions]
       }
-      self.find_or_create_by_host(params[:host]).update_attributes!(attrs)
+      self.find_or_create_by(:host => params[:host]).update_attributes!(attrs)
     end
 
     # Dispatch a WorkUnit to this node. Places the node at back at the end of
@@ -82,23 +82,33 @@ module CloudCrowd
 
     # A list of the process ids of the workers currently being run by the Node.
     def worker_pids
-      work_units.all(:select => 'worker_pid').map(&:worker_pid)
+      work_units.pluck('worker_pid')
     end
 
     # Release all of this Node's WorkUnits for other nodes to take.
     def release_work_units
-      WorkUnit.update_all('node_record_id = null, worker_pid = null', "node_record_id = #{id}")
+      WorkUnit.where("node_record_id = #{id}").update_all('node_record_id = null, worker_pid = null')
     end
 
     # The JSON representation of a NodeRecord includes its worker_pids.
-    def to_json(opts={})
-      { 'host'    => host,
-        'workers' => worker_pids,
-        'status'  => display_status,
-        'tag'     => tag
-      }.to_json
+    
+    class Serializer < ActiveModel::Serializer
+      attributes :host, :tag, :workers, :status
+      
+      def workers
+        object.worker_pids
+      end
+      
+      def status
+        object.display_status
+      end
     end
+    
+    def active_model_serializer; Serializer; end
 
+    def to_json
+      Serializer.new(self).to_json
+    end
 
     private
 

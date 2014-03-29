@@ -5,15 +5,17 @@ class WorkUnitTest < Test::Unit::TestCase
   context "A WorkUnit" do
     
     setup do
-      @unit = CloudCrowd::WorkUnit.make
+      @unit = CloudCrowd::WorkUnit.make!
       @job = @unit.job
     end
     
     subject { @unit }
     
-    should_belong_to :job
+    should belong_to :job
     
-    should_validate_presence_of :job_id, :status, :input, :action
+    [:job_id, :status, :input, :action].each do |field|
+      should validate_presence_of(field)
+    end
     
     should "know if its done" do
       assert !@unit.complete?
@@ -24,7 +26,7 @@ class WorkUnitTest < Test::Unit::TestCase
     end
     
     should "have JSON that includes job attributes" do
-      job = Job.make
+      job = Job.make!
       unit_data = JSON.parse(job.work_units.first.to_json)
       assert unit_data['job_id'] == job.id
       assert unit_data['action'] == job.action

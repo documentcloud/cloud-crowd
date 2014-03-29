@@ -13,12 +13,17 @@ module CloudCrowd
 
     validates_presence_of :status, :inputs, :action, :options
 
-    before_validation_on_create :set_initial_status
+    # Set initial status
+    # A Job starts out either splitting or processing, depending on its action.
+    before_validation(:on => :create) do
+      self.status = self.splittable? ? SPLITTING : PROCESSING
+    end
+
     after_create                :queue_for_workers
     before_destroy              :cleanup_assets
 
     # Jobs that were last updated more than N days ago.
-    named_scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
+    scope :older_than, lambda {|num| {:conditions => ['updated_at < ?', num.days.ago]} }
 
     # Create a Job from an incoming JSON request, and add it to the queue.
     def self.create_from_request(h)
@@ -86,7 +91,7 @@ module CloudCrowd
     # separate thread to get out of the transaction's way.
     # TODO: Convert this into a 'cleanup' work unit that gets run by a worker.
     def cleanup_assets
-      AssetStore.new.cleanup(self)
+    #  AssetStore.new.cleanup(self)
     end
 
     # Have all of the WorkUnits finished?
@@ -147,7 +152,7 @@ module CloudCrowd
 
     # A JSON representation of this job includes the statuses of its component
     # WorkUnits, as well as any completed outputs.
-    def to_json(opts={})
+    def as_json(opts={})
       atts = {
         'id'                => id,
         'color'             => color,
@@ -158,7 +163,7 @@ module CloudCrowd
       }
       atts['outputs'] = JSON.parse(outputs) if outputs
       atts['email']   = email               if email
-      atts.to_json
+      atts
     end
 
 
@@ -180,11 +185,6 @@ module CloudCrowd
       input ||= JSON.parse(self.inputs)
       input.each {|i| WorkUnit.start(self, action, i, status) }
       self
-    end
-
-    # A Job starts out either splitting or processing, depending on its action.
-    def set_initial_status
-      self.status = self.splittable? ? SPLITTING : PROCESSING
     end
 
   end
