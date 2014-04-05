@@ -1,12 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra'
-gem 'activerecord'
-gem 'active_model_serializers'
-gem 'json'
-gem 'rest-client'
-gem 'thin'
-gem 'rake'
+gemspec
 
 group :development do
   gem 'sqlite3'
@@ -25,4 +19,3 @@ group :test do
   gem 'machinist'
 end
 
-gemspec
