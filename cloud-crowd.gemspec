@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.7.1'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2014-04-05'
+  s.version   = '0.7.2.pre'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2014-04-06'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'json',          ['>= 1.1.7']
   s.add_dependency 'rest-client',   ['>= 1.4']
   s.add_dependency 'thin',          ['>= 1.2.4']
-  s.add_dependency 'rake'  
+  s.add_dependency 'rake'
 
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'faker',              ['>= 0.3.1']

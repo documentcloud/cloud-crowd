@@ -47,7 +47,7 @@ module CloudCrowd
   autoload :WorkUnit,     'cloud_crowd/models'
 
   # Keep this version in sync with the gemspec.
-  VERSION        = '0.7.1'
+  VERSION        = '0.7.2'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4
@@ -100,6 +100,10 @@ module CloudCrowd
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
       @config[:work_unit_retries] ||= MIN_RETRIES
+      if @config[:actions_path]
+        path = Pathname.new( @config[:actions_path] ).realpath
+        $LOAD_PATH.unshift( path ) unless $LOAD_PATH.include?( path )
+      end
     end
 
     # Configure the CloudCrowd central database (and connect to it), by passing
