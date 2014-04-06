@@ -164,9 +164,10 @@ module CloudCrowd
     def actions
       return @actions if @actions
       @actions = action_paths.inject({}) do |memo, path|
-        name = File.basename(path, File.extname(path))
-        require path
-        memo[name] = Module.const_get(Inflector.camelize(name))
+        path = Pathname.new(path)
+        require path.relative? ? path.basename : path
+        name = path.basename('.*').to_s
+        memo[name] = Module.const_get( Inflector.camelize( name ) )
         memo
       end
     rescue NameError => e
