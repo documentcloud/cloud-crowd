@@ -1,4 +1,4 @@
-gem 'right_aws'
+require 'aws'
 
 module CloudCrowd
   class AssetStore
@@ -14,11 +14,8 @@ module CloudCrowd
         key, secret = CloudCrowd.config[:aws_access_key], CloudCrowd.config[:aws_secret_key]
         valid_conf  = [bucket_name, key, secret].all? {|s| s.is_a? String }
         raise Error::MissingConfiguration, "An S3 account must be configured in 'config.yml' before 's3' storage can be used" unless valid_conf
-        protocol    = @use_auth ? 'https' : 'http'
-        port        = @use_auth ? 443 : 80
-        @s3         = RightAws::S3.new(key, secret, :protocol => protocol, :port => port)
-        @bucket     = @s3.bucket(bucket_name)
-        @bucket     = @s3.bucket(bucket_name, true) unless @bucket
+        @s3         = ::AWS::S3.new(:access_key_id => key, :secret_access_key => secret, :secure => !!@use_auth)
+        @bucket     = (@s3.buckets[bucket_name].exists? ? @s3.buckets[bucket_name] : @s3.buckets.create(bucket_name))
       end
 
       # Save a finished file from local storage to S3. Save it publicly unless
