@@ -91,7 +91,7 @@ module CloudCrowd
       @server.daemonize if @daemon
       trap_signals
       asset_store
-      @server_thread   = Thread.new { @server.start }
+      @server_thread   = CloudCrowd.defer { @server.start }
       check_in(true)
       check_in_periodically
       monitor_system if @max_load || @min_memory
@@ -158,7 +158,7 @@ module CloudCrowd
     # average and the amount of free memory remaining. If we transition out of
     # the overloaded state, let central know.
     def monitor_system
-      @monitor_thread = Thread.new do
+      @monitor_thread = CloudCrowd.defer do
         loop do
           was_overloaded = @overloaded
           @overloaded = overloaded?
@@ -172,7 +172,7 @@ module CloudCrowd
     # will assume that the node has gone down. Checking in will let central know
     # it's still online.
     def check_in_periodically
-      @check_in_thread = Thread.new do
+      @check_in_thread = CloudCrowd.defer do
         loop do
           sleep CHECK_IN_INTERVAL
           check_in

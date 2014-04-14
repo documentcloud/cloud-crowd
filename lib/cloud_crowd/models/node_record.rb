@@ -116,7 +116,7 @@ module CloudCrowd
     # Redistribute in a separate thread to avoid delaying shutdown.
     def redistribute_work_units
       release_work_units
-      Thread.new { WorkUnit.distribute_to_nodes }
+      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
     end
 
   end

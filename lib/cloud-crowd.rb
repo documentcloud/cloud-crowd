@@ -116,6 +116,16 @@ module CloudCrowd
       end
     end
 
+    # Starts a new thread with a ActiveRecord connection_pool
+    # and yields for peforming work inside the blocks
+    def defer
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          yield
+        end
+      end
+    end
+
     # Get a reference to the central server, including authentication if
     # configured.
     def central_server

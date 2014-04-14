@@ -54,7 +54,7 @@ module CloudCrowd
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
         puts "Job ##{id} (#{action}) #{display_status}." unless ENV['RACK_ENV'] == 'test'
-        Thread.new { fire_callback } if callback_url
+        CloudCrowd.defer { fire_callback } if callback_url
       end
       self
     end
@@ -80,7 +80,7 @@ module CloudCrowd
     def fire_callback
       begin
         response = RestClient.post(callback_url, {:job => self.to_json})
-        Thread.new { self.destroy } if response && response.code == 201
+        CloudCrowd.defer { self.destroy } if response && response.code == 201
       rescue RestClient::Exception => e
         puts "Job ##{id} (#{action}) failed to fire callback: #{callback_url}"
       end

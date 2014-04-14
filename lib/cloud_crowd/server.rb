@@ -33,6 +33,11 @@ module CloudCrowd
       login_required if CloudCrowd.config[:http_authentication]
     end
 
+    # After each request return the connection to the ActiveRecord pool
+    after do
+      ActiveRecord::Base.clear_active_connections!
+    end
+
     # Render the admin console.
     get '/' do
       erb :operations_center
@@ -71,7 +76,7 @@ module CloudCrowd
     # Distributes all work units to available nodes.
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
-      Thread.new { WorkUnit.distribute_to_nodes }
+      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
       puts "Job ##{job.id} (#{job.action}) started." unless ENV['RACK_ENV'] == 'test'
       json job
     end
