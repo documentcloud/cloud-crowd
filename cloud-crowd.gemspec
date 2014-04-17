@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.7.2.beta'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2014-04-06'
+  s.version   = '0.7.2'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2014-04-17'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
