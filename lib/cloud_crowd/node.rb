@@ -175,8 +175,23 @@ module CloudCrowd
     def check_in_periodically
       @check_in_thread = CloudCrowd.defer do
         loop do
-          sleep CHECK_IN_INTERVAL
-          check_in
+          reply = ""
+          1.upto(5).each do | attempt_number |
+            # sleep for an ever increasing amount of time to prevent overloading the server
+            sleep CHECK_IN_INTERVAL * attempt_number
+            reply = check_in
+            # if we did not receive a reply, the server has went away; it
+            # will reply with an empty string if the check-in succeeds
+            if reply.nil?
+              puts "Failed on attempt # #{attempt_number} to check in with server"
+            else
+              break
+            end
+          end
+          if reply.nil?
+            puts "Giving up after repeated attempts to contact server"
+            raise SystemExit
+          end
         end
       end
     end
