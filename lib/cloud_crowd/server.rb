@@ -95,7 +95,7 @@ module CloudCrowd
     # configuration with the central server. Triggers distribution of WorkUnits.
     put '/node/:host' do
       NodeRecord.check_in(params, request)
-      WorkUnit.distribute_to_nodes
+      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
       puts "Node #{params[:host]} checked in."
       json nil
     end
@@ -117,7 +117,8 @@ module CloudCrowd
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
       else             error(500, "Completing a work unit must specify status.")
       end
-      WorkUnit.distribute_to_nodes
+      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
+
       json nil
     end
 
