@@ -44,6 +44,9 @@ module CloudCrowd
       result = node['/work'].post(:work_unit => unit.to_json)
       unit.assign_to(self, JSON.parse(result.body)['pid'])
       touch && true
+    rescue RestClient::RequestTimeout
+      # The node's gone away.  Destroy it and it will check in when it comes back
+      destroy && false
     rescue RestClient::RequestFailed => e
       raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE
       update_attribute(:busy, true) && false
