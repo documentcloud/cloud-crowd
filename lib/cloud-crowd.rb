@@ -27,7 +27,7 @@ require 'socket'
 require 'net/http'
 require 'cloud_crowd/exceptions'
 require 'rest_client'
-
+require 'pathname'
 require 'active_model_serializers'
 ActiveModel::Serializer.root = false
 
