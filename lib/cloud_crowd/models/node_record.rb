@@ -46,12 +46,14 @@ module CloudCrowd
       touch && true
     rescue RestClient::RequestTimeout
       # The node's gone away.  Destroy it and it will check in when it comes back
+      puts "Node #{host} received RequestTimeout, removing it"
       destroy && false
     rescue RestClient::RequestFailed => e
       raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE
       update_attribute(:busy, true) && false
-    rescue RestClient::Exception, Errno::ECONNREFUSED, Timeout::Error, RestClient::RequestTimeout, Errno::ECONNRESET
+    rescue RestClient::Exception, Errno::ECONNREFUSED, Timeout::Error, Errno::ECONNRESET=>e
       # Couldn't post to node, assume it's gone away.
+      puts "Node #{host} received #{e.class} #{e}, removing it"
       destroy && false
     end
 
