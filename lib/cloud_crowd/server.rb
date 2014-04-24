@@ -95,8 +95,11 @@ module CloudCrowd
     # configuration with the central server. Triggers distribution of WorkUnits.
     put '/node/:host' do
       NodeRecord.check_in(params, request)
-      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
       puts "Node #{params[:host]} checked in."
+      CloudCrowd.defer do
+        sleep 15 # Give the new node awhile to start listening
+        WorkUnit.distribute_to_nodes
+      end
       json nil
     end
 
