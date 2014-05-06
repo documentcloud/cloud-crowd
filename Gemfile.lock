@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-crowd (0.7.2)
+    cloud-crowd (0.7.3)
       active_model_serializers
       activerecord (>= 3.0)
       json (>= 1.1.7)
@@ -86,7 +86,7 @@ DEPENDENCIES
   cloud-crowd!
   faker
   machinist
-  mocha
+  mocha (>= 0.9.7)
   pry
   rack-test
   sham

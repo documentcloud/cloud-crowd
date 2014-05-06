@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.7.2'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2014-04-17'
+  s.version   = '0.7.3'         # Keep version in sync with cloud-cloud.rb
+  s.date      = '2014-05-06'
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   
   s.license = "MIT"
 
-  s.authors           = ['Jeremy Ashkenas', 'Ted Han']
+  s.authors           = ['Jeremy Ashkenas', 'Ted Han', 'Nathan Stitt']
   s.email             = 'opensource@documentcloud.org'
   s.rubyforge_project = 'cloud-crowd'
 
