@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ServerTest < Test::Unit::TestCase
+class ServerTest < Minitest::Test
 
   include Rack::Test::Methods
 

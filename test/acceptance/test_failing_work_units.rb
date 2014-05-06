@@ -1,7 +1,7 @@
 require 'test_helper'
 
 # A Worker Daemon needs to be running to perform this integration test.
-class FailingWorkUnitsTest < Test::Unit::TestCase
+class FailingWorkUnitsTest < Minitest::Test
 
   should "retry work units when they fail" do
     WorkUnit.expects(:distribute_to_nodes).returns(true)

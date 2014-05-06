@@ -4,8 +4,8 @@ require 'rake/testtask'
 # create and load a fresh test database, and then `rake test`.
 desc 'Run all tests'
 task :test do
+  require 'minitest/autorun'
   $LOAD_PATH.unshift(File.expand_path('test'))
-  require 'test/unit'  
   Dir['./test/**/test_*.rb'].each {|test| require test }
 end
 

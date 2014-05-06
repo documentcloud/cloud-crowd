@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class WorkUnitTest < Test::Unit::TestCase
+class WorkUnitTest < Minitest::Test
 
   context "A WorkUnit" do
     

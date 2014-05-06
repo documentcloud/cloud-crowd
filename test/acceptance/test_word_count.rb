@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class WordCountTest < Test::Unit::TestCase
+class WordCountTest < Minitest::Test
   
   context "the word_count action" do
     

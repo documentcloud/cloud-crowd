@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class NodeAcceptanceTest < Test::Unit::TestCase
+class NodeAcceptanceTest < Minitest::Test
   
   include Rack::Test::Methods
   

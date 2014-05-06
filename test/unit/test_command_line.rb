@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CommandLineTest < Test::Unit::TestCase
+class CommandLineTest < Minitest::Test
   
   context "A CloudCrowd::CommandLine" do
     

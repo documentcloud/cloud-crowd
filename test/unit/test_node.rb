@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class NodeUnitTest < Test::Unit::TestCase
+class NodeUnitTest < Minitest::Test
 
   context "A Node" do
 

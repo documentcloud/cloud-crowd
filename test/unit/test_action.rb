@@ -7,7 +7,7 @@ end
 class EmptyAction < CloudCrowd::Action
 end
 
-class ActionTest < Test::Unit::TestCase
+class ActionTest < Minitest::Test
 
   context "A CloudCrowd::Action" do
 
@@ -18,7 +18,7 @@ class ActionTest < Test::Unit::TestCase
     end
 
     should "throw an exception if the 'process' method isn't implemented" do
-      assert_raise(NotImplementedError) { EmptyAction.new(*@args).process }
+      assert_raises(NotImplementedError) { EmptyAction.new(*@args).process }
     end
 
     should "have downloaded the input URL to local storage" do
@@ -55,7 +55,7 @@ class ActionTest < Test::Unit::TestCase
 
     should "raise an exception when backticks fail" do
       def @action.process; `utter failure 2>&1`; end
-      assert_raise(CloudCrowd::Error::CommandFailed) { @action.process }
+      assert_raises(CloudCrowd::Error::CommandFailed) { @action.process }
     end
 
     should "be able to download a remote file" do

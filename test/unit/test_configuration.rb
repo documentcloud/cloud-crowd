@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ConfigurationTest < Test::Unit::TestCase
+class ConfigurationTest < Minitest::Test
 
   context "CloudCrowd Configuration" do
 

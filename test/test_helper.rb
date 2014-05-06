@@ -19,7 +19,7 @@ CloudCrowd.configure_database(here + '/config/database.yml')
 
 require "#{CloudCrowd::ROOT}/test/blueprints.rb"
 
-class Test::Unit::TestCase
+class Minitest::Test
   include CloudCrowd
   include Shoulda::Matchers::ActiveRecord
   extend Shoulda::Matchers::ActiveRecord

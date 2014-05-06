@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class NodeRecordTest < Test::Unit::TestCase
+class NodeRecordTest < Minitest::Test
 
   context "A NodeRecord" do
         

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class JobTest < Test::Unit::TestCase
+class JobTest < Minitest::Test
 
   context "A CloudCrowd Job" do
         
