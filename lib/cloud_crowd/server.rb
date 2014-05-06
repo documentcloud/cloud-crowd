@@ -91,7 +91,7 @@ module CloudCrowd
 
     # INTERNAL NODE API:
 
-    # A new Node will this this action to register its location and
+    # A new Node will put to this action to register its location and
     # configuration with the central server. Triggers distribution of WorkUnits.
     put '/node/:host' do
       NodeRecord.check_in(params, request)
