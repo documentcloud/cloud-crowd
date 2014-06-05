@@ -32,7 +32,13 @@ module CloudCrowd
         :max_workers      => params[:max_workers],
         :enabled_actions  => params[:enabled_actions]
       }
-      self.find_or_create_by(:host => params[:host]).update_attributes!(attrs)
+      host_attr = {:host => params[:host]}
+      if (record = where(host_attr).first)
+        record.update_attributes!(attrs)
+        record
+      else
+        create!(attrs.merge(host_attr))
+      end
     end
 
     # Dispatch a WorkUnit to this node. Places the node at back at the end of

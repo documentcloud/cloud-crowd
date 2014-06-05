@@ -39,6 +39,24 @@ class NodeRecordTest < Minitest::Test
       assert !!URI.parse(@node.url)
     end
     
+    should "be able to check-in and be updated" do
+      request = Rack::Request.new({'REMOTE_ADDR'=>'127.0.0.1'})
+      node_data = {
+          :ip_address      => '127.0.0.1',
+          :host            => "hostname-42:6032",
+          :busy            => false,
+          :max_workers     => 3,
+          :enabled_actions => 'graphics_magick,word_count'
+      }
+      node_data[:host] << ':6093'
+      record = NodeRecord.check_in( node_data, request )
+      assert_equal '127.0.0.1', record.ip_address
+      assert_equal 3, record.max_workers
+      node_data[:max_workers] = 2
+      updated_record = NodeRecord.check_in( node_data, request )
+      assert_equal updated_record, record
+      assert_equal 2, updated_record.max_workers
+    end
   end
   
 end
