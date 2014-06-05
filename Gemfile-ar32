@@ -1,0 +1,28 @@
+# This is an alternate Gemfile that locks ActiveRecord to version 3.2
+# It can be used for testing by:
+#
+#    bundle install --gemfile=Gemfile-ar32
+#    BUNDLE_GEMFILE=./Gemfile-ar32 bundle exec rake test
+#
+source 'https://rubygems.org'
+
+gemspec
+
+gem 'activerecord', '~>3.2'
+
+group :development do
+  gem 'sqlite3'
+  gem 'pry'
+  gem 'faker'
+end
+
+group :test do
+  gem 'minitest', '~>5.3'
+  gem 'activesupport'
+  gem 'shoulda-matchers'
+  gem 'shoulda-context'
+  gem "rack-test", :require => "rack/test"
+  gem 'sham'
+  gem 'machinist'
+end
+
