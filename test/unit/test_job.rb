@@ -77,6 +77,7 @@ class JobTest < Minitest::Test
       Job.any_instance.stubs(:fire_callback).returns(true)
       Job.any_instance.expects(:fire_callback)
       @job.work_units.first.finish('{"output":"output"}', 10)
+      sleep 0.5 # block to allow Crowd.defer thread to execute
       assert @job.all_work_units_complete?
     end
     
