@@ -113,7 +113,11 @@ module CloudCrowd
       configuration = YAML.load(ERB.new(File.read(config_path)).result)
       ActiveRecord::Base.establish_connection(configuration)
       if validate_schema
-        version = ActiveRecord::Base.connection.select_values('select max(version) from schema_migrations').first.to_i
+        begin
+          version = ActiveRecord::Base.connection.select_values('select max(version) from schema_migrations').first.to_i
+        rescue
+          version = 0
+        end
         return true if version == SCHEMA_VERSION
         puts "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first.\nexiting..."
         exit
