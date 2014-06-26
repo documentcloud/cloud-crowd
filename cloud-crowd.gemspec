@@ -1,7 +1,11 @@
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'cloud_crowd/version'
+
 Gem::Specification.new do |s|
   s.name      = 'cloud-crowd'
-  s.version   = '0.7.3'         # Keep version in sync with cloud-cloud.rb
-  s.date      = '2014-05-06'
+  s.version   = CloudCrowd::VERSION
+  s.date      = CloudCrowd::VERSION_RELEASED
 
   s.homepage    = "http://wiki.github.com/documentcloud/cloud-crowd"
   s.summary     = "Parallel Processing for the Rest of Us"
