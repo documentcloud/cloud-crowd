@@ -134,7 +134,12 @@ module CloudCrowd
       @distribute_thread = Thread.new do
         loop do
           puts "Distributing jobs to nodes"
-          WorkUnit.distribute_to_nodes
+          begin
+            WorkUnit.distribute_to_nodes
+          rescue StandardError => e
+            puts "Exception: #{e}"
+            puts e.backtrace 
+          end
           sleep DISTRIBUTE_INTERVAL
         end
       end
