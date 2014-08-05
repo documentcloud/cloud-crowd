@@ -83,7 +83,7 @@ Options:
       pid_path    = CloudCrowd.pid_path('server.pid')
       rackup_path = File.expand_path("#{@options[:config_path]}/config.ru")
       FileUtils.mkdir_p(CloudCrowd.log_path) if @options[:daemonize] && !File.exists?(CloudCrowd.log_path)
-      puts "Starting CloudCrowd Central Server on port #{port}..."
+      puts "Starting CloudCrowd Central Server (#{VERSION}) on port #{port}..."
       exec "thin -e #{@options[:environment]} -p #{port} #{daemonize} --tag cloud-crowd-server --log #{log_path} --pid #{pid_path} -R #{rackup_path} start"
     end
 
@@ -114,7 +114,7 @@ Options:
     # will be long-lived, although its workers will come and go.
     def start_node
       @options[:port] ||= Node::DEFAULT_PORT
-      puts "Starting CloudCrowd Node on port #{@options[:port]}..."
+      puts "Starting CloudCrowd Node (#{VERSION}) on port #{@options[:port]}..."
       Node.new(@options)
     end
 

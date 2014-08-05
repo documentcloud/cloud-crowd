@@ -20,6 +20,10 @@ module CloudCrowd
   class Server < Sinatra::Base
     use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
+    # The interval (in seconds) at which the server will distribute
+    # new work units to the nodes
+    DISTRIBUTE_INTERVAL=20
+
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
 
@@ -71,7 +75,6 @@ module CloudCrowd
     # Distributes all work units to available nodes.
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
-      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
       puts "Job ##{job.id} (#{job.action}) started." unless ENV['RACK_ENV'] == 'test'
       json job
     end
@@ -96,10 +99,6 @@ module CloudCrowd
     put '/node/:host' do
       NodeRecord.check_in(params, request)
       puts "Node #{params[:host]} checked in."
-      CloudCrowd.defer do
-        sleep 15 # Give the new node awhile to start listening
-        WorkUnit.distribute_to_nodes
-      end
       json nil
     end
 
@@ -120,8 +119,6 @@ module CloudCrowd
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
       else             error(500, "Completing a work unit must specify status.")
       end
-      CloudCrowd.defer { WorkUnit.distribute_to_nodes }
-
       json nil
     end
 
@@ -129,8 +126,19 @@ module CloudCrowd
     def initialize(*args)
       super(*args)
       CloudCrowd.identity = :server
+      self.distribute_periodically
     end
 
+    # Perform distribution of work units in a background thread
+    def distribute_periodically
+      @distribute_thread = Thread.new do
+        loop do
+          puts "Distributing jobs to nodes"
+          WorkUnit.distribute_to_nodes
+          sleep DISTRIBUTE_INTERVAL
+        end
+      end
+    end
   end
 
 end
