@@ -53,7 +53,7 @@ module CloudCrowd
       return queue_for_workers([outs]) if merging?
       if complete?
         update_attributes(:outputs => outs, :time => time_taken)
-        puts "Job ##{id} (#{action}) #{display_status}." unless ENV['RACK_ENV'] == 'test'
+        CloudCrowd.log "Job ##{id} (#{action}) #{display_status}." unless ENV['RACK_ENV'] == 'test'
         CloudCrowd.defer { fire_callback } if callback_url
       end
       self
@@ -82,7 +82,7 @@ module CloudCrowd
         response = RestClient.post(callback_url, {:job => self.to_json})
         CloudCrowd.defer { self.destroy } if response && response.code == 201
       rescue RestClient::Exception => e
-        puts "Job ##{id} (#{action}) failed to fire callback: #{callback_url}"
+        CloudCrowd.log "Job ##{id} (#{action}) failed to fire callback: #{callback_url}"
       end
     end
 

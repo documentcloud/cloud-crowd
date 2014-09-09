@@ -110,7 +110,7 @@ module CloudCrowd
         :enabled_actions  => @enabled_actions.join(',')
       )
     rescue RestClient::Exception, Errno::ECONNREFUSED
-      puts "Failed to connect to the central server (#{@central.to_s})."
+      CloudCrowd.log "Failed to connect to the central server (#{@central.to_s})."
       raise SystemExit if critical
     end
 
@@ -183,13 +183,13 @@ module CloudCrowd
             # if we did not receive a reply, the server has went away; it
             # will reply with an empty string if the check-in succeeds
             if reply.nil?
-              puts "Failed on attempt # #{attempt_number} to check in with server"
+              CloudCrowd.log "Failed on attempt # #{attempt_number} to check in with server"
             else
               break
             end
           end
           if reply.nil?
-            puts "Giving up after repeated attempts to contact server"
+            CloudCrowd.log "Giving up after repeated attempts to contact server"
             raise SystemExit
           end
         end

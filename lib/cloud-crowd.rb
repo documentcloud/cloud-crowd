@@ -210,6 +210,12 @@ module CloudCrowd
       @identity == :node
     end
 
+    # Output a message with the current Timestamp prepended.
+    # Sinatra will re-direct stdout to a log file located at "log_path"
+    def log(message)
+      printf("%-20s %s\n", Time.now.strftime("%F-%T:"), message)
+    end
+
   end
 
 end

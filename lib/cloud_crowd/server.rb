@@ -75,7 +75,7 @@ module CloudCrowd
     # Distributes all work units to available nodes.
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
-      puts "Job ##{job.id} (#{job.action}) started." unless ENV['RACK_ENV'] == 'test'
+      CloudCrowd.log("Job ##{job.id} (#{job.action}) started.") unless ENV['RACK_ENV'] == 'test'
       json job
     end
 
@@ -98,7 +98,7 @@ module CloudCrowd
     # configuration with the central server. Triggers distribution of WorkUnits.
     put '/node/:host' do
       NodeRecord.check_in(params, request)
-      puts "Node #{params[:host]} checked in."
+      CloudCrowd.log "Node #{params[:host]} checked in."
       json nil
     end
 
@@ -106,7 +106,7 @@ module CloudCrowd
     # WorkUnits it may have had checked out.
     delete '/node/:host' do
       NodeRecord.destroy_all(:host => params[:host])
-      puts "Node #{params[:host]} checked out."
+      CloudCrowd.log "Node #{params[:host]} checked out."
       json nil
     end
 
@@ -114,6 +114,7 @@ module CloudCrowd
     # they mark it back on the central server and exit. Triggers distribution
     # of pending work units.
     put '/work/:work_unit_id' do
+      CloudCrowd.log "Job #{current_work_unit.job_id} WorkUnit #{current_work_unit.id} #{current_work_unit.action} #{params[:status]} in #{params[:time]}"
       case params[:status]
       when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
@@ -133,12 +134,12 @@ module CloudCrowd
     def distribute_periodically
       @distribute_thread = Thread.new do
         loop do
-          puts "Distributing jobs to nodes"
+          CloudCrowd.log "Distributing jobs to nodes"
           begin
             WorkUnit.distribute_to_nodes
           rescue StandardError => e
-            puts "Exception: #{e}"
-            puts e.backtrace 
+            CloudCrowd.log "Exception: #{e}"
+            CloudCrowd.log e.backtrace 
           end
           sleep DISTRIBUTE_INTERVAL
         end
