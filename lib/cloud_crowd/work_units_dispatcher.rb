@@ -1,11 +1,11 @@
 module CloudCrowd
 
-  # The foreman is responsible for distributing jobs
+  # The dispatcher is responsible for distributing jobs
   # to the worker nodes.
   #
   # It automatically performs the distribution on a set schedule,
   # but can also be signaled to perform distribution immediately
-  class JobsForeman
+  class WorkUnitsDispatcher
 
     # Starts distributing jobs every "distribution_interval" seconds
     def initialize(distribution_interval)
