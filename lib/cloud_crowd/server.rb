@@ -76,6 +76,7 @@ module CloudCrowd
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
       CloudCrowd.log("Job ##{job.id} (#{job.action}) started.") unless ENV['RACK_ENV'] == 'test'
+      @jobs.distribute!
       json job
     end
 
@@ -99,6 +100,7 @@ module CloudCrowd
     put '/node/:host' do
       NodeRecord.check_in(params, request)
       CloudCrowd.log "Node #{params[:host]} checked in."
+      @jobs.distribute!
       json nil
     end
 
@@ -107,6 +109,7 @@ module CloudCrowd
     delete '/node/:host' do
       NodeRecord.destroy_all(:host => params[:host])
       CloudCrowd.log "Node #{params[:host]} checked out."
+      @jobs.distribute!
       json nil
     end
 
@@ -120,31 +123,18 @@ module CloudCrowd
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
       else             error(500, "Completing a work unit must specify status.")
       end
+      @jobs.distribute!
       json nil
     end
 
     # At initialization record the identity of this Ruby instance as a server.
     def initialize(*args)
+      CloudCrowd.log "Starting server"
       super(*args)
       CloudCrowd.identity = :server
-      self.distribute_periodically
+      @jobs = JobsForeman.new(DISTRIBUTE_INTERVAL)
     end
 
-    # Perform distribution of work units in a background thread
-    def distribute_periodically
-      @distribute_thread = Thread.new do
-        loop do
-          CloudCrowd.log "Distributing jobs to nodes"
-          begin
-            WorkUnit.distribute_to_nodes
-          rescue StandardError => e
-            CloudCrowd.log "Exception: #{e}"
-            CloudCrowd.log e.backtrace 
-          end
-          sleep DISTRIBUTE_INTERVAL
-        end
-      end
-    end
   end
 
 end

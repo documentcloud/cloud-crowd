@@ -46,6 +46,7 @@ module CloudCrowd
   autoload :Server,       'cloud_crowd/server'
   autoload :Worker,       'cloud_crowd/worker'
   autoload :WorkUnit,     'cloud_crowd/models'
+  autoload :JobsForeman,  'cloud_crowd/jobs_foreman'
 
   # Increment the schema version when there's a backwards incompatible change.
   SCHEMA_VERSION = 4
