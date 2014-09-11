@@ -1,17 +1,17 @@
 module CloudCrowd
 
-  # The dispatcher is responsible for distributing jobs
+  # The dispatcher is responsible for distributing work_units
   # to the worker nodes.
   #
   # It automatically performs the distribution on a set schedule,
   # but can also be signaled to perform distribution immediately
-  class WorkUnitsDispatcher
+  class Dispatcher
 
     # Starts distributing jobs every "distribution_interval" seconds
     def initialize(distribution_interval)
       @mutex  = Mutex.new
       @awaken = ConditionVariable.new
-      @thread = Thread.new{ distribute_periodically(distribution_interval) }
+      distribute_periodically(distribution_interval)
     end
 
     # Sends a signal to the distribution thread.
@@ -26,19 +26,25 @@ module CloudCrowd
 
     # Perform distribution of work units in a background thread
     def distribute_periodically(interval)
-      loop do
-        CloudCrowd.log "Distributing jobs to nodes"
-        begin
-          WorkUnit.distribute_to_nodes
-        rescue StandardError => e
-          CloudCrowd.log "Exception: #{e}"
-          CloudCrowd.log e.backtrace
+      Thread.new{
+        loop do
+          perform_distribution
+          # Sleep for "interval" seconds.
+          # If awaken isn't signaled, timeout and attempt distribution
+          @mutex.synchronize do
+            @awaken.wait(@mutex, interval)
+          end
         end
-        # Sleep for "interval" seconds.
-        # If awaken isn't signaled, timeout and attempt distribution
-        @mutex.synchronize do
-          @awaken.wait(@mutex, interval)
-        end
+      }
+    end
+
+    def perform_distribution
+      CloudCrowd.log "Distributing jobs to nodes"
+      begin
+        WorkUnit.distribute_to_nodes
+      rescue StandardError => e
+        CloudCrowd.log "Exception: #{e}"
+        CloudCrowd.log e.backtrace
       end
     end
 

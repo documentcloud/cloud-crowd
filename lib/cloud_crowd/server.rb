@@ -76,7 +76,7 @@ module CloudCrowd
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
       CloudCrowd.log("Job ##{job.id} (#{job.action}) started.") unless ENV['RACK_ENV'] == 'test'
-      @work.distribute!
+      @dispatcher.distribute!
       json job
     end
 
@@ -100,7 +100,7 @@ module CloudCrowd
     put '/node/:host' do
       NodeRecord.check_in(params, request)
       CloudCrowd.log "Node #{params[:host]} checked in."
-      @work.distribute!
+      @dispatcher.distribute!
       json nil
     end
 
@@ -109,7 +109,7 @@ module CloudCrowd
     delete '/node/:host' do
       NodeRecord.destroy_all(:host => params[:host])
       CloudCrowd.log "Node #{params[:host]} checked out."
-      @work.distribute!
+      @dispatcher.distribute!
       json nil
     end
 
@@ -123,7 +123,7 @@ module CloudCrowd
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
       else             error(500, "Completing a work unit must specify status.")
       end
-      @work.distribute!
+      @dispatcher.distribute!
       json nil
     end
 
@@ -132,7 +132,7 @@ module CloudCrowd
       CloudCrowd.log "Starting server"
       super(*args)
       CloudCrowd.identity = :server
-      @work = WorkUnitsDispatcher.new(DISTRIBUTE_INTERVAL)
+      @dispatcher = Dispatcher.new(DISTRIBUTE_INTERVAL)
     end
 
   end
