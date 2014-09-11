@@ -4,9 +4,10 @@ require 'test_helper'
 class FailingWorkUnitsTest < Minitest::Test
 
   should "retry work units when they fail" do
-    WorkUnit.expects(:distribute_to_nodes).returns(true)
+    WorkUnit.stubs(:distribute_to_nodes).returns([])
+    Dispatcher.any_instance.stubs(:distribute_periodically)
+    Dispatcher.any_instance.expects(:distribute!)
     browser = Rack::Test::Session.new(Rack::MockSession.new(CloudCrowd::Server))
-    
     browser.post '/jobs', :job => {
       'action'  => 'failure_testing',
       'inputs'  => ['one', 'two', 'three'],

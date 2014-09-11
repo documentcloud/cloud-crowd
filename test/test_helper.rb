@@ -19,10 +19,25 @@ CloudCrowd.configure_database(here + '/config/database.yml')
 
 require "#{CloudCrowd::ROOT}/test/blueprints.rb"
 
+
+module TestHelpers
+  def setup
+    CloudCrowd::WorkUnit.stubs(:distribute_to_nodes).returns([])
+    CloudCrowd.stubs(:log)
+    super
+  end
+  def teardown
+      Mocha::Mockery.instance.teardown
+      Mocha::Mockery.reset_instance
+      super
+  end
+end
+
 class Minitest::Test
-  include CloudCrowd
+  include TestHelpers
   include Shoulda::Matchers::ActiveRecord
   extend Shoulda::Matchers::ActiveRecord
   include Shoulda::Matchers::ActiveModel
   extend Shoulda::Matchers::ActiveModel
+  include CloudCrowd
 end

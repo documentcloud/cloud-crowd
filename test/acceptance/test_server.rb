@@ -11,9 +11,12 @@ class ServerTest < Minitest::Test
   context "The CloudCrowd::Server (Sinatra)" do
 
     setup do
+      WorkUnit.stubs(:distribute_to_nodes).returns([])
+      Dispatcher.any_instance.stubs(:distribute_periodically)
       Job.destroy_all
       2.times { Job.make! }
     end
+
 
     should "set the identity of the Ruby instance" do
       app.new
@@ -37,7 +40,7 @@ class ServerTest < Minitest::Test
     end
 
     should "be able to create a job" do
-      WorkUnit.expects(:distribute_to_nodes).returns(true)
+      Dispatcher.any_instance.expects(:distribute!)
       post('/jobs', :job => '{"action":"graphics_magick","inputs":["http://www.google.com/"]}')
       assert last_response.ok?
       job_info = JSON.parse(last_response.body)
