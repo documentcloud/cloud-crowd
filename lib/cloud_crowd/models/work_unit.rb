@@ -79,7 +79,7 @@ module CloudCrowd
       reservation = SecureRandom.random_number(MAX_RESERVATION)
       conditions = "reservation is null and node_record_id is null and status in (#{INCOMPLETE.join(',')}) and #{options[:conditions]}"
       query = WorkUnit.where(conditions)
-      query.limit(options[:limit]) if options[:limit]
+      query = query.limit(options[:limit]) if options[:limit]
       any = query.update_all("reservation = #{reservation}") > 0
       any && reservation
     end
