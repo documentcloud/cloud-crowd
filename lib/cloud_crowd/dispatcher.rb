@@ -39,7 +39,7 @@ module CloudCrowd
     end
 
     def perform_distribution
-      CloudCrowd.log "Distributing jobs to nodes"
+      #CloudCrowd.log "Distributing jobs to nodes"
       begin
         WorkUnit.distribute_to_nodes
       rescue StandardError => e
