@@ -75,7 +75,7 @@ module CloudCrowd
     # Distributes all work units to available nodes.
     post '/jobs' do
       job = Job.create_from_request(JSON.parse(params[:job]))
-      CloudCrowd.log("Job ##{job.id} (#{job.action}) started.") unless ENV['RACK_ENV'] == 'test'
+      CloudCrowd.logger.info("Job ##{job.id} (#{job.action}) started.") unless ENV['RACK_ENV'] == 'test'
       @dispatcher.distribute!
       json job
     end
@@ -99,7 +99,7 @@ module CloudCrowd
     # configuration with the central server. Triggers distribution of WorkUnits.
     put '/node/:host' do
       NodeRecord.check_in(params, request)
-      CloudCrowd.log "Node #{params[:host]} checked in."
+      CloudCrowd.logger.info "Node #{params[:host]} checked in."
       @dispatcher.distribute!
       json nil
     end
@@ -108,7 +108,7 @@ module CloudCrowd
     # WorkUnits it may have had checked out.
     delete '/node/:host' do
       NodeRecord.destroy_all(:host => params[:host])
-      CloudCrowd.log "Node #{params[:host]} checked out."
+      CloudCrowd.logger.info "Node #{params[:host]} checked out."
       @dispatcher.distribute!
       json nil
     end
@@ -117,7 +117,7 @@ module CloudCrowd
     # they mark it back on the central server and exit. Triggers distribution
     # of pending work units.
     put '/work/:work_unit_id' do
-      CloudCrowd.log "Job #{current_work_unit.job_id} WorkUnit #{current_work_unit.id} #{current_work_unit.action} #{params[:status]} in #{params[:time]}"
+      CloudCrowd.logger.info "Job #{current_work_unit.job_id} WorkUnit #{current_work_unit.id} #{current_work_unit.action} #{params[:status]} in #{params[:time]}"
       case params[:status]
       when 'succeeded' then current_work_unit.finish(params[:output], params[:time])
       when 'failed'    then current_work_unit.fail(params[:output], params[:time])
@@ -129,7 +129,7 @@ module CloudCrowd
 
     # At initialization record the identity of this Ruby instance as a server.
     def initialize(*args)
-      CloudCrowd.log "Starting server"
+      CloudCrowd.logger.info "Starting server"
       super(*args)
       CloudCrowd.identity = :server
       @dispatcher = Dispatcher.new(DISTRIBUTE_INTERVAL)

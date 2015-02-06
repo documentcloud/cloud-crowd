@@ -12,7 +12,7 @@ module CloudCrowd
     after_destroy :redistribute_work_units
 
     # Available Nodes haven't used up their maxiumum number of workers yet.
-    scope :available, -> { 
+    scope :available, -> {
       where('(max_workers is null or (select count(*) from work_units where node_record_id = node_records.id) < max_workers)').
       order('updated_at asc')
     }
@@ -52,14 +52,14 @@ module CloudCrowd
       touch && true
     rescue RestClient::RequestTimeout
       # The node's gone away.  Destroy it and it will check in when it comes back
-      CloudCrowd.log "Node #{host} received RequestTimeout, removing it"
+      CloudCrowd.logger.warn "Node #{host} received RequestTimeout, removing it"
       destroy && false
     rescue RestClient::RequestFailed => e
       raise e unless e.http_code == 503 && e.http_body == Node::OVERLOADED_MESSAGE
       update_attribute(:busy, true) && false
     rescue RestClient::Exception, Errno::ECONNREFUSED, Timeout::Error, Errno::ECONNRESET=>e
       # Couldn't post to node, assume it's gone away.
-      CloudCrowd.log "Node #{host} received #{e.class} #{e}, removing it"
+      CloudCrowd.logger.warn "Node #{host} received #{e.class} #{e}, removing it"
       destroy && false
     end
 
@@ -102,19 +102,19 @@ module CloudCrowd
     end
 
     # The JSON representation of a NodeRecord includes its worker_pids.
-    
+
     class Serializer < ActiveModel::Serializer
       attributes :host, :tag, :workers, :status
-      
+
       def workers
         object.worker_pids
       end
-      
+
       def status
         object.display_status
       end
     end
-    
+
     def active_model_serializer; Serializer; end
 
     def to_json

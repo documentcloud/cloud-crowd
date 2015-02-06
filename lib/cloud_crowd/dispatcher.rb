@@ -39,12 +39,12 @@ module CloudCrowd
     end
 
     def perform_distribution
-      #CloudCrowd.log "Distributing jobs to nodes"
+      CloudCrowd.logger.debug "Distributing jobs to nodes"
       begin
         WorkUnit.distribute_to_nodes
       rescue StandardError => e
-        CloudCrowd.log "Exception: #{e}"
-        CloudCrowd.log e.backtrace
+        CloudCrowd.logger.error "Exception: #{e}"
+        CloudCrowd.logger.error e.backtrace
       end
     end
 

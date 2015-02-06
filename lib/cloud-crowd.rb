@@ -4,6 +4,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
 require 'rubygems'
+require 'logger'
 gem 'activerecord'
 gem 'json'
 gem 'sinatra'
@@ -98,10 +99,23 @@ module CloudCrowd
     def configure(config_path)
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
+      configure_logging
       @config[:work_unit_retries] ||= MIN_RETRIES
       if @config[:actions_path]
         path = Pathname.new( @config[:actions_path] ).realpath
         $LOAD_PATH.unshift( path ) unless $LOAD_PATH.include?( path )
+      end
+    end
+
+    # Configure a logger for CloudCrowd
+    # By default an instance of Logger from the Ruby standard library is configured.
+    # The log level will default to "warn" and may be adjusted by specifying
+    # a "log_level" in the configuration file.
+    def configure_logging
+      @logger = Logger.new(STDOUT)
+      log_level = ( @config[:log_level] || 'warn' ).to_s.upcase
+      if ['FATAL','ERROR','WARN', 'INFO','DEBUG'].include?(log_level)
+        @logger.level = Logger.const_get(log_level)
       end
     end
 
@@ -213,8 +227,8 @@ module CloudCrowd
 
     # Output a message with the current Timestamp prepended.
     # Sinatra will re-direct stdout to a log file located at "log_path"
-    def log(message)
-      printf("%-20s %s\n", Time.now.strftime("%F-%T:"), message)
+    def logger
+      @logger
     end
 
   end
