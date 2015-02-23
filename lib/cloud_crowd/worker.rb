@@ -141,7 +141,6 @@ module CloudCrowd
     def trap_signals
       Signal.trap('QUIT') { Process.exit! }
       Signal.trap('INT')  { Process.exit! }
-      Signal.trap('KILL') { Process.exit! }
       Signal.trap('TERM') { Process.exit! }
     end
 

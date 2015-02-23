@@ -200,7 +200,6 @@ module CloudCrowd
     def trap_signals
       Signal.trap('QUIT') { shut_down }
       Signal.trap('INT')  { shut_down }
-      Signal.trap('KILL') { shut_down }
       Signal.trap('TERM') { shut_down }
     end
 
