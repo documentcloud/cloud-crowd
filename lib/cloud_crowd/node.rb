@@ -159,6 +159,11 @@ module CloudCrowd
     end
 
     def check_on_workers
+      # ToDo, this isn't really thread safe.
+      # there are events in which a job completes and exits successfully
+      # while iteration here is taking place.  However the interleaving
+      # is such that the work unit should be complete / cleaned up already
+      # even in the event that a thread is flagged as dead here.
       @work.each do |unit_id, work|
         unless work[:thread].alive?
           CloudCrowd.log "Notifying central server that worker #{work[:thread].pid} for unit #{unit_id} mysteriously died."
