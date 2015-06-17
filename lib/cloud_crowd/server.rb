@@ -58,11 +58,6 @@ module CloudCrowd
       `tail -n 100 #{CloudCrowd.log_path('server.log')}`
     end
 
-    # Get the JSON for what a worker is up to.
-    get '/worker/:name' do
-      json WorkUnit.find_by_worker_name(params[:name]) || {}
-    end
-
     # To monitor the central server with Monit, God, Nagios, or another
     # monitoring tool, you can hit /heartbeat to make sure.
     get '/heartbeat' do
