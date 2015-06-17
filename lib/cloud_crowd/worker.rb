@@ -89,6 +89,7 @@ module CloudCrowd
         action.cleanup_work_directory if action
         fail_work_unit(e)
       end
+      @node.resolve_work(@unit['id'])
     end
 
     # Run this worker inside of a fork. Attempts to exit cleanly.

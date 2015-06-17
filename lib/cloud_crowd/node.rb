@@ -59,7 +59,8 @@ module CloudCrowd
       throw :halt, [503, OVERLOADED_MESSAGE] if @overloaded
       unit = JSON.parse(params[:work_unit])
       pid = fork { Worker.new(self, unit).run }
-      Process.detach(pid)
+      thread = Process.detach(pid)
+      track_work(unit["id"], thread)
       json :pid => pid
     end
 
@@ -78,6 +79,7 @@ module CloudCrowd
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
       @min_memory       = CloudCrowd.config[:min_free_memory]
+      @work             = {}
       start unless ENV['RACK_ENV'] == 'test'
     end
 
@@ -151,8 +153,32 @@ module CloudCrowd
         raise NotImplementedError, "'min_free_memory' is not yet implemented on your platform"
       end
     end
+    
+    def track_work(id, thread)
+      @work[id] = { thread: thread, start: Time.now }
+    end
 
-
+    def check_on_workers
+      @work.each do |unit_id, work|
+        unless work[:thread].alive?
+          CloudCrowd.log "Notifying central server that worker #{work[:thread].pid} for unit #{unit_id} mysteriously died."
+          data = {
+            id:     unit_id,
+            pid:    work[:thread].pid,
+            status: 'failed',
+            output: { output: "Worker thread #{work[:thread].pid} died on #{host} prior to #{Time.now}" }.to_json,
+            time:   Time.now - work[:start] # this is time until failure was noticed
+          }
+          @central["/work/#{unit_id}"].put(data)
+          resolve_work(unit_id)
+        end
+      end
+    end
+    
+    def resolve_work(unit_id)
+      @work.delete(unit_id)
+    end
+    
     private
 
     # Launch a monitoring thread that periodically checks the node's load
@@ -175,6 +201,7 @@ module CloudCrowd
     def check_in_periodically
       @check_in_thread = Thread.new do
         loop do
+          check_on_workers
           reply = ""
           1.upto(5).each do | attempt_number |
             # sleep for an ever increasing amount of time to prevent overloading the server
@@ -183,7 +210,7 @@ module CloudCrowd
             # if we did not receive a reply, the server has went away; it
             # will reply with an empty string if the check-in succeeds
             if reply.nil?
-              CloudCrowd.log "Failed on attempt # #{attempt_number} to check in with server"
+              CloudCrowd.log "Failed on attempt ##{attempt_number} to check in with server"
             else
               break
             end
