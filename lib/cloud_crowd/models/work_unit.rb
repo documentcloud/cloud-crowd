@@ -43,6 +43,11 @@ module CloudCrowd
         # of running at the moment.
         available_nodes   = NodeRecord.available.to_a
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
+        # Filter out any actions that are blacklisted
+        # First make sure out black list is up to date and we expire any old black listed items
+        BlackListedAction.update_black_list
+        available_actions.reject!{|x| BlackListedAction.all.map(&:action).include? x}
+
         filter            = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
         
         # If there aren't any available nodes or actions don't bother doing anything.

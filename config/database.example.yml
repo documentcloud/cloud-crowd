@@ -2,12 +2,11 @@
 # to use any database that ActiveRecord supports. Only the central server needs
 # this file to be configured -- nodes never connect directly to the database.
 
-:adapter:  mysql
-:encoding: utf8
-:username: root
-:password:
-:socket:   /tmp/mysql.sock
+:adapter:  postgresql
+:encoding: unicode
+:host:   localhost
 :database: cloud_crowd
+allow_concurrency: true
 
 # If you'd prefer to use an SQLite database instead, the following configuration
 # will do nicely:

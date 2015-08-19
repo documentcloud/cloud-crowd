@@ -49,7 +49,7 @@ module CloudCrowd
   autoload :Dispatcher,   'cloud_crowd/dispatcher'
 
   # Increment the schema version when there's a backwards incompatible change.
-  SCHEMA_VERSION = 4
+  SCHEMA_VERSION = 5
 
   # Root directory of the CloudCrowd gem.
   ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')
