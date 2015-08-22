@@ -205,3 +205,14 @@ body {
     .graph {
       height: 150px;
     }
+    .info_table tr th {
+      width: 200px;
+      height: 50px;
+    }
+    .info_table tr {
+      outline: #555555 solid 2px;
+      height: 30px;
+      text-align: center;
+    }
+    
+

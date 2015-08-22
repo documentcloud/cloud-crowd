@@ -82,6 +82,19 @@ module CloudCrowd
       json current_job
     end
 
+    # Retrieve a list of blacklisted actions and information about them.
+    get '/blacklist' do
+      blacklist = BlackListedAction.all
+      processed_result = {}
+      byebug
+      blacklist.each do |item|
+        processed_result[:name] = item.action
+        processed_result[:created_time] = item.created_at
+        duration = (item.duration_in_seconds || 0) + item.created_at.to_i
+        processed_result[:finish_time] =  duration.strftime("%-m/%-d %i:%M%P %Z")
+      end
+    end
+
     # Cleans up a Job's saved S3 files. Delete a Job after you're done
     # downloading the results.
     delete '/jobs/:job_id' do

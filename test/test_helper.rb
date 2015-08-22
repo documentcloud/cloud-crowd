@@ -11,6 +11,7 @@ require 'shoulda/matchers/active_record'
 require 'shoulda/matchers/active_model'
 require 'machinist/active_record'
 require 'mocha/setup'
+require 'byebug'
 
 here = File.dirname(__FILE__)
 require File.expand_path(here + "/../lib/cloud-crowd")

@@ -30,26 +30,28 @@ require 'cloud_crowd/exceptions'
 require 'rest_client'
 require 'pathname'
 require 'active_model_serializers'
+require 'byebug'
 ActiveModel::Serializer.root = false
 
 module CloudCrowd
 
   # Autoload all the CloudCrowd internals.
-  autoload :Action,       'cloud_crowd/action'
-  autoload :AssetStore,   'cloud_crowd/asset_store'
-  autoload :CommandLine,  'cloud_crowd/command_line'
-  autoload :Helpers,      'cloud_crowd/helpers'
-  autoload :Inflector,    'cloud_crowd/inflector'
-  autoload :Job,          'cloud_crowd/models'
-  autoload :Node,         'cloud_crowd/node'
-  autoload :NodeRecord,   'cloud_crowd/models'
-  autoload :Server,       'cloud_crowd/server'
-  autoload :Worker,       'cloud_crowd/worker'
-  autoload :WorkUnit,     'cloud_crowd/models'
-  autoload :Dispatcher,   'cloud_crowd/dispatcher'
+  autoload :Action,             'cloud_crowd/action'
+  autoload :AssetStore,         'cloud_crowd/asset_store'
+  autoload :CommandLine,        'cloud_crowd/command_line'
+  autoload :Helpers,            'cloud_crowd/helpers'
+  autoload :Inflector,          'cloud_crowd/inflector'
+  autoload :Job,                'cloud_crowd/models'
+  autoload :BlackListedAction,  'cloud_crowd/models'
+  autoload :Node,               'cloud_crowd/node'
+  autoload :NodeRecord,         'cloud_crowd/models'
+  autoload :Server,             'cloud_crowd/server'
+  autoload :Worker,             'cloud_crowd/worker'
+  autoload :WorkUnit,           'cloud_crowd/models'
+  autoload :Dispatcher,         'cloud_crowd/dispatcher'
 
   # Increment the schema version when there's a backwards incompatible change.
-  SCHEMA_VERSION = 5
+  SCHEMA_VERSION = 4
 
   # Root directory of the CloudCrowd gem.
   ROOT           = File.expand_path(File.dirname(__FILE__) + '/..')
@@ -110,6 +112,7 @@ module CloudCrowd
     # ActiveRecord connection format.
     def configure_database(config_path, validate_schema=true)
       configuration = YAML.load(ERB.new(File.read(config_path)).result)
+      byebug
       ActiveRecord::Base.establish_connection(configuration)
       if validate_schema
         begin
@@ -117,6 +120,7 @@ module CloudCrowd
         rescue
           version = 0
         end
+        byebug
         return true if version == SCHEMA_VERSION
         puts "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first.\nexiting..."
         exit

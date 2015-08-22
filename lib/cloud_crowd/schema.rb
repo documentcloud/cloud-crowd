@@ -1,4 +1,5 @@
 # Complete schema for CloudCrowd.
+byebug
 ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "jobs", :force => true do |t|
@@ -28,7 +29,7 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
 
   create_table "black_listed_actions", :force => true do |t|
     t.string   "action",                              :null => false
-    t.integer  "remaining_seconds",                   :null => true
+    t.integer  "duration_in_seconds",                   :null => true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
