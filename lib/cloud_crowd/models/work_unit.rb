@@ -116,7 +116,7 @@ module CloudCrowd
 
     def self.filter_blacklist(actions)
       # Update blacklist
-      BlackListedAction.update_black_list
+      #BlackListedAction.update_black_list
       # Check blacklist for the item
       actions.reject!{|x| BlackListedAction.all.map(&:action).include? x}
       actions || []
