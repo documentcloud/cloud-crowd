@@ -9,7 +9,7 @@ class BlackListedActionTest < Minitest::Test
     end
 
     teardown do
-      @black_listed_action.delete
+      BlackListedAction.delete_all
     end
     
     should "fail if trying to create a duplicate blacklist entry" do
@@ -44,6 +44,18 @@ class BlackListedActionTest < Minitest::Test
         "callback_url" : "http://example.com/callback" }
       EOS
       ))
+      assert job.present?
+    end
+
+    should "create blacklist job with a POST" do
+      BlackListedAction.delete_all
+      byebug
+      result = RestClient.post "localhost:9173/blacklist", {action: "graphics_magick", duration: 10}
+      assert BlackListedAction.where(action: "graphics_magick").present?
+    end
+
+    should "delete blacklist job with a DELETE" do
+      
       assert job.present?
     end
   end

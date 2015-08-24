@@ -23,7 +23,7 @@ module CloudCrowd
     # The interval (in seconds) at which the server will distribute
     # new work units to the nodes
     DISTRIBUTE_INTERVAL=20
-
+    require 'byebug'
     set :root, ROOT
     set :authorization_realm, "CloudCrowd"
 
@@ -81,6 +81,21 @@ module CloudCrowd
       json current_job
     end
 
+    # Create a new blacklist item.
+    post '/blacklist' do
+      blacklist_item = BlackListedAction.add_action(params[:action], params[:duration])
+      CloudCrowd.log("Blacklist ##{blacklist_item.id} (#{blacklist_item.action}) created.") unless ENV['RACK_ENV'] == 'test'
+      json blacklist_item
+    end
+
+    # Delete a blacklist by action name
+    delete '/blacklist/:action' do
+      blacklist_item = BlackListedAction.where(params[:action]).first
+      if blacklist_item.present?
+        blacklist_item.delete
+      end
+      json nil
+    end
     # Retrieve a list of blacklisted actions and information about them.
     get '/blacklist' do
       blacklist = BlackListedAction.all
