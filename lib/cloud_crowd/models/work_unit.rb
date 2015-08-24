@@ -44,9 +44,7 @@ module CloudCrowd
         available_nodes   = NodeRecord.available.to_a
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
         # Filter out any actions that are blacklisted
-        # First make sure out black list is up to date and we expire any old black listed items
-        BlackListedAction.update_black_list
-        available_actions.reject!{|x| BlackListedAction.all.map(&:action).include? x}
+        available_actions = self.filter_blacklist(available_actions)
 
         filter            = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
         
@@ -110,8 +108,18 @@ module CloudCrowd
 
     # Convenience method for starting a new WorkUnit.
     def self.start(job, action, input, status)
+      blacklist_check = self.filter_blacklist([action]).empty?
+      raise "Action [#{action}] is blacklisted.  Unable to start job." if blacklist_check
       input = input.to_json unless input.is_a? String
       self.create(:job => job, :action => action, :input => input, :status => status)
+    end
+
+    def self.filter_blacklist(actions)
+      # Update blacklist
+      BlackListedAction.update_black_list
+      # Check blacklist for the item
+      actions.reject!{|x| BlackListedAction.all.map(&:action).include? x}
+      actions || []
     end
 
     # Mark this unit as having finished successfully.

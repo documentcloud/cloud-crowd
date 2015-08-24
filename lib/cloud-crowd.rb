@@ -30,7 +30,6 @@ require 'cloud_crowd/exceptions'
 require 'rest_client'
 require 'pathname'
 require 'active_model_serializers'
-require 'byebug'
 ActiveModel::Serializer.root = false
 
 module CloudCrowd
@@ -112,7 +111,6 @@ module CloudCrowd
     # ActiveRecord connection format.
     def configure_database(config_path, validate_schema=true)
       configuration = YAML.load(ERB.new(File.read(config_path)).result)
-      byebug
       ActiveRecord::Base.establish_connection(configuration)
       if validate_schema
         begin
@@ -120,7 +118,6 @@ module CloudCrowd
         rescue
           version = 0
         end
-        byebug
         return true if version == SCHEMA_VERSION
         puts "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first.\nexiting..."
         exit
