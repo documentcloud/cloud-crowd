@@ -6,6 +6,7 @@ module CloudCrowd
   class BlackListedAction < ActiveRecord::Base
 
     validates_presence_of :action
+    validates :action, uniqueness: true
 
     def self.add_action(name, duration_in_seconds)
       self.create(action: name, duration_in_seconds: duration_in_seconds)

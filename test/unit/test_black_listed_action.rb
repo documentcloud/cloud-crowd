@@ -12,6 +12,11 @@ class BlackListedActionTest < Minitest::Test
       @black_listed_action.delete
     end
     
+    should "fail if trying to create a duplicate blacklist entry" do
+      duplicate = BlackListedAction.create(action: 'word_count', duration_in_seconds: 200)
+      assert duplicate.errors.first[1] == "has already been taken"
+    end
+
     should "create valid black listed action object" do
       assert @black_listed_action.present?
     end
