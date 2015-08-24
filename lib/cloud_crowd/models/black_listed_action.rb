@@ -13,12 +13,10 @@ module CloudCrowd
 
     # Update items on our blacklist that have expired and can now be run
     def self.update_black_list
-      # Only run this method every minute to minimize database hits
-      return if (current_time = Time.now.to_i)%60
-      black_list = BlackListedAction.where(:duration_in_seconds.ne => nil)
+      black_list = BlackListedAction.where.not(:duration_in_seconds => [nil,'',0])
       black_list.each do |item|
         target_time = item.created_at.to_i + item.duration_in_seconds
-        item.delete if target_time > current_time
+        item.delete if target_time < Time.now.to_i
       end 
     end
 
