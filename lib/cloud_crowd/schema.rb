@@ -29,7 +29,6 @@ ActiveRecord::Schema.define(:version => CloudCrowd::SCHEMA_VERSION) do
   create_table "black_listed_actions", :force => true do |t|
     t.string   "action",                              :null => false
     t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "work_units", :force => true do |t|
