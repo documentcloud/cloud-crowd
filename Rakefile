@@ -1,9 +1,10 @@
 require 'rake/testtask'
+require 'yaml'
 
 # To get started testing, run `crowd -c test/config load_schema`, in order to
 # create and load a fresh test database, and then `rake test`.
 desc 'Run all tests'
-task :test do
+task :test => ['test:drop_db', 'test:create_db'] do
   require 'minitest/autorun'
   $LOAD_PATH.unshift(File.expand_path('test'))
   Dir['./test/**/test_*.rb'].each {|test| require test }
@@ -24,27 +25,19 @@ namespace :gem do
   
 end
 
-namespace :db do
+namespace :test do
 
   desc 'Wipe out local databases'
-  task :drop do
-    sh "dropdb cloud_crowd && echo DROPPED DB"
+  task :drop_db do
+    path = YAML.load(File.read('./test/config/database.yml'))[:database]
+    FileUtils.rm path if File.exists? path
   end
 
   desc "Create local database"
-  task :create do
-    sh "createdb cloud_crowd && echo CREATED DB"
+  task :create_db do
     load_db_code
     # Load in schema
     require 'cloud_crowd/schema.rb'
-  end
-
-  desc 'Removes all items from blacklist'
-  task :clearblacklist do
-    load_db_code
-    count = CloudCrowd::BlackListedAction.all.count
-    CloudCrowd::BlackListedAction.destroy_all
-    sh "echo REMOVED #{count} ITEMS FROM BLACKLIST"
   end
 end
 
