@@ -7,6 +7,7 @@ class BlackListedActionTest < Minitest::Test
     setup do
       BlackListedAction.destroy_all
       @black_listed_action = BlackListedAction.create(action: 'word_count')
+      @node = NodeRecord.make!
     end
 
     teardown do
@@ -23,39 +24,10 @@ class BlackListedActionTest < Minitest::Test
     end
 
     should "not execute job because it is blacklisted" do
-      assert_raises RuntimeError do
-        Job.create_from_request(JSON.parse(<<-EOS
-        { "inputs"       : ["one", "two", "three"],
-          "action"       : "word_count",
-          "email"        : "bob@example.com",
-          "callback_url" : "http://example.com/callback" }
-        EOS
-        ))
-      end
+      assert NodeRecord.all.map(&:actions).flatten.uniq.include? @black_listed_action.action
+      refute NodeRecord.available_actions.include? @black_listed_action.action
     end
 
-    # should "sucessfully execute job because blacklist item expires" do
-    #   @black_listed_action.duration_in_seconds = 2
-    #   @black_listed_action.save
-    #   sleep(3)
-    #   job = Job.create_from_request(JSON.parse(<<-EOS
-    #   { "inputs"       : ["one", "two", "three"],
-    #     "action"       : "word_count",
-    #     "email"        : "bob@example.com",
-    #     "callback_url" : "http://example.com/callback" }
-    #   EOS
-    #   ))
-    #   assert job.present?
-    # # end
-    # should "create blacklist job with a POST" do
-    #   result = RestClient.post "localhost:9173/blacklist", {action: "graphics_magick"}
-    #   assert BlackListedAction.where(action: "graphics_magick").present?
-    # end
-
-    # should "delete blacklist job with a DELETE" do
-      
-    #   assert job.present?
-    # end
   end
   
 end

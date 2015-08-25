@@ -40,6 +40,10 @@ module CloudCrowd
         create!(attrs.merge(host_attr))
       end
     end
+    
+    def self.available_actions
+      all.map(&:actions).flatten.uniq - BlackListedAction.all.pluck(:action)
+    end
 
     # Dispatch a WorkUnit to this node. Places the node at back at the end of
     # the rotation. If we fail to send the WorkUnit, we consider the node to be
