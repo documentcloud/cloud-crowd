@@ -40,6 +40,7 @@ module CloudCrowd
   autoload :CommandLine,        'cloud_crowd/command_line'
   autoload :Helpers,            'cloud_crowd/helpers'
   autoload :Inflector,          'cloud_crowd/inflector'
+  autoload :MODELS,             'cloud_crowd/models'
   autoload :Job,                'cloud_crowd/models'
   autoload :BlackListedAction,  'cloud_crowd/models'
   autoload :Node,               'cloud_crowd/node'
