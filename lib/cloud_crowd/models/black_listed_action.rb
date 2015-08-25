@@ -7,10 +7,7 @@ module CloudCrowd
 
     validates_presence_of :action
     validates :action, uniqueness: true
-
-    def self.add_action(name)
-      self.create(action: name)
-    end
+    validates :action, format: { with: /\A[a-z_]+\z/, message: "action names must be alphabetic snakecase" }
 
     # Update items on our blacklist that have expired and can now be run
     # def self.update_black_list
