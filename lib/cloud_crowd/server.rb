@@ -83,32 +83,27 @@ module CloudCrowd
 
     # Create a new blacklist item.
     post '/blacklist' do
-      blacklist_item = BlackListedAction.add_action(params[:action])
-      CloudCrowd.log("Blacklist ##{blacklist_item.id} (#{blacklist_item.action}) created.") unless ENV['RACK_ENV'] == 'test'
-      json blacklist_item
+      banned_action = BlackListedAction.new({:action=> params[:action]})
+      CloudCrowd.log("Blacklist ##{banned_action.id} (#{banned_action.action}) created.") unless ENV['RACK_ENV'] == 'test'
+      if banned_action.save
+        json banned_action
+      else
+        json banned_action.errors
+      end
     end
 
     # Delete a blacklist by action name
     delete '/blacklist/:action' do
-      blacklist_item = BlackListedAction.where(action: params[:action]).first
-      if blacklist_item.present?
-        blacklist_item.delete
+      if action_ban = BlackListedAction.where(:action => params[:action]).first
+        json action_ban.destroy
+      else
+        raise not_found
       end
-      json nil
     end
 
     # Retrieve a list of blacklisted actions and information about them.
     get '/blacklist' do
-      blacklist = BlackListedAction.all
-      blacklist_items = []
-      blacklist.each do |item|
-        processed_result = {}
-        processed_result[:name] = item.action
-        processed_result[:created_time] = item.created_at
-        blacklist_items.push processed_result
-        #processed_result[:finish_time] =  Time.at(duration).strftime("%-m/%-d %i:%M%P %Z")
-      end
-      json blacklist_items
+      json BlackListedAction.all
     end
 
     # Cleans up a Job's saved S3 files. Delete a Job after you're done
