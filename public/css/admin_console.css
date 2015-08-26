@@ -205,14 +205,21 @@ body {
     .graph {
       height: 150px;
     }
-    .info_table tr th {
-      width: 200px;
-      height: 50px;
-    }
-    .info_table tr {
+    .info_table {
+      width: 300px;
       outline: #555555 solid 2px;
-      height: 30px;
       text-align: center;
+      margin-left: 15px;
     }
-    
+      .info_table thead tr {
+        font-size: 16px;
+        color: #454545;
+        height: 50px;
+        background-color: white;
+      }
+      .info_table tbody tr {
+        height: 30px;
+        background-color: white;
+      }
+      
 
