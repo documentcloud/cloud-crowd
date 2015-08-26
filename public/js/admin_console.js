@@ -44,6 +44,7 @@ window.Console = {
     this._workUnitCountEl   = $('#work_unit_count');
     this._nodeCountEl       = $('#node_count');
     this._workerCountEl     = $('#worker_count');
+    this._blacklistEl       = $('#blacklist');
     this._disconnected = $('#disconnected');
     $(window).bind('resize', Console.renderGraphs);
     $('#nodes .worker').live('click', Console.getWorkerInfo);
@@ -51,6 +52,7 @@ window.Console = {
     $('#workers_legend').css({background : this.WORKERS_COLOR});
     $('#nodes_legend').css({background : this.NODES_COLOR});
     this.getStatus();
+    this.getBlacklist();
     $.each(this.PRELOAD_IMAGES, function(){ var i = new Image(); i.src = this; });
   },
 
@@ -72,6 +74,27 @@ window.Console = {
       if (!Console._disconnected.is(':visible')) Console._disconnected.fadeIn(Console.ANIMATION_SPEED);
       setTimeout(Console.getStatus, Console.POLL_INTERVAL);
     }});
+  },
+
+  // Request the blacklisted actions from our server
+  getBlacklist : function () {
+    $.ajax({url : 'blacklist', dataType: 'json', success : function(resp) {
+      Console._blacklist      = resp;
+      if (Console._disconnected.is(':visible')) Console._disconnected.fadeOut(Console.ANIMATION_SPEED);
+      Console.renderBlacklist();
+      setTimeout(Console.getBlacklist, Console.POLL_INTERVAL);
+    }, error : function(request, status, errorThrown) {
+      if (!Console._disconnected.is(':visible')) Console._disconnected.fadeIn(Console.ANIMATION_SPEED);
+      setTimeout(Console.getBlacklist, Console.POLL_INTERVAL);
+    }});
+  },
+
+  // Render the blacklisted actions
+  renderBlacklist : function() {
+    Console._blacklistEl.empty()
+    this._blacklist.forEach(function(d){
+      Console._blacklistEl.append("<tr><td>" + d.action + "</td><td>" + d.created_at + "</td></tr>")
+    });
   },
 
   // Fetch the last 100 lines of log from the server.
