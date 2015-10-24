@@ -42,7 +42,7 @@ module CloudCrowd
     end
     
     def self.available_actions
-      all.map(&:actions).flatten.uniq - BlackListedAction.all.pluck(:action)
+      available.map(&:actions).flatten.uniq - BlackListedAction.all.pluck(:action)
     end
 
     # Dispatch a WorkUnit to this node. Places the node at back at the end of
