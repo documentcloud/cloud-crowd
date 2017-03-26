@@ -5,6 +5,7 @@ module CloudCrowd
   # daemon processing one at a time. The splitting and merging stages of a job
   # are each run as a single WorkUnit.
   class WorkUnit < ActiveRecord::Base
+    include DatabaseConnection
     include ModelStatus
     
     # We use a random number in (0...MAX_RESERVATION) to reserve work units.

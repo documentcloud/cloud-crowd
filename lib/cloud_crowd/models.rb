@@ -33,6 +33,13 @@ module CloudCrowd
     end
     
   end
+
+  # Makes sure cloud-crowd connect to right database
+  module DatabaseConnection
+    configuration = YAML.load(ERB.new(File.read("#{CloudCrowd.config[:config_path]}/database.yml")).result)
+    ActiveRecord::Base.establish_connection(configuration)
+  end
+
 end
 
 require 'cloud_crowd/models/job'
