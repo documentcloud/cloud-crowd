@@ -100,6 +100,7 @@ module CloudCrowd
     def configure(config_path)
       @config_path = File.expand_path(File.dirname(config_path))
       @config = YAML.load(ERB.new(File.read(config_path)).result)
+      @config[:database_config] = YAML.load(ERB.new(File.read("#{@config_path}/database.yml")).result)
       @config[:work_unit_retries] ||= MIN_RETRIES
       if @config[:actions_path]
         path = Pathname.new( @config[:actions_path] ).realpath
