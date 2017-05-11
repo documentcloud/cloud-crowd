@@ -16,5 +16,6 @@ group :test do
   gem "rack-test", :require => "rack/test"
   gem 'sham'
   gem 'machinist'
+  gem "factory_girl_rails", "~> 4.0"
 end
 

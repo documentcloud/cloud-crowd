@@ -5,7 +5,7 @@ class WorkUnitTest < Minitest::Test
   context "A WorkUnit" do
     
     setup do
-      @unit = CloudCrowd::WorkUnit.make!
+      @unit = create(:work_unit)
       @job = @unit.job
     end
     
@@ -26,7 +26,7 @@ class WorkUnitTest < Minitest::Test
     end
     
     should "have JSON that includes job attributes" do
-      job = Job.make!
+      job = create(:job)
       unit_data = JSON.parse(job.work_units.first.to_json)
       assert unit_data['job_id'] == job.id
       assert unit_data['action'] == job.action

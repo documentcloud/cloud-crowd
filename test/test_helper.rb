@@ -12,6 +12,7 @@ require 'shoulda/matchers/active_model'
 require 'machinist/active_record'
 require 'mocha/setup'
 require 'byebug'
+require 'factory_girl'
 
 here = File.dirname(__FILE__)
 require File.expand_path(here + "/../lib/cloud-crowd")
@@ -19,7 +20,6 @@ CloudCrowd.configure(here + '/config/config.yml')
 CloudCrowd.configure_database(here + '/config/database.yml')
 
 require "#{CloudCrowd::ROOT}/test/blueprints.rb"
-
 
 module TestHelpers
   def setup
@@ -36,6 +36,7 @@ end
 
 class Minitest::Test
   include TestHelpers
+  include FactoryGirl::Syntax::Methods
   include Shoulda::Matchers::ActiveRecord
   extend Shoulda::Matchers::ActiveRecord
   include Shoulda::Matchers::ActiveModel

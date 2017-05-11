@@ -6,7 +6,7 @@ class WorkerTest < Minitest::Test
         
     setup do
       @node = Node.new.instance_variable_get(:"@instance")
-      @unit = WorkUnit.make!
+      @unit = create(:work_unit)
       @worker = Worker.new(@node, JSON.parse(@unit.to_json))
     end
     

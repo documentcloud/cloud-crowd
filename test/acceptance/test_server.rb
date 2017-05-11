@@ -14,7 +14,7 @@ class ServerTest < Minitest::Test
       WorkUnit.stubs(:distribute_to_nodes).returns([])
       Dispatcher.any_instance.stubs(:distribute_periodically)
       Job.destroy_all
-      2.times { Job.make! }
+      2.times { create(:job) }
     end
 
 

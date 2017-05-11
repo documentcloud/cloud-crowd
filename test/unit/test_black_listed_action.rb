@@ -7,7 +7,7 @@ class BlackListedActionTest < Minitest::Test
     setup do
       BlackListedAction.destroy_all
       @black_listed_action = BlackListedAction.create(action: 'word_count')
-      @node = NodeRecord.make!
+      @node = create(:node_record)
     end
 
     teardown do

@@ -5,7 +5,7 @@ class JobTest < Minitest::Test
   context "A CloudCrowd Job" do
         
     setup do
-      @job = Job.make!
+      @job = create(:job)
       @unit = @job.work_units.first
     end
     
