@@ -7,7 +7,8 @@ module CloudCrowd
   # [get /heartbeat] Returns 200 OK to let monitoring tools know the server's up.
   # [post /work] The central server hits <tt>/work</tt> to dispatch a WorkUnit to this Node.
   class Node < Sinatra::Base
-    use ActiveRecord::ConnectionAdapters::ConnectionManagement
+    use ActionDispatch::Executor, ActiveSupport::Executor
+    ActiveRecord::QueryCache.install_executor_hooks
 
     # A Node's default port. You only run a single node per machine, so they
     # can all use the same port without any problems.

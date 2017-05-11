@@ -30,7 +30,7 @@ require 'cloud_crowd/exceptions'
 require 'rest_client'
 require 'pathname'
 require 'active_model_serializers'
-ActiveModel::Serializer.root = false
+require 'action_dispatch/middleware/executor'
 
 module CloudCrowd
 
