@@ -1,4 +1,4 @@
 module CloudCrowd
-  VERSION          = '0.7.6'
-  VERSION_RELEASED = '2015-10-28'
+  VERSION          = '0.7.7'
+  VERSION_RELEASED = '2017-05-18'
 end
