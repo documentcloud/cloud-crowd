@@ -7,11 +7,10 @@ require 'sham'
 require 'rack/test'
 require 'shoulda'
 require 'shoulda/context'
-require 'shoulda/matchers/active_record'
 require 'shoulda/matchers/active_model'
+require 'shoulda/matchers/active_record'
 require 'machinist/active_record'
 require 'mocha/setup'
-require 'byebug'
 require 'factory_girl'
 
 here = File.dirname(__FILE__)

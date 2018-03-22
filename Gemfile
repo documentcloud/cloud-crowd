@@ -6,12 +6,11 @@ group :development do
   gem 'sqlite3'
   gem 'pry'
   gem 'faker'
-  gem 'byebug'
 end
 
 group :test do
   gem 'activesupport'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 2.0'
   gem 'shoulda-context'
   gem "rack-test", :require => "rack/test"
   gem 'sham'
