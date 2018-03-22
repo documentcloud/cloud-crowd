@@ -1,3 +1,6 @@
+require 'erb'
+require 'sinatra'
+
 module CloudCrowd
 
   # The main CloudCrowd (Sinatra) application. The actions are:

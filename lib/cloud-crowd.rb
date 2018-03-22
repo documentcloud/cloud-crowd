@@ -3,26 +3,13 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 # Common Gems:
-require 'rubygems'
-gem 'activerecord'
-gem 'json'
-gem 'sinatra'
-gem 'thin'
-
-# Autoloading for all the pieces which may or may not be needed:
-autoload :ActiveRecord, 'active_record'
-autoload :Benchmark,    'benchmark'
-autoload :Digest,       'digest'
-autoload :ERB,          'erb'
-autoload :FileUtils,    'fileutils'
-autoload :JSON,         'json'
-autoload :RightAws,     'right_aws'
-autoload :CloudFiles,   'cloudfiles'
-autoload :Sinatra,      'sinatra'
-autoload :Thin,         'thin'
-autoload :YAML,         'yaml'
-
 # Common code which should really be required in every circumstance.
+require 'json'
+require 'yaml'
+require 'rubygems'
+require 'active_record'
+require 'erb'
+require 'fileutils'
 require 'socket'
 require 'net/http'
 require 'cloud_crowd/version'
@@ -37,12 +24,12 @@ module CloudCrowd
   # Autoload all the CloudCrowd internals.
   autoload :Action,             'cloud_crowd/action'
   autoload :AssetStore,         'cloud_crowd/asset_store'
+  autoload :BlackListedAction,  'cloud_crowd/models'
   autoload :CommandLine,        'cloud_crowd/command_line'
   autoload :Helpers,            'cloud_crowd/helpers'
   autoload :Inflector,          'cloud_crowd/inflector'
   autoload :MODELS,             'cloud_crowd/models'
   autoload :Job,                'cloud_crowd/models'
-  autoload :BlackListedAction,  'cloud_crowd/models'
   autoload :Node,               'cloud_crowd/node'
   autoload :NodeRecord,         'cloud_crowd/models'
   autoload :Server,             'cloud_crowd/server'

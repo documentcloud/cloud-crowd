@@ -1,3 +1,5 @@
+require 'benchmark'
+
 module CloudCrowd
 
   # The Worker, forked off from the Node when a new WorkUnit is received,

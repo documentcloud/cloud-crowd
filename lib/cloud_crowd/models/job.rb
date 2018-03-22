@@ -1,3 +1,5 @@
+require 'digest'
+
 module CloudCrowd
 
   # A chunk of work that will be farmed out into many WorkUnits to be processed

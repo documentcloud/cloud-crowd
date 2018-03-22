@@ -1,3 +1,6 @@
+require 'thin'
+require 'sinatra'
+
 module CloudCrowd
 
   # A Node is a Sinatra/Thin application that runs a single instance per-machine

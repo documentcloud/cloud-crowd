@@ -1,4 +1,5 @@
 require 'optparse'
+require 'thin'
 
 module CloudCrowd
   class CommandLine
