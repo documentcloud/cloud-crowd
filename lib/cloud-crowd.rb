@@ -84,21 +84,42 @@ module CloudCrowd
     attr_accessor :identity
 
     # Configure CloudCrowd by passing in the path to <tt>config.yml</tt>.
-    def configure(config_path)
-      @config_path = File.expand_path(File.dirname(config_path))
-      @config = YAML.load(ERB.new(File.read(config_path)).result)
+    def configure(configuration)
+      if configuration.kind_of? Hash
+        load_configuration(configuration)
+      else
+        load_configuration_from_path(configuration)
+      end
+    end
+    
+    def load_configuration(configuration)
+      raise ArgumentError unless configuration.kind_of? Hash
+      @config = configuration
       @config[:work_unit_retries] ||= MIN_RETRIES
       if @config[:actions_path]
         path = Pathname.new( @config[:actions_path] ).realpath
         $LOAD_PATH.unshift( path ) unless $LOAD_PATH.include?( path )
       end
     end
+    
+    def load_configuration_from_path(config_path)
+      @config_path = File.expand_path(File.dirname(config_path))
+      configuration = YAML.load(ERB.new(File.read(config_path)).result)
+      load_configuration(configuration)
+    end
 
     # Configure the CloudCrowd central database (and connect to it), by passing
     # in a path to <tt>database.yml</tt>. The file should use the standard
     # ActiveRecord connection format.
-    def configure_database(config_path, validate_schema=true)
-      configuration = YAML.load(ERB.new(File.read(config_path)).result)
+    def configure_database(configuration, validate_schema=true)
+      if configuration.kind_of? Hash
+        load_database_configuration(configuration, validate_schema)
+      else
+        load_database_configuration_from_path(configuration, validate_schema)
+      end
+    end
+    
+    def load_database_configuration(configuration, validate_schema=true)
       ActiveRecord::Base.establish_connection(configuration)
       if validate_schema
         begin
@@ -110,6 +131,11 @@ module CloudCrowd
         puts "Your database schema is out of date. Please use `crowd load_schema` to update it. This will wipe all the tables, so make sure that your jobs have a chance to finish first.\nexiting..."
         exit
       end
+    end
+    
+    def load_database_configuration_from_path(config_path, validate_schema=true)
+      configuration = YAML.load(ERB.new(File.read(config_path)).result)
+      load_database_configuration(configuration, validate_schema)
     end
 
     # Starts a new thread with a ActiveRecord connection_pool
