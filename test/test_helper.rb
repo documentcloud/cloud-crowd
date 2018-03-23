@@ -35,7 +35,7 @@ end
 
 class Minitest::Test
   include TestHelpers
-  include FactoryGirl::Syntax::Methods
+  include FactoryBot::Syntax::Methods
   include Shoulda::Matchers::ActiveRecord
   extend Shoulda::Matchers::ActiveRecord
   include Shoulda::Matchers::ActiveModel

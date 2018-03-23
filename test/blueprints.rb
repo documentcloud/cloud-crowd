@@ -21,7 +21,7 @@
 #   action  { 'graphics_magick' }
 # end
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :job, class: CloudCrowd::Job do
     status  CloudCrowd::PROCESSING
     inputs  { ['http://www.google.com/intl/en_ALL/images/logo.gif'].to_json }
