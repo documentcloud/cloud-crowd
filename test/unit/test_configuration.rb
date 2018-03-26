@@ -5,6 +5,17 @@ class ConfigurationTest < Minitest::Test
   context "CloudCrowd Configuration" do
 
     setup { CloudCrowd.instance_variable_set("@actions", nil) }
+    
+    should "accept a configuration hash" do
+      CloudCrowd.instance_variable_set(:"@config", nil)
+      here = File.dirname(__FILE__)
+      config_path = File.join(here, '..', 'config', 'config.yml')
+      configuration = YAML.load(ERB.new(File.read(config_path)).result)
+      assert_nil CloudCrowd.config
+      CloudCrowd.configure(configuration)
+      refute_nil CloudCrowd.config
+      assert CloudCrowd.config[:max_workers] == 10
+    end
 
     should "have read in config.yml" do
       assert CloudCrowd.config[:max_workers] == 10
