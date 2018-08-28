@@ -91,7 +91,7 @@ module CloudCrowd
         response = RestClient.post(callback_url, {:job => self.to_json})
         CloudCrowd.defer { self.destroy } if response && response.code == 201
       rescue RestClient::Exception => e
-        CloudCrowd.log "Job ##{id} (#{action}) failed to fire callback: #{callback_url}"
+        CloudCrowd.log "Job ##{id} (#{action}) failed to fire callback: #{callback_url}\n#{e.backtrace}"
       end
     end
 
