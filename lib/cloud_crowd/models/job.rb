@@ -71,7 +71,14 @@ module CloudCrowd
                                  SUCCEEDED
       )
     end
-
+    
+    # This occurs often enough that it's time just to add a restart.
+    def restart
+      self.status = self.splittable? ? CloudCrowd::SPLITTING : CloudCrowd::PROCESSING
+      self.save
+      self.send(:queue_for_workers)
+    end
+    
     # If a <tt>callback_url</tt> is defined, post the Job's JSON to it upon
     # completion. The <tt>callback_url</tt> may include HTTP basic authentication,
     # if you like:
