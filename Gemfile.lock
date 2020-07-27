@@ -65,7 +65,7 @@ GEM
       domain_name (~> 0.5)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
-    json (2.1.0)
+    json (2.3.1)
     jsonapi-renderer (0.2.0)
     loofah (2.2.1)
       crass (~> 1.0.2)
